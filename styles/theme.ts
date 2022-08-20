@@ -1,3 +1,5 @@
+import { DefaultTheme } from "styled-components";
+
 const colors = {
   primary: "#6358dc",
   secondary: "#4e60ff",
@@ -41,7 +43,7 @@ const fonts = {
   monospace: "Menlo, monospace",
 };
 
-const theme = {
+const theme: DefaultTheme = {
   colors,
   animation,
   breakpoints,
@@ -53,10 +55,8 @@ const theme = {
     widescreen: `@media screen and (min-width: ${breakpoints[4]})`,
   },
   shadows: {
-    card: {
-      light: "15px 15px 35px rgba(0, 127, 255, 0.5)",
-      dark: `7px 7px 15px ${colors.primary}`,
-    },
+    light: "15px 15px 35px rgba(0, 127, 255, 0.5)",
+    dark: `7px 7px 15px ${colors.primary}`,
   },
   fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 96],
   fontWeights: {
