@@ -10,7 +10,7 @@ function DefaultLayout({ children }: Props) {
   return (
     <Container>
       <Header />
-      {children}
+      <Body>{children}</Body>
       <Footer />
     </Container>
   );
@@ -21,6 +21,14 @@ const Container = styled.div`
   margin: 0 auto;
   display: flex;
   flex-direction: column;
+  gap: 50px;
+`;
+
+const Body = styled.div`
+  flex-basis: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 export default DefaultLayout;
