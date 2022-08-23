@@ -6,6 +6,7 @@ const colors = {
   error: "#ff5c60",
   success: "#259323",
   white: "#ffffff",
+  lightGray: "f6f6f6",
   gray50: "#fbfbfb",
   gray100: "#edeef2",
   gray150: "#d5dbe1",
