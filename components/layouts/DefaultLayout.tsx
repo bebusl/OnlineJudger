@@ -25,7 +25,7 @@ const Container = styled.div`
 `;
 
 const Body = styled.div`
-  flex-basis: 80vh;
+  flex-basis: 60vh;
   display: flex;
   justify-content: center;
   align-items: center;
