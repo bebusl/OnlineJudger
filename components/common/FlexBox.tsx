@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const FlexBox = styled.div<{
+const FlexBox = styled.div<{
   justifyContent?: string;
   alignItems?: string;
   gap?: number | string;
@@ -12,3 +12,5 @@ export const FlexBox = styled.div<{
   flex-direction: ${({ flexDirection }) => flexDirection ?? "column"};
   gap: ${({ gap }) => gap ?? 0};
 `;
+
+export default FlexBox;
