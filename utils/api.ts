@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
-import { BASE_URL } from "./constants/request";
+import { API_BASE_URL } from "./constants/url";
 
 interface GetRequestProps {
   url: string;
@@ -14,18 +14,22 @@ interface PostRequestProps extends GetRequestProps {
 
 export default function request(url: string = "") {
   const axiosInstance = axios.create({
-    baseURL: BASE_URL + url,
+    baseURL: API_BASE_URL + url,
   });
 
   async function requestHandler(
     request: Function,
-    callback?: Function,
-    errorHandler?: Function
+    callback: Function = (result: AxiosResponse) => {
+      console.log("default ", result);
+    },
+    errorHandler: Function = (error: Error) => {
+      console.log("error", error);
+    }
   ) {
     try {
       const result = await request();
-      if (callback) callback();
-      console.log("HIHI", result);
+      if (callback) callback(result);
+      // console.log("HIHI", result);
       return result;
     } catch (error) {
       if (errorHandler) errorHandler();
