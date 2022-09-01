@@ -5,24 +5,26 @@ import { FlexBox } from "../common/shared";
 interface Props {
   title?: string;
   subTitle?: string;
+  children?: React.ReactNode;
 }
 
 const AuthTemplate = ({
   title = "LOGIN",
   subTitle = "서비스를 이용하기 위해서는 로그인이 필요합니다",
+  children,
 }: Props) => {
   return (
-    <Container>
+    <Container flexDirection="row">
       <LeftBox alignItems="start" justifyContent="start">
         <Title>{title}</Title>
         <SubTitle>{subTitle}</SubTitle>
       </LeftBox>
-      <RightBox>오른쪽</RightBox>
+      <RightBox>{children}</RightBox>
     </Container>
   );
 };
 
-const Container = styled.div`
+const Container = styled(FlexBox)`
   width: 100%;
   height: 100%;
   border: 1px solid ${({ theme }) => theme.colors.gray150};
@@ -42,7 +44,6 @@ const LeftBox = styled(FlexBox)`
 const RightBox = styled(FlexBox)`
   width: 50%;
   height: 100%;
-
 `;
 
 const Title = styled.span`
