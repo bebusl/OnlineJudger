@@ -1,13 +1,40 @@
-import React,{useRef} from 'react'
+import React, { useRef, forwardRef } from "react";
 
-function Input({validation}:{validation:()=>boolean}) {
-    const inputRef = useRef<HTMLInputElement>(null)
-    return (
-    <>
-    <input ref={inputRef} />
-    {!validation&&<p>밸리데이션 에러</p>}
-    </>
-  )
+interface Props {
+  name: string;
+  type?: string;
+  defaultValue?: string | number;
+  // errorMessage?: string;
+  // validator: Function;
 }
 
-export default Input
+const Input = forwardRef<HTMLInputElement, Props>(
+  (
+    {
+      name,
+      type = "text",
+      defaultValue = "",
+      // errorMessage = "wrong data",
+      // validator,
+    },
+    ref
+  ) => {
+    // const isValid = validator();
+    return (
+      <div>
+        <input
+          name={name}
+          ref={ref}
+          type={type}
+          defaultValue={defaultValue}
+          placeholder={name}
+        />
+        {/* {!isValid && <p>{errorMessage}</p>} */}
+      </div>
+    );
+  }
+);
+
+Input.displayName = "Input";
+
+export default Input;

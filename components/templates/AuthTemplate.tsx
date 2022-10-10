@@ -1,6 +1,5 @@
 import styled from "styled-components";
-import { Card } from "../common/Card";
-import { FlexBox } from "../common/shared";
+import { Card, FlexBox } from "../common";
 
 interface Props {
   title?: string;

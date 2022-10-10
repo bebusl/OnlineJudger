@@ -1,5 +1,7 @@
 import Image from "next/image";
 import React from "react";
+import Button from "../../components/common/Button";
+import Input from "../../components/common/Input";
 import AuthTemplate from "../../components/templates/AuthTemplate";
 import {
   GITHUB_AUTH_URL,
@@ -30,6 +32,9 @@ function Login() {
       <OAuthLinkButton url={GOOGLE_AUTH_URL} type="google" />
       <OAuthLinkButton url={KAKAO_AUTH_URL} type="kakao" />
       <OAuthLinkButton url={GITHUB_AUTH_URL} type="github" />
+      <Input name="id" />
+      <Input name="password" />
+      <Button>LOGIN</Button>
     </AuthTemplate>
   );
 }

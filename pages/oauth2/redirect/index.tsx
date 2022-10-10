@@ -7,10 +7,12 @@ function Oauth2Redirect({
   isNew,
   linkKey,
   error,
+  provider,
 }: {
   isNew: string;
   linkKey: string;
   error: string;
+  provider: string;
 }) {
   const router = useRouter();
 
@@ -20,7 +22,7 @@ function Oauth2Redirect({
       localStorage.setItem(LINK_KEY, linkKey);
       router.push({
         pathname: "/register",
-        query: { prev: "oauth2", linkKey },
+        query: { prev: "oauth2", linkKey, provider },
       });
     } else if (linkKey) {
       localStorage.setItem(ACCESS_TOKEN, linkKey);
@@ -37,12 +39,14 @@ export function getServerSideProps(ctx: NextPageContext) {
   const isNew = ctx.query?.newUser ?? "";
   const linkKey = ctx.query?.linkKey ?? "";
   const error = ctx.query?.error ?? "";
+  const provider = ctx.query?.provider;
 
   return {
     props: {
       isNew,
       linkKey,
       error,
+      provider,
     },
   };
 }

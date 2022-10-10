@@ -1,7 +1,8 @@
 import React from "react";
 
 function Detail({ query }: { query: string }) {
-  return <div>query: {query}</div>;
+  // return <div>query: {query}</div>;
+  return <div></div>;
 }
 export const getServerSideProps = ({ query }: { query: { name: string } }) => {
   return { props: { query: query.name } };
