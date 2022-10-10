@@ -1,3 +1,5 @@
-export * as FlexBox from "./FlexBox";
-export * as Card from "./Card";
-export * as Input from "./Input";
+import FlexBox from "./FlexBox";
+import Card from "./Card";
+import Input from "./Input";
+
+export { FlexBox, Card, Input };
