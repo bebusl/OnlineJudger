@@ -1,35 +1,38 @@
-import React, { useRef, forwardRef } from "react";
+import React, { forwardRef } from "react";
+import styled from "styled-components";
 
-interface Props {
+interface InputProps {
   name: string;
   type?: string;
   defaultValue?: string | number;
-  // errorMessage?: string;
-  // validator: Function;
+  errorMessage?: string;
+  validator?: (a: string | null) => boolean;
 }
 
-const Input = forwardRef<HTMLInputElement, Props>(
+const Input = forwardRef<HTMLInputElement, InputProps>(
   (
     {
       name,
       type = "text",
       defaultValue = "",
-      // errorMessage = "wrong data",
-      // validator,
+      errorMessage = "wrong Input",
+      validator,
     },
     ref
   ) => {
+    const value = null;
     // const isValid = validator();
+    const isValid = true;
     return (
       <div>
-        <input
+        <InputBox
           name={name}
           ref={ref}
           type={type}
           defaultValue={defaultValue}
           placeholder={name}
         />
-        {/* {!isValid && <p>{errorMessage}</p>} */}
+        {isValid && <p>{errorMessage}</p>}
       </div>
     );
   }
@@ -38,3 +41,19 @@ const Input = forwardRef<HTMLInputElement, Props>(
 Input.displayName = "Input";
 
 export default Input;
+
+const InputBox = styled.input`
+  background-color: ${({ theme }) => theme.colors.gray50};
+  padding: 10px;
+  width: 100%;
+  border: 1px solid ${({ theme }) => theme.colors.gray100};
+  border-radius: 5px;
+  &:focus {
+    border: 1px solid gray;
+  }
+  & + p {
+    color: red;
+    // visibility: hidden;
+    font-size: 0.8rem;
+  }
+`;
