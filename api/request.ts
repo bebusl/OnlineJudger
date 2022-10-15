@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import { stringify } from "querystring";
 import { API_BASE_URL } from "../utils/constants/url";
 
 interface GetRequestProps {
@@ -36,7 +37,7 @@ export default function request(url: string = "") {
       return error;
     }
   }
-  async function get(
+  function get(
     url: string,
     config?: AxiosRequestConfig,
     callback?: Function,
@@ -57,5 +58,19 @@ export default function request(url: string = "") {
     return requestHandler(request, callback, errorHandler);
   }
 
-  return { get, post };
+  function deleteRequest(
+    url: string,
+    callback?: Function,
+    errorHandler?: Function
+  ) {
+    const request = () => axiosInstance.delete(url);
+    return requestHandler(request, callback, errorHandler);
+  }
+
+  function putRequest(url: string) {
+    const request = () => axiosInstance.put(url);
+    return requestHandler(request);
+  }
+
+  return { get, post, deleteRequest, putRequest };
 }
