@@ -8,26 +8,24 @@ interface TableProps {
 
 function Table({ header, body }: TableProps) {
   return (
-    <Wrapper>
-      <TableStyle>
-        <THead>
-          <tr>
-            {header.map((head) => (
-              <th key={head}>{head}</th>
+    <TableStyle>
+      <THead>
+        <tr>
+          {header.map((head) => (
+            <th key={head}>{head}</th>
+          ))}
+        </tr>
+      </THead>
+      <tbody>
+        {body.map((data, idx) => (
+          <tr key={idx}>
+            {data.map((d, didx) => (
+              <td key={`h-${didx}`}>{d}</td>
             ))}
           </tr>
-        </THead>
-        <tbody>
-          {body.map((data, idx) => (
-            <tr key={idx}>
-              {data.map((d, didx) => (
-                <td key={`h-${didx}`}>{d}</td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </TableStyle>
-    </Wrapper>
+        ))}
+      </tbody>
+    </TableStyle>
   );
 }
 
@@ -49,13 +47,4 @@ const THead = styled.thead`
   color: white;
   top: 0;
   left: 0;
-`;
-
-const Wrapper = styled.div`
-  width: 100%;
-  position: relative;
-  top: 0;
-  left: 0;
-  height: 500px;
-  overflow: scroll;
 `;
