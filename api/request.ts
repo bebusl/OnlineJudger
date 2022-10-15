@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
-import { API_BASE_URL } from "./constants/url";
+import { API_BASE_URL } from "../utils/constants/url";
 
 interface GetRequestProps {
   url: string;
