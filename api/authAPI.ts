@@ -1,20 +1,36 @@
 import request from "./request";
+import Cookies from "js-cookie";
 
-const { get, post } = request("/users");
+const makeAuthorization = () => {
+  const auth_token = Cookies.get("auth_token") as string;
+  return { Authorization: auth_token };
+};
 
-export const getUser = async () => await get("");
+const { get, post } = request("/users", { headers: makeAuthorization() });
+
+export const getUser = async () => {
+  return await get("");
+};
 
 export const validateName = async (name: string) => await get(`/name/${name}`);
 
 export const signup = async () => await post({ url: "" });
 
-export const login = async () =>
+export const login = async ({
+  id,
+  password,
+  link_key = "",
+}: {
+  id: string;
+  password: string;
+  link_key?: string;
+}) =>
   await post({
     url: "/login",
     data: {
-      id: "test1234",
-      password: "test1234",
-      link_key: "",
+      id,
+      password,
+      link_key,
     },
   });
 

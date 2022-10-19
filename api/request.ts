@@ -13,9 +13,14 @@ interface PostRequestProps extends GetRequestProps {
   data?: unknown;
 }
 
-export default function request(url: string = "") {
+export default function request(
+  url: string = "",
+  config?: Omit<AxiosRequestConfig, "baseUrl">
+) {
   const axiosInstance = axios.create({
     baseURL: API_BASE_URL + url,
+    withCredentials: true,
+    ...config,
   });
 
   async function requestHandler(
@@ -24,17 +29,16 @@ export default function request(url: string = "") {
       console.log("default ", result);
     },
     errorHandler: Function = (error: Error) => {
-      console.log("error", error);
+      console.log("error1", error);
     }
   ) {
     try {
       const result = await request();
       if (callback) callback(result);
-      // console.log("HIHI", result);
       return result;
     } catch (error) {
-      if (errorHandler) errorHandler();
-      return error;
+      if (errorHandler) errorHandler(error);
+      throw error;
     }
   }
   function get(
