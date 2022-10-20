@@ -5,13 +5,29 @@ import { ThemeProvider } from "styled-components";
 import theme from "../styles/theme";
 import DefaultLayout from "../components/layouts/DefaultLayout";
 import store from "../store/store";
+import AuthGuard from "../components/guard/AuthGuard";
+import { useEffect } from "react";
+import { getUser } from "../api/authAPI";
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps }: AppProps<{ authRequired: boolean }>) {
+  const requiredAuth = Component.defaultProps?.authRequired;
+
+  useEffect(() => {
+    const validation = async () => await getUser();
+    validation();
+  });
+
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <DefaultLayout>
-          <Component {...pageProps} />
+          {requiredAuth ? (
+            <AuthGuard>
+              <Component {...pageProps} />
+            </AuthGuard>
+          ) : (
+            <Component {...pageProps} />
+          )}
         </DefaultLayout>
       </ThemeProvider>
     </Provider>
