@@ -14,7 +14,21 @@ export const getUser = async () => {
 
 export const validateName = async (name: string) => await get(`/name/${name}`);
 
-export const signup = async () => await post({ url: "" });
+export const signup = async (
+  name: string | undefined,
+  id: string | undefined,
+  password: string | undefined,
+  link: string = ""
+) =>
+  await post({
+    url: "",
+    data: {
+      name,
+      id,
+      password,
+      link_key: link,
+    },
+  });
 
 export const login = async ({
   id,
