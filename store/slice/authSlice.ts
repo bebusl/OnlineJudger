@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { HYDRATE } from "next-redux-wrapper";
-import { login, signup } from "../../api/authAPI";
+import { login, signup, getUser } from "../../api/authAPI";
 import Cookies from "js-cookie";
 
 export const signUpRequest = createAsyncThunk(
@@ -46,6 +46,15 @@ export const loginRequest = createAsyncThunk(
   }
 );
 
+export const getUserData = createAsyncThunk(
+  "auth/getMe",
+  async (_, thunkAPI) => {
+    const a = await getUser();
+    if (a.data?.success) return a.data.user;
+    return thunkAPI.rejectWithValue(a);
+  }
+);
+
 export const authSlice = createSlice({
   name: "auth",
   initialState: { isLogin: false, id: "bebus1998" },
@@ -55,13 +64,21 @@ export const authSlice = createSlice({
       ...action.payload.auth,
     }),
     logoff: (state) => {
+      Cookies.remove("auth_token", {
+        secure: false,
+        sameSite: "Strict",
+      });
+
       state.isLogin = false;
       state.id = "";
     },
   },
   extraReducers: (builder) => {
     builder.addCase(loginRequest.fulfilled, (state, action) => {
-      Cookies.set("auth_token", `Bearer ${action.payload.data.access_token}`);
+      Cookies.set("auth_token", `Bearer ${action.payload.data.access_token}`, {
+        secure: false,
+        sameSite: "Strict",
+      });
       state.isLogin = true;
       state.id = action.payload.id;
     });
@@ -69,6 +86,13 @@ export const authSlice = createSlice({
       state.isLogin = false;
     });
     builder.addCase(signUpRequest.fulfilled, (state, action) => {});
+    builder.addCase(getUserData.fulfilled, (state, action) => {
+      state.isLogin = true;
+      state.userData = action.payload;
+    });
+    builder.addCase(getUserData.rejected, (state) => {
+      authSlice.caseReducers.logoff(state);
+    });
   },
 });
 
