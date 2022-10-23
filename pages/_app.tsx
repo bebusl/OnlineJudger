@@ -7,15 +7,13 @@ import DefaultLayout from "../components/layouts/DefaultLayout";
 import store from "../store/store";
 import AuthGuard from "../components/guard/AuthGuard";
 import { useEffect } from "react";
-import { getUser } from "../api/authAPI";
+import { getUserData } from "../store/slice/authSlice";
 
 function MyApp({ Component, pageProps }: AppProps<{ authRequired: boolean }>) {
   const requiredAuth = Component.defaultProps?.authRequired;
-
   useEffect(() => {
-    const validation = async () => await getUser();
-    validation();
-  });
+    store.dispatch(getUserData());
+  }, []);
 
   return (
     <Provider store={store}>
