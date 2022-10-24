@@ -1,6 +1,5 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
-import { stringify } from "querystring";
-import { API_BASE_URL } from "../utils/constants/url";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import { API_BASE_URL } from "../constants/url";
 
 interface GetRequestProps {
   url: string;
@@ -78,3 +77,7 @@ export default function request(
 
   return { get, post, deleteRequest, putRequest };
 }
+
+/**TODO
+ * request 이름 좀 더 명확하게 수정하기
+ */

@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 interface TableProps {
   header: string[];
-  body: (number | string)[][];
+  body: (number | string | JSX.Element)[][];
 }
 
 function Table({ header, body }: TableProps) {

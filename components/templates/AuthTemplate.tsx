@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Card, FlexBox } from "../common";
+import { FlexBox } from "../common";
 
 interface Props {
   title?: string;
@@ -11,17 +11,15 @@ const AuthTemplate = ({
   title = "LOGIN",
   subTitle = "서비스를 이용하기 위해서는 로그인이 필요합니다",
   children,
-}: Props) => {
-  return (
-    <Container flexDirection="row">
-      <LeftBox alignItems="start" justifyContent="start">
-        <Title>{title}</Title>
-        <SubTitle>{subTitle}</SubTitle>
-      </LeftBox>
-      <RightBox>{children}</RightBox>
-    </Container>
-  );
-};
+}: Props) => (
+  <Container flexDirection="row">
+    <LeftBox alignItems="start" justifyContent="start">
+      <Title>{title}</Title>
+      <SubTitle>{subTitle}</SubTitle>
+    </LeftBox>
+    <RightBox>{children}</RightBox>
+  </Container>
+);
 
 const Container = styled(FlexBox)`
   width: 100%;

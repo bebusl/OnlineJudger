@@ -6,7 +6,7 @@ interface InputProps {
   type?: string;
   defaultValue?: string | number;
   errorMessage?: string;
-  validator?: (value: string) => boolean;
+  validator?: (a: string | null) => boolean;
   onBlur: (a: unknown) => void;
   isValid: boolean;
 }
@@ -18,15 +18,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       type = "text",
       defaultValue = "",
       errorMessage = "wrong Input",
-      validator = () => true,
       isValid,
       onBlur,
     },
     ref
   ) => {
-    const value = null;
-    // const isValid = validator();
-
     return (
       <div>
         <InputBox
@@ -35,7 +31,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           type={type}
           defaultValue={defaultValue}
           placeholder={name}
-          onBlur={(e) => onBlur(validator(e.target.value))}
+          onBlur={onBlur}
         />
         <p style={{ visibility: isValid ? "hidden" : "visible" }}>
           {errorMessage}
