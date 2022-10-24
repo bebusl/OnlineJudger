@@ -6,7 +6,9 @@ interface InputProps {
   type?: string;
   defaultValue?: string | number;
   errorMessage?: string;
-  validator?: (a: string | null) => boolean;
+  validator?: (value: string) => boolean;
+  onBlur: (a: unknown) => void;
+  isValid: boolean;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -16,13 +18,15 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       type = "text",
       defaultValue = "",
       errorMessage = "wrong Input",
-      validator,
+      validator = () => true,
+      isValid,
+      onBlur,
     },
     ref
   ) => {
     const value = null;
     // const isValid = validator();
-    const isValid = true;
+
     return (
       <div>
         <InputBox
@@ -31,8 +35,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           type={type}
           defaultValue={defaultValue}
           placeholder={name}
+          onBlur={(e) => onBlur(validator(e.target.value))}
         />
-        {isValid && <p>{errorMessage}</p>}
+        <p style={{ visibility: isValid ? "hidden" : "visible" }}>
+          {errorMessage}
+        </p>
       </div>
     );
   }
@@ -40,7 +47,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
 Input.displayName = "Input";
 
-export default Input;
+export default React.memo(Input);
 
 const InputBox = styled.input`
   background-color: ${({ theme }) => theme.colors.gray50};

@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
-import { API_BASE_URL } from "./constants/url";
+import { stringify } from "querystring";
+import { API_BASE_URL } from "../utils/constants/url";
 
 interface GetRequestProps {
   url: string;
@@ -12,9 +13,14 @@ interface PostRequestProps extends GetRequestProps {
   data?: unknown;
 }
 
-export default function request(url: string = "") {
+export default function request(
+  url: string = "",
+  config?: Omit<AxiosRequestConfig, "baseUrl">
+) {
   const axiosInstance = axios.create({
     baseURL: API_BASE_URL + url,
+    withCredentials: true,
+    ...config,
   });
 
   async function requestHandler(
@@ -23,20 +29,19 @@ export default function request(url: string = "") {
       console.log("default ", result);
     },
     errorHandler: Function = (error: Error) => {
-      console.log("error", error);
+      console.log("error1", error);
     }
   ) {
     try {
       const result = await request();
       if (callback) callback(result);
-      // console.log("HIHI", result);
       return result;
     } catch (error) {
-      if (errorHandler) errorHandler();
-      return error;
+      if (errorHandler) errorHandler(error);
+      throw error;
     }
   }
-  async function get(
+  function get(
     url: string,
     config?: AxiosRequestConfig,
     callback?: Function,
@@ -57,5 +62,19 @@ export default function request(url: string = "") {
     return requestHandler(request, callback, errorHandler);
   }
 
-  return { get, post };
+  function deleteRequest(
+    url: string,
+    callback?: Function,
+    errorHandler?: Function
+  ) {
+    const request = () => axiosInstance.delete(url);
+    return requestHandler(request, callback, errorHandler);
+  }
+
+  function putRequest(url: string) {
+    const request = () => axiosInstance.put(url);
+    return requestHandler(request);
+  }
+
+  return { get, post, deleteRequest, putRequest };
 }

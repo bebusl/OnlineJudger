@@ -1,10 +1,14 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
-import { createWrapper } from "next-redux-wrapper";
 import authReducer from "./slice/authSlice";
 
 const reducer = { auth: authReducer };
 
-const makeStore = () => configureStore({ reducer: reducer });
+const makeStore = () =>
+  configureStore({
+    reducer: reducer,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({ serializableCheck: false }),
+  });
 
 const store = makeStore();
 

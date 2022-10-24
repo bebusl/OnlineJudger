@@ -9,3 +9,7 @@ export const getServerSideProps = ({ query }: { query: { name: string } }) => {
 };
 // 마이페이지 만들어서 뿌려줘야 하겠군.
 export default Detail;
+
+Detail.defaultProps = {
+  authRequired: true,
+};
