@@ -2,11 +2,11 @@ import { NextPageContext } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useRef } from "react";
-import { Button, Input, Seperator } from "../../components/common";
-import AuthTemplate from "../../components/templates/AuthTemplate";
-import useForm from "../../hooks/useForm";
-import { signUpRequest } from "../../store/slice/authSlice";
-import { useAuthDispatch } from "../../store/useStore";
+import { Button, Input, Seperator } from "../components/common";
+import AuthTemplate from "../components/templates/AuthTemplate";
+import useForm from "../hooks/useForm";
+import { signUpRequest } from "../store/slice/authSlice";
+import { useAuthDispatch } from "../store/useStore";
 
 const RegisterForm = ({ linkKey }: { linkKey: string | undefined }) => {
   const dispatch = useAuthDispatch();
