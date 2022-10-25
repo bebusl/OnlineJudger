@@ -1,16 +1,13 @@
-import React from "react";
+import React, { ReactElement } from "react";
 import styled from "styled-components";
 import Footer from "./Footer";
 import Header from "./Header";
-interface Props {
-  children?: React.ReactNode;
-}
 
-function DefaultLayout({ children }: Props) {
+function DefaultLayout({ page }: { page: ReactElement }) {
   return (
     <Container>
       <Header />
-      <Body>{children}</Body>
+      <Body>{page}</Body>
       <Footer />
     </Container>
   );

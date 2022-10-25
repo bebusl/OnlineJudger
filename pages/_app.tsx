@@ -1,33 +1,48 @@
 import "../styles/globals.css";
-import type { AppProps } from "next/app";
+import { useEffect } from "react";
 import { Provider } from "react-redux";
+import store from "../store/store";
+import AuthGuard from "../components/guard/AuthGuard";
 import { ThemeProvider } from "styled-components";
 import theme from "../styles/theme";
 import DefaultLayout from "../components/layouts/DefaultLayout";
-import store from "../store/store";
-import AuthGuard from "../components/guard/AuthGuard";
-import { useEffect } from "react";
 import { getUserData } from "../store/slice/authSlice";
 
-function MyApp({ Component, pageProps }: AppProps<{ authRequired: boolean }>) {
-  const requiredAuth = Component.defaultProps?.authRequired;
+import type { ReactElement, ReactNode } from "react";
+import type { AppProps } from "next/app";
+import type { NextPage } from "next";
+
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout<T> = AppProps<T> & {
+  Component: NextPageWithLayout;
+};
+
+function MyApp({
+  Component,
+  pageProps,
+}: AppPropsWithLayout<{ authRequired: boolean }>) {
   useEffect(() => {
     store.dispatch(getUserData());
   }, []);
 
+  const getLayout =
+    Component.getLayout ?? ((page) => <DefaultLayout page={page} />);
+
+  const RequiredAuth = () =>
+    Component.defaultProps?.authRequired ? (
+      <AuthGuard>
+        <Component {...pageProps} />
+      </AuthGuard>
+    ) : (
+      <Component {...pageProps}></Component>
+    );
+
   return (
     <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <DefaultLayout>
-          {requiredAuth ? (
-            <AuthGuard>
-              <Component {...pageProps} />
-            </AuthGuard>
-          ) : (
-            <Component {...pageProps} />
-          )}
-        </DefaultLayout>
-      </ThemeProvider>
+      <ThemeProvider theme={theme}>{getLayout(<RequiredAuth />)}</ThemeProvider>
     </Provider>
   );
 }
