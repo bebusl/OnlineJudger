@@ -1,4 +1,11 @@
-import Document, { DocumentContext, DocumentInitialProps } from "next/document";
+import Document, {
+  DocumentContext,
+  DocumentInitialProps,
+  Html,
+  Main,
+  Head,
+  NextScript,
+} from "next/document";
 import { ServerStyleSheet } from "styled-components";
 
 export default class CustomDocument extends Document {
@@ -16,6 +23,7 @@ export default class CustomDocument extends Document {
         });
 
       const initialProps = await Document.getInitialProps(ctx);
+
       return {
         ...initialProps,
         styles: [
@@ -28,5 +36,18 @@ export default class CustomDocument extends Document {
     } finally {
       sheet.seal();
     }
+  }
+
+  render(): JSX.Element {
+    return (
+      <Html>
+        <Head />
+        <body>
+          <div id="portal" />
+          <Main />
+          <NextScript />
+        </body>
+      </Html>
+    );
   }
 }
