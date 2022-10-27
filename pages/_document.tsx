@@ -44,6 +44,7 @@ export default class CustomDocument extends Document {
         <Head />
         <body>
           <div id="portal" />
+          <div id="notification-portal" />
           <Main />
           <NextScript />
         </body>
