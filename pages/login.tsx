@@ -5,7 +5,7 @@ import Button from "../components/common/Button";
 import Input from "../components/common/Input";
 import AuthTemplate from "../components/templates/AuthTemplate";
 import { loginRequest } from "../store/slice/authSlice";
-import { useAuthDispatch } from "../store/useStore";
+import { useAppDispatch } from "../store/useStore";
 import {
   GITHUB_AUTH_URL,
   GOOGLE_AUTH_URL,
@@ -30,7 +30,7 @@ const OAuthLinkButton = React.memo(
 );
 
 const LoginForm = () => {
-  const dispatch = useAuthDispatch();
+  const dispatch = useAppDispatch();
   const router = useRouter();
   const { handleBlur, isValidInputs, isValid, getRef } = useForm({
     types: ["email", "password"],
@@ -56,12 +56,7 @@ const LoginForm = () => {
       <OAuthLinkButton url={GOOGLE_AUTH_URL} type="google" />
       <OAuthLinkButton url={KAKAO_AUTH_URL} type="kakao" />
       <OAuthLinkButton url={GITHUB_AUTH_URL} type="github" />
-      <Input
-        name="email"
-        ref={emailRef}
-        isValid={isValid.email}
-        onBlur={() => handleBlur("email")}
-      />
+      <Input name="email" ref={emailRef} />
       <Input
         name="password"
         type="password"

@@ -1,10 +1,10 @@
 import { useRouter } from "next/router";
 import React, { ReactNode, useEffect, useState } from "react";
-import { useAuthSelector } from "../../store/useStore";
+import { useAppSelector } from "../../store/useStore";
 
 const AuthGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isInitializing, setIsInitializing] = useState(true);
-  const isLogin = useAuthSelector((state) => state.auth.isLogin);
+  const isLogin = useAppSelector((state) => state.auth.isLogin);
   const router = useRouter();
 
   useEffect(() => {

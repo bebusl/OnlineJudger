@@ -2,13 +2,12 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Container, Logo, SearchBarWrapper } from "./Header.style";
-import { useAuthDispatch, useAuthSelector } from "../../store/useStore";
+import { useAppDispatch, useAppSelector } from "../../store/useStore";
 import { logoff } from "../../store/slice/authSlice";
-import Cookies from "js-cookie";
 
 function Header() {
-  const isLogin = useAuthSelector((state) => state.auth.isLogin);
-  const dispatch = useAuthDispatch();
+  const isLogin = useAppSelector((state) => state.auth.isLogin);
+  const dispatch = useAppDispatch();
   return (
     <Container>
       <Logo>
@@ -61,4 +60,4 @@ function Header() {
   );
 }
 
-export default Header;
+export default React.memo(Header);
