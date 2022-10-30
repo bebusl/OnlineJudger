@@ -18,6 +18,8 @@ const colors = {
   gray500: "#545563",
   gray600: "#40464c",
   black: "#2b2b43",
+  warning: "red",
+  normal: "gray",
 };
 
 const animation = {
@@ -128,3 +130,5 @@ const theme: DefaultTheme = {
 };
 
 export default theme;
+
+export type colorType = typeof colors;
