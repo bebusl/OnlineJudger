@@ -64,7 +64,7 @@ export const authSlice = createSlice({
       ...action.payload.auth,
     }),
     logoff: (state) => {
-      Cookies.remove("auth_token", {
+      Cookies.remove("Authorization", {
         secure: false,
         sameSite: "Strict",
       });
@@ -75,10 +75,14 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(loginRequest.fulfilled, (state, action) => {
-      Cookies.set("auth_token", `Bearer ${action.payload.data.access_token}`, {
-        secure: false,
-        sameSite: "Strict",
-      });
+      Cookies.set(
+        "Authorization",
+        `Bearer ${action.payload.data.access_token}`,
+        {
+          secure: false,
+          sameSite: "Strict",
+        }
+      );
       state.isLogin = true;
       state.id = action.payload.id;
     });

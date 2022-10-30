@@ -2,14 +2,15 @@ import request from "./request";
 import Cookies from "js-cookie";
 
 const makeAuthorization = () => {
-  const auth_token = Cookies.get("auth_token") as string;
+  const auth_token = Cookies.get("Authorization") as string;
   return { Authorization: auth_token };
 };
 
 const { get, post } = request("/users", { headers: makeAuthorization() });
 
-export const getUser = async () => {
-  return await get("");
+export const getUser = async (Authorization?: string) => {
+  if (Authorization) return await get("", { headers: { Authorization } });
+  else return await get("");
 };
 
 export const validateName = async (name: string) => await get(`/name/${name}`);
