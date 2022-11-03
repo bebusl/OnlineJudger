@@ -6,7 +6,7 @@ import { Button, Input, Seperator } from "../components/common";
 import AuthTemplate from "../components/templates/AuthTemplate";
 import useForm from "../hooks/useForm";
 import { signUpRequest } from "../store/slice/authSlice";
-import { useAppDispatch } from "../store/useStore";
+import { useAppDispatch } from "../hooks/useStore";
 
 const RegisterForm = ({ linkKey }: { linkKey: string | undefined }) => {
   const dispatch = useAppDispatch();

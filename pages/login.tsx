@@ -5,7 +5,7 @@ import Button from "../components/common/Button";
 import Input from "../components/common/Input";
 import AuthTemplate from "../components/templates/AuthTemplate";
 import { loginRequest } from "../store/slice/authSlice";
-import { useAppDispatch } from "../store/useStore";
+import { useAppDispatch } from "../hooks/useStore";
 import {
   GITHUB_AUTH_URL,
   GOOGLE_AUTH_URL,

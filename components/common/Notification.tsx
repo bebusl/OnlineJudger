@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import styled, { keyframes } from "styled-components";
-import { useAuthSelector } from "../../store/useStore";
+import { useAppSelector } from "../../hooks/useStore";
 
 const NotiCard = () => {
-  const notiMessage = useAuthSelector((state) => state.noti.message);
+  const notiMessage = useAppSelector((state) => state.noti.message);
 
   return (
     <NotiContainer>
@@ -47,7 +47,7 @@ const slideInandOut = keyframes`
   
 `;
 
-const Card = styled.div<{ $variant: string }>`
+const Card = styled.div<{ $variant: "normal" | "success" | "error" }>`
   width: 250px;
   background-color: ${({ theme, $variant }) => theme.colors[$variant]};
   animation-name: ${slideInandOut};

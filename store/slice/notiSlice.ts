@@ -1,8 +1,4 @@
-import {
-  createSlice,
-  createAsyncThunk,
-  ActionReducerMapBuilder,
-} from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { HYDRATE } from "next-redux-wrapper";
 
 export const addNoti = createAsyncThunk(

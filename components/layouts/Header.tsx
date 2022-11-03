@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Container, Logo, SearchBarWrapper } from "./Header.style";
-import { useAppDispatch, useAppSelector } from "../../store/useStore";
+import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 import { logoff } from "../../store/slice/authSlice";
 
 function Header() {
