@@ -48,14 +48,23 @@ const slideInandOut = keyframes`
 `;
 
 const Card = styled.div<{ $variant: "normal" | "success" | "error" }>`
-  width: 250px;
+  width: fit-content;
+  min-width: 250px;
+  padding: 10px 0;
+  margin: 5px auto;
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px ${({ theme }) => theme.colors.gray200};
+  border: 1px solid ${({ theme, $variant }) => theme.colors[$variant]};
   background-color: ${({ theme, $variant }) => theme.colors[$variant]};
+  font-size: ${({ theme }) => theme.fontSizes[1]};
   animation-name: ${slideInandOut};
   animation-duration: 3s;
   animation-fill-mode: forwards;
 `;
 
 const NotiContainer = styled.aside`
+  width: 100%;
   position: fixed;
   top: 0;
   left: 0;
