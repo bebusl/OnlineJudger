@@ -17,7 +17,7 @@ declare module "styled-components" {
       light: string;
       dark: string;
     };
-    fontSizes: number[];
+    fontSizes: string[];
     fontWeights: { body: number; heading: number; bold: number };
     text: { [key: string]: unknown };
   }

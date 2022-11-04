@@ -4,7 +4,9 @@ const colors = {
   primary: "#6358dc",
   secondary: "#4e60ff",
   error: "#ff5c60",
-  success: "#259323",
+  success: "#6cdb65",
+  warning: "#f2d44f",
+  normal: "#83859c",
   white: "#ffffff",
   lightGray: "f6f6f6",
   gray50: "#fbfbfb",
@@ -18,8 +20,6 @@ const colors = {
   gray500: "#545563",
   gray600: "#40464c",
   black: "#2b2b43",
-  warning: "red",
-  normal: "gray",
 };
 
 const animation = {
@@ -61,7 +61,17 @@ const theme: DefaultTheme = {
     light: "15px 15px 35px rgba(0, 127, 255, 0.5)",
     dark: `7px 7px 15px ${colors.primary}`,
   },
-  fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 96],
+  fontSizes: [
+    "12px",
+    "14px",
+    "16px",
+    "20px",
+    "24px",
+    "32px",
+    "48px",
+    "64px",
+    "96px",
+  ],
   fontWeights: {
     body: 400,
     heading: 500,
