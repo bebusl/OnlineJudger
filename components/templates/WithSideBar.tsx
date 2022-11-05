@@ -6,7 +6,7 @@ import { IconButton } from "../common/Button";
 function WithSideBar({ children }: { children: ReactNode }) {
   const router = useRouter();
   const path = router.pathname;
-  console.log(path);
+
   return (
     <FlexBox
       flexDirection="row"
