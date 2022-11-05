@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import styled, { keyframes } from "styled-components";
 import { useAppSelector } from "../../hooks/useStore";
+import type { variantType } from "../../styles/theme";
 
 const NotiCard = () => {
   const notiMessage = useAppSelector((state) => state.noti.message);
@@ -47,7 +48,7 @@ const slideInandOut = keyframes`
   
 `;
 
-const Card = styled.div<{ $variant: "normal" | "success" | "error" }>`
+const Card = styled.div<{ $variant: variantType }>`
   width: fit-content;
   min-width: 250px;
   padding: 10px 0;
@@ -56,7 +57,7 @@ const Card = styled.div<{ $variant: "normal" | "success" | "error" }>`
   border-radius: 10px;
   box-shadow: 5px 5px 5px ${({ theme }) => theme.colors.gray200};
   border: 1px solid ${({ theme, $variant }) => theme.colors[$variant]};
-  background-color: ${({ theme, $variant }) => theme.colors[$variant]};
+  background-color: ${({ theme, $variant }) => theme.colors.white};
   font-size: ${({ theme }) => theme.fontSizes[1]};
   animation-name: ${slideInandOut};
   animation-duration: 3s;
