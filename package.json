@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.4.6",
     "@reduxjs/toolkit": "^1.8.6",
     "@types/js-cookie": "^3.0.2",
     "axios": "^0.27.2",
