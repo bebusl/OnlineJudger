@@ -20,17 +20,19 @@ const useForm = ({ types }: Props) => {
   const [isValid, setIsValid] = useState(initialRecord(true));
 
   const isValidInputs = () => {
-    const a = Object.values(isDirtyField).every((field) => field);
-    const b = Object.values(isValid).every((field) => field);
-    return a && b;
+    const allDirty = Object.values(isDirtyField).every((field) => field);
+    const allValid = Object.values(isValid).every((field) => field);
+    return allDirty && allValid;
   };
 
-  const handleBlur = (type: regexType) => {
+  const handleBlur = (type: regexType, validate?: boolean) => {
     const currentRef = getRef(type);
     if (currentRef) {
       setIsValid({
         ...isValid,
-        [type]: validator(type, currentRef.current?.value as string),
+        [type]: validate
+          ? validator(type, currentRef.current?.value as string)
+          : true,
       });
       setDirtyField({
         ...isDirtyField,
