@@ -56,13 +56,13 @@ const LoginForm = () => {
       <OAuthLinkButton url={GOOGLE_AUTH_URL} type="google" />
       <OAuthLinkButton url={KAKAO_AUTH_URL} type="kakao" />
       <OAuthLinkButton url={GITHUB_AUTH_URL} type="github" />
-      <Input name="email" ref={emailRef} />
+      <Input name="email" ref={emailRef} onBlur={() => handleBlur("email")} />
       <Input
         name="password"
         type="password"
         ref={passwordRef}
         isValid={isValid.password}
-        onBlur={() => handleBlur("password")}
+        onBlur={() => handleBlur("password", true)}
       />
       <Button disabled={!isValidInputs()}>LOGIN</Button>
     </form>
