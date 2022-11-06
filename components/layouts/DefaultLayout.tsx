@@ -24,7 +24,8 @@ const Container = styled.div`
 const Body = styled.div`
   flex-basis: 60vh;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: start;
   align-items: center;
 `;
 
