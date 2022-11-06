@@ -49,7 +49,9 @@ function UserProfile({
           defaultValue={name}
         />
         <LabelInput grandchildRef={linkRef} type="email" name="linkedEmail" />
-
+        <a href="https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/userinfo.profile&response_type=token&redirect_uri=https://localhost:3443/oauth2/redirect/client&client_id=120623111530-5cf3mkdcfed1m9n8eumn9vsa6dodl43l.apps.googleusercontent.com">
+          구글 연동하기
+        </a>
         <article>
           <h3>Email Notification</h3>
           <Input type="checkbox" isValid={true} name="new deal" />
