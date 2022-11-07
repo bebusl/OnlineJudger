@@ -8,6 +8,7 @@ import store from "../store/store";
 import AuthGuard from "../components/guard/AuthGuard";
 import { useEffect } from "react";
 import { getUserData } from "../store/slice/authSlice";
+import Notification from "../components/common/Notification";
 
 function MyApp({ Component, pageProps }: AppProps<{ authRequired: boolean }>) {
   const requiredAuth = Component.defaultProps?.authRequired;
@@ -19,6 +20,7 @@ function MyApp({ Component, pageProps }: AppProps<{ authRequired: boolean }>) {
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <DefaultLayout>
+          <Notification />
           {requiredAuth ? (
             <AuthGuard>
               <Component {...pageProps} />

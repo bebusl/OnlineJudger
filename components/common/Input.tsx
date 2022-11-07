@@ -1,38 +1,24 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, InputHTMLAttributes, Ref, useEffect } from "react";
 import styled from "styled-components";
 
-interface InputProps {
-  name: string;
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   type?: string;
-  defaultValue?: string | number;
   errorMessage?: string;
-  validator?: (a: string | null) => boolean;
-  onBlur: (a: unknown) => void;
-  isValid: boolean;
+  isValid?: boolean;
+}
+
+interface LabelInputProps extends InputProps {
+  grandchildRef: Ref<HTMLInputElement>;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
   (
-    {
-      name,
-      type = "text",
-      defaultValue = "",
-      errorMessage = "wrong Input",
-      isValid,
-      onBlur,
-    },
+    { type = "text", errorMessage = "wrong Input", isValid = true, ...rest },
     ref
   ) => {
     return (
       <div>
-        <InputBox
-          name={name}
-          ref={ref}
-          type={type}
-          defaultValue={defaultValue}
-          placeholder={name}
-          onBlur={onBlur}
-        />
+        <InputBox ref={ref} type={type} {...rest} />
         <p style={{ visibility: isValid ? "hidden" : "visible" }}>
           {errorMessage}
         </p>
@@ -45,6 +31,15 @@ Input.displayName = "Input";
 
 export default React.memo(Input);
 
+export const LabelInput = ({ grandchildRef, ...props }: LabelInputProps) => {
+  return (
+    <div>
+      <label htmlFor={props.name}>{props.name}</label>
+      <Input {...props} ref={grandchildRef} />
+    </div>
+  );
+};
+
 const InputBox = styled.input`
   background-color: ${({ theme }) => theme.colors.gray50};
   padding: 10px;
@@ -56,7 +51,6 @@ const InputBox = styled.input`
   }
   & + p {
     color: red;
-    // visibility: hidden;
     font-size: 0.8rem;
   }
 `;

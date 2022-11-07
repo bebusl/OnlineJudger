@@ -29,7 +29,7 @@ function Header() {
         {isLogin ? (
           <>
             <Link href="scoreboard">채점현황</Link>
-            <Link href="problem">문제보기</Link>
+            <Link href="problem?page=1">문제보기</Link>
             <Link href="user/problem">푼 문제</Link>
             <Link href="user">
               <div>

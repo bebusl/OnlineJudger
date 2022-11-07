@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { HYDRATE } from "next-redux-wrapper";
+import type { variantType } from "../../styles/theme";
 
 export const addNoti = createAsyncThunk(
   "noti/add",
@@ -9,7 +10,6 @@ export const addNoti = createAsyncThunk(
   ) => {
     thunkAPI.dispatch(add({ id, message, variant }));
     await setTimeout(() => {
-      console.log(id);
       thunkAPI.dispatch(remove(id));
     }, 3000);
   }
@@ -18,7 +18,7 @@ export const addNoti = createAsyncThunk(
 export const notiSlice = createSlice({
   name: "noti",
   initialState: {
-    message: [] as { id: number; message: string; variant: string }[],
+    message: [] as { id: number; message: string; variant: variantType }[],
   },
   reducers: {
     [HYDRATE]: (state, action) => ({
@@ -29,9 +29,10 @@ export const notiSlice = createSlice({
       state.message.push(action.payload);
     },
     remove: (state, action) => {
-      const after = state.message.filter((st) => st.id === action.payload);
-      console.log("!!!", action.payload, after);
-      state.message.splice(1, 1);
+      const index = state.message.findIndex(
+        (noti) => noti.id === action.payload
+      );
+      state.message.splice(index, 1);
     },
   },
 });
