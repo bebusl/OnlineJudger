@@ -1,83 +1,64 @@
-import axios from "axios";
-import { NextPageContext } from "next";
 import React from "react";
+import Link from "next/link";
+import type { NextPageContext } from "next";
+
 import { getProblems } from "../../api/problemsAPI";
+
 import { Table } from "../../components/common";
-import ScrollBox from "../../components/common/ScrollBox";
+import Pagination from "../../components/common/Pagination";
 
 interface ProblemProps {
   header: string[];
-  body: (number | string)[][];
-  test?: string;
+  problems: Record<string, string | number>[];
+  pageInfo: Record<string, number>;
 }
 
 const Error = () => <div>Error</div>;
 
-function index({ header, body }: ProblemProps) {
+function ProblemList({ header, problems, pageInfo }: ProblemProps) {
+  console.log(problems);
+  const body = problems.reduce(
+    (pre: (string | number)[][], cur: Record<string, string | number>) => {
+      const data = [
+        cur.id,
+        <Link href={`problem/${cur.id}`} key={cur.id}>
+          {cur.title}
+        </Link>,
+        cur.memory_limit,
+        cur.time_limit,
+        cur.languages.join(" "),
+      ];
+      return [...pre, data];
+    },
+    []
+  );
   return (
     <React.Suspense fallback={<Error />}>
-      <ScrollBox height="800px">
-        <Table header={header} body={body} />
-      </ScrollBox>
+      <Table header={header} body={body} />
+      <Pagination
+        current_pages={pageInfo.current_pages}
+        total_pages={pageInfo.total_pages}
+      />
     </React.Suspense>
   );
 }
 
 export async function getServerSideProps(ctx: NextPageContext) {
-  const result = await getProblems();
-  const { page, problems } = result;
-
-  const testHeader = [
-    "제출번호",
-    "ID",
-    "문제",
-    "결과",
-    "메모리",
-    "시간",
-    "언어",
-  ];
-  const testBody = [];
-  for (let i = 0; i < 50; i++) {
-    testBody.push([100, 1023, "문제이름" + i, "right", 1010, 0, "C"]);
+  const { page } = ctx.query;
+  if (page) {
+    const result = await getProblems({ page: page as string });
+    const { page: pageInfo, problems } = result.data;
+    const header = ["ID", "제목", "메모리", "시간", "언어"];
+    problems.sort((a, b) => (a.id > b.id ? 1 : -1));
+    // type 설정 안해줘서 빨간데,, 일단 그냥 뒀습니다.
+    return {
+      props: {
+        header,
+        problems,
+        pageInfo,
+      },
+    };
   }
-  return {
-    props: {
-      header: testHeader,
-      body: testBody,
-    },
-  };
 }
 
-/**
- * 
- * {
-  "success": true,
-  "err_msg": "string",
-  "id": 0,
-  "title": "string",
-  "time_limit": 0,
-  "memory_limit": 0,
-  "desc": "string",
-  "input_desc": "string",
-  "output_desc": "string",
-  "test_case_examples": [
-    {
-      "input": "World\nWorld2\n",
-      "output": "Hello World\nHello2 World2\n"
-    }
-  ],
-  "languages": [
-    "C"
-  ],
-  "tags": [
-    {
-      "id": 0,
-      "name": "string"
-    }
-  ]
-}
- */
-
-export default index;
-
-index.requireAuth = true;
+export default ProblemList;
