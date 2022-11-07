@@ -5,19 +5,33 @@ import styled from "styled-components";
 const misteryManSrc =
   "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
 
-const Button = styled.button<{ disabled?: boolean }>`
-  width: 320px;
-  min-height: 50px;
-  background-color: ${({ theme }) => theme.colors.primary};
-  color: ${({ theme }) => theme.colors.white};
+const Button = styled.button<{
+  disabled?: boolean;
+  $variant?: "outline" | "full";
+  width?: number | string;
+  height?: number | string;
+}>`
+  width: ${({ width }) => width};
+  min-height: ${({ height }) => height};
+  ${({ $variant, theme }) => {
+    if ($variant === "full") {
+      return `background-color:${theme.colors.primary};color:${theme.colors.white};border:none;`;
+    } else
+      return `background-color:${theme.colors.white};border:1px solid ${theme.colors.primary};color:${theme.colors.primary};`;
+  }}
   border-radius: 5px;
-  border: none;
   cursor: pointer;
   &:disabled {
     opacity: 0.1;
     cursor: not-allowed;
   }
 `;
+
+Button.defaultProps = {
+  width: "320px",
+  height: "50px",
+  $variant: "full",
+};
 
 interface IconButtonProps {
   iconSrc?: string;
