@@ -1,17 +1,19 @@
 import "../styles/globals.css";
 import { useEffect } from "react";
-import { Provider } from "react-redux";
 import store from "../store/store";
-import AuthGuard from "../components/guard/AuthGuard";
+import { Provider } from "react-redux";
+import { getUserData } from "../store/slice/authSlice";
+
 import { ThemeProvider } from "styled-components";
 import theme from "../styles/theme";
 import DefaultLayout from "../components/layouts/DefaultLayout";
-import { getUserData } from "../store/slice/authSlice";
 import Notification from "../components/common/Notification";
 
+import withAuth from "../components/guard/withAuth";
+
 import type { ReactElement, ReactNode } from "react";
-import type { AppProps } from "next/app";
 import type { NextPage } from "next";
+import type { AppProps } from "next/app";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -32,14 +34,13 @@ function MyApp({
   const getLayout =
     Component.getLayout || ((page) => <DefaultLayout page={page} />);
 
-  const RequiredAuth = () =>
-    Component.defaultProps?.authRequired ? (
-      <AuthGuard>
-        <Component {...pageProps} />
-      </AuthGuard>
-    ) : (
-      <Component {...pageProps}></Component>
-    );
+  const RequiredAuth = () => {
+    if (Component.defaultProps?.authRequired) {
+      const AuthenticatedComponent = withAuth(Component);
+      return <AuthenticatedComponent {...pageProps} />;
+    }
+    return <Component {...pageProps} />;
+  };
 
   return (
     <Provider store={store}>
