@@ -3,11 +3,12 @@ import React, { useMemo } from "react";
 import styled from "styled-components";
 
 interface Props {
+  route: string;
   current_pages: number;
   total_pages: number;
 }
 
-function Pagination({ current_pages, total_pages }: Props) {
+function Pagination({ route, current_pages, total_pages }: Props) {
   // const total_pages = 26; if you want test pagination
   const paginationIndex = Math.floor((current_pages - 1) / 5);
   const enablePrev = useMemo(() => paginationIndex !== 0, [paginationIndex]);
@@ -31,7 +32,9 @@ function Pagination({ current_pages, total_pages }: Props) {
     <Wrapper>
       {enablePrev && (
         <Link
-          href={`problem?page=${current_pages - 5 < 1 ? 1 : current_pages - 5}`}
+          href={`${route}?page=${
+            current_pages - 5 < 1 ? 1 : current_pages - 5
+          }`}
           passHref
           legacyBehavior
         >
@@ -42,7 +45,7 @@ function Pagination({ current_pages, total_pages }: Props) {
         {pageNumbers.map((number) => {
           const isCurrentPage = number == current_pages;
           return (
-            <Link href={`problem?page=${number}`} key={number}>
+            <Link href={`${route}?page=${number}`} key={number}>
               <a className={isCurrentPage ? "active" : ""}> {number}</a>
             </Link>
           );
@@ -50,7 +53,7 @@ function Pagination({ current_pages, total_pages }: Props) {
       </PageNumbers>
       {enableNext && (
         <Link
-          href={`problem?page=${
+          href={`${route}?page=${
             current_pages + 5 > total_pages ? total_pages : current_pages + 5
           }`}
           passHref
