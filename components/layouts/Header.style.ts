@@ -1,5 +1,5 @@
 import styled from "styled-components";
-export const Container = styled.div`
+export const Container = styled.header`
   width: 1200px;
   height: 80px;
   flex-grow: 0;
