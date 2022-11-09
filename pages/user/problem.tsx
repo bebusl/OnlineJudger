@@ -1,34 +1,65 @@
+import { NextPageContext } from "next";
+import Link from "next/link";
 import React from "react";
-import { Button, Table } from "../../components/common";
+import { getSubmissionsByQuery } from "../../api/submissionAPI";
+import { Table } from "../../components/common";
+import Pagination from "../../components/common/Pagination";
 import WithSideBar from "../../components/templates/WithSideBar";
 
-function SolveList() {
-  const testHeader = ["id", "제목", "태그", ""];
-  const testBody = [
-    ["19992", "해적왕이 될거야", "DP", <Button key="19992">자세히보기</Button>],
-    [
-      "19994",
-      "해적왕이 될수있을것같니?",
-      "DP",
-      <Button key="19994">자세히보기</Button>,
-    ],
-    ["19995", "나는 버기", "DP", <Button key="19995">자세히보기</Button>],
-    ["1999", "나는 버기", "DP", <Button key="1999">자세히보기</Button>],
-    ["19996", "나는 버기", "DP", <Button key="19996">자세히보기</Button>],
-  ];
-
+function SolveList({
+  header,
+  body,
+  pageInfo,
+}: {
+  header: string[];
+  body: (string | number)[][];
+  pageInfo: { current_pages: number; total_pages: number };
+}) {
+  const linkedBody = body.map((row) => [
+    <Link href={`/solution/${row[0]}?user=test1234`} key={row[0]}>
+      {row[0]}
+    </Link>,
+    ...row.slice(1),
+  ]);
   return (
     <WithSideBar>
       <>
-        <h4>선택한 메뉴 이름</h4>
-        <Table header={testHeader} body={testBody} />
+        <h2>해결한 문제들</h2>
+        <Table header={header} body={linkedBody} />
+        <Pagination {...pageInfo} route="user/problem" />
       </>
     </WithSideBar>
   );
 }
 
+export async function getServerSideProps(ctx: NextPageContext) {
+  const result = await getSubmissionsByQuery({ userId: "test1234" });
+
+  const pageInfo = {
+    current_pages: result.data.page.current_pages,
+    total_pages: result.data.page.total_pages,
+  };
+  return {
+    props: {
+      header: [
+        "문제번호",
+        "메모리",
+        "실행시간",
+        "제출언어",
+        "성공여부",
+        "제출코드보기",
+      ],
+      body: [
+        [6, 0, 0, "C", "SUCCESS", ""],
+        [7, 1000, 1000, "C++", "FALSE", ""],
+      ],
+      pageInfo,
+    },
+  };
+}
+
 export default SolveList;
 
-// SolveList.defaultProps = {
-//   authRequired: true,
-// };
+SolveList.defaultProps = {
+  authRequired: true,
+};

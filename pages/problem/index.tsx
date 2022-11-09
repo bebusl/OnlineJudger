@@ -36,6 +36,7 @@ function ProblemList({ header, problems, pageInfo }: ProblemProps) {
     <React.Suspense fallback={<Error />}>
       <Table header={header} body={body} />
       <Pagination
+        route="problem"
         current_pages={pageInfo.current_pages}
         total_pages={pageInfo.total_pages}
       />

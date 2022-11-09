@@ -1,16 +1,13 @@
-import React from "react";
+import React, { ReactElement, ReactFragment, ReactNode } from "react";
 import styled from "styled-components";
 import Footer from "./Footer";
 import Header from "./Header";
-interface Props {
-  children?: React.ReactNode;
-}
 
-function DefaultLayout({ children }: Props) {
+function DefaultLayout({ page }: { page: ReactElement }) {
   return (
     <Container>
       <Header />
-      <Body>{children}</Body>
+      <Body>{page}</Body>
       <Footer />
     </Container>
   );
@@ -27,7 +24,8 @@ const Container = styled.div`
 const Body = styled.div`
   flex-basis: 60vh;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: start;
   align-items: center;
 `;
 
