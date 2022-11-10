@@ -5,7 +5,7 @@ import styled from "styled-components";
 function Footer() {
   return (
     <footer>
-      <Link href="/admin/login" passHref>
+      <Link href="/admin" passHref>
         <FooterLink>관리자 페이지</FooterLink>
       </Link>
     </footer>
