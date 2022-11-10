@@ -1,12 +1,7 @@
 import request from "./request";
-import Cookies from "js-cookie";
+import { makeAuthHeader } from "../utils/authUtils";
 
-const makeAuthorization = () => {
-  const auth_token = Cookies.get("Authorization") as string;
-  return { Authorization: auth_token };
-};
-
-const { get, post } = request("/users", { headers: makeAuthorization() });
+const { get, post } = request("/users", { headers: makeAuthHeader() });
 
 export const getUser = async (Authorization?: string) => {
   if (Authorization) return await get("", { headers: { Authorization } });
