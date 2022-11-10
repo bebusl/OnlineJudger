@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { RefObject, useState } from "react";
 import validator from "../utils/validator";
 import type { regexType } from "../utils/validator";
 import useDynamicRefs from "./useDynamicRefs";
@@ -41,7 +41,32 @@ const useForm = ({ types }: Props) => {
     }
   }; // 더 좋은 이름이 있을 것 같은딩.
 
-  return { handleBlur, isValidInputs, isValid, getRef };
+  const getAllRefs = () => {
+    const allRefs = types.reduce((accum, current) => {
+      const currentRef = getRef(current);
+      return { ...accum, [current]: currentRef };
+    }, {} as Record<regexType, RefObject<HTMLInputElement>>);
+    return allRefs;
+  };
+
+  const getAllValues = () => {
+    const allRefs = getAllRefs();
+    const allValues = {} as Record<string, unknown>;
+    for (let refKey in allRefs) {
+      const currentRef = allRefs[refKey];
+      allValues[refKey] = currentRef.current?.value;
+    }
+    return allValues;
+  };
+
+  return {
+    handleBlur,
+    isValidInputs,
+    isValid,
+    getRef,
+    getAllRefs,
+    getAllValues,
+  };
 };
 
 export default useForm;

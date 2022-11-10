@@ -15,7 +15,7 @@ function useDynamicRefs<T>(): [
   (key: string) => React.RefObject<T>,
   (key: string) => void
 ] {
-  return [getRef, setRef];
+  return [getRef<T>, setRef<T>];
 }
 
 export default useDynamicRefs;
