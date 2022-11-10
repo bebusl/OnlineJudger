@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { HYDRATE } from "next-redux-wrapper";
 import { login, signup, getUser } from "../../api/authAPI";
 import Cookies from "js-cookie";
+import { addNoti } from "./notiSlice";
 
 export const signUpRequest = createAsyncThunk(
   "auth/signup",
@@ -40,7 +41,13 @@ export const loginRequest = createAsyncThunk(
     thunkAPI
   ) => {
     const a = await login({ id, password, link_key });
-
+    thunkAPI.dispatch(
+      addNoti({
+        id: Date.now(),
+        message: "로그인을 성공했습니다.",
+        variant: "success",
+      })
+    );
     if (a) return { id, ...a };
     return thunkAPI.rejectWithValue(a);
   }
@@ -49,15 +56,15 @@ export const loginRequest = createAsyncThunk(
 export const getUserData = createAsyncThunk(
   "auth/getMe",
   async (_, thunkAPI) => {
-    const a = await getUser();
-    if (a.data?.success) return a.data.user;
-    return thunkAPI.rejectWithValue(a);
+    const userInfo = await getUser();
+    if (userInfo.data?.success) return userInfo.data.user;
+    return thunkAPI.rejectWithValue(userInfo);
   }
 );
 
 export const authSlice = createSlice({
   name: "auth",
-  initialState: { isLogin: false, id: "bebus1998" },
+  initialState: { isLogin: false },
   reducers: {
     [HYDRATE]: (state, action) => ({
       ...state,
@@ -79,8 +86,8 @@ export const authSlice = createSlice({
         "Authorization",
         `Bearer ${action.payload.data.access_token}`,
         {
-          secure: false,
-          sameSite: "Strict",
+          secure: true,
+          sameSite: "None",
         }
       );
       state.isLogin = true;
@@ -103,3 +110,6 @@ export const authSlice = createSlice({
 export const { logoff } = authSlice.actions;
 
 export default authSlice.reducer;
+
+// TODO : Cookie에서 sameSite, secure 옵션 변경.
+// 보안 이슈 관련 커밋할 떄 같이 커밋할 것.

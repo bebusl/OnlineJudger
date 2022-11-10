@@ -1,14 +1,16 @@
-/* eslint-disable react/display-name */
-import Cookies from "js-cookie";
-import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { useAppSelector } from "../../hooks/useStore";
+import useNotification from "../../hooks/useNotification";
+
+import Cookies from "js-cookie";
 
 const withAuth = (
   WrappedComponent: React.ComponentType<Record<string, unknown>>
 ) => {
   function AuthenticatedComponent(props: Record<string, unknown>) {
     const router = useRouter();
+    const addNotification = useNotification();
     const { isLogin } = useAppSelector((state) => state.auth);
     const [mounted, setMounted] = useState(false);
 
@@ -21,7 +23,7 @@ const withAuth = (
       const accessToken = Cookies.get("Authorization");
 
       if (!accessToken) {
-        window.alert("너 토큰없음!");
+        addNotification("로그인이 필요합니다.", "error");
         router.replace("/");
       }
 

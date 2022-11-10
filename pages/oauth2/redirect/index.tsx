@@ -1,7 +1,12 @@
-import { NextPageContext } from "next";
-import { useRouter } from "next/router";
 import React, { useEffect } from "react";
-import { ACCESS_TOKEN, LINK_KEY } from "../../../constants/url";
+import type { NextPageContext } from "next";
+import { LINK_KEY } from "../../../constants/url";
+
+import { loginRequest } from "../../../store/slice/authSlice";
+
+import { useRouter } from "next/router";
+import { useAppDispatch } from "../../../hooks/useStore";
+import useNotification from "../../../hooks/useNotification";
 
 function Oauth2Redirect({
   isNew,
@@ -15,6 +20,8 @@ function Oauth2Redirect({
   provider: string;
 }) {
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  const addNotification = useNotification();
 
   useEffect(() => {
     if (isNew) {
@@ -27,8 +34,12 @@ function Oauth2Redirect({
         "/register"
       );
     } else if (linkKey) {
-      localStorage.setItem(ACCESS_TOKEN, linkKey);
-      router.push({ pathname: "/login", query: { linkKey } });
+      dispatch(loginRequest({ id: "", password: "", link_key: linkKey }))
+        .unwrap()
+        .then(() => {
+          addNotification("로그인에 성공했습니다!", "success");
+          router.push("/");
+        });
     } else {
       router.push({ pathname: "/login", query: { error } });
     }
@@ -38,14 +49,13 @@ function Oauth2Redirect({
 }
 
 export function getServerSideProps(ctx: NextPageContext) {
-  const isNew = ctx.query?.newUser ?? "";
+  const isNew = ctx.query?.newUser;
   const linkKey = ctx.query?.linkKey ?? "";
   const error = ctx.query?.error ?? "";
   const provider = ctx.query?.provider;
-
   return {
     props: {
-      isNew,
+      isNew: isNew === "true" ? true : false,
       linkKey,
       error,
       provider,
