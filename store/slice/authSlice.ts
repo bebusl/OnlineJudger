@@ -1,8 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { HYDRATE } from "next-redux-wrapper";
 import { login, signup, getUser } from "../../api/authAPI";
-import Cookies from "js-cookie";
 import { addNoti } from "./notiSlice";
+import Cookies from "js-cookie";
+
+const initialState = { isLogin: false, id: "", roles: [] };
 
 export const signUpRequest = createAsyncThunk(
   "auth/signup",
@@ -40,16 +42,19 @@ export const loginRequest = createAsyncThunk(
     },
     thunkAPI
   ) => {
-    const a = await login({ id, password, link_key });
-    thunkAPI.dispatch(
-      addNoti({
-        id: Date.now(),
-        message: "로그인을 성공했습니다.",
-        variant: "success",
-      })
-    );
-    if (a) return { id, ...a };
-    return thunkAPI.rejectWithValue(a);
+    const loginInfo = await login({ id, password, link_key });
+    if (loginInfo.data.success) {
+      thunkAPI.dispatch(
+        addNoti({
+          id: Date.now(),
+          message: "로그인을 성공했습니다.",
+          variant: "success",
+        })
+      );
+      const { access_token, roles } = loginInfo.data;
+      return { id, access_token, roles };
+    }
+    return thunkAPI.rejectWithValue(loginInfo);
   }
 );
 
@@ -64,7 +69,7 @@ export const getUserData = createAsyncThunk(
 
 export const authSlice = createSlice({
   name: "auth",
-  initialState: { isLogin: false },
+  initialState,
   reducers: {
     [HYDRATE]: (state, action) => ({
       ...state,
@@ -82,16 +87,13 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(loginRequest.fulfilled, (state, action) => {
-      Cookies.set(
-        "Authorization",
-        `Bearer ${action.payload.data.access_token}`,
-        {
-          secure: true,
-          sameSite: "None",
-        }
-      );
+      Cookies.set("Authorization", `Bearer ${action.payload.access_token}`, {
+        secure: true,
+        sameSite: "None",
+      });
       state.isLogin = true;
       state.id = action.payload.id;
+      state.roles = action.payload.roles;
     });
     builder.addCase(loginRequest.rejected, (state, action) => {
       state.isLogin = false;
@@ -110,6 +112,3 @@ export const authSlice = createSlice({
 export const { logoff } = authSlice.actions;
 
 export default authSlice.reducer;
-
-// TODO : Cookie에서 sameSite, secure 옵션 변경.
-// 보안 이슈 관련 커밋할 떄 같이 커밋할 것.
