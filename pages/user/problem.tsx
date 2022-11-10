@@ -1,7 +1,7 @@
 import { NextPageContext } from "next";
 import Link from "next/link";
 import React from "react";
-import { getSubmissionsByQuery } from "../../api/submissionAPI";
+import { getSubmissionsByQuery } from "../../api/submissionsAPI";
 import { Table } from "../../components/common";
 import Pagination from "../../components/common/Pagination";
 import WithSideBar from "../../components/templates/WithSideBar";
