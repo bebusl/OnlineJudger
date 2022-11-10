@@ -40,7 +40,7 @@ export const LabelInput = ({ grandchildRef, ...props }: LabelInputProps) => {
   );
 };
 
-const InputBox = styled.input`
+export const InputBox = styled.input`
   background-color: ${({ theme }) => theme.colors.gray50};
   padding: 10px;
   width: 100%;
