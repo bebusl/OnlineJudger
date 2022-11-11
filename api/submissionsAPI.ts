@@ -1,12 +1,17 @@
+import { LANGUAGES } from "../constants/language";
 import { makeAuthHeader } from "../utils/authUtils";
 import request from "./request";
 
 const { get, post } = request("/submissions");
 
-export const gradeProblem = async (code: string) =>
+export const gradeProblem = async (
+  problemId: number,
+  code: string,
+  language: LANGUAGES
+) =>
   await post({
     url: "",
-    data: { problem_id: 8, language: "C", code: code, judge: true },
+    data: { problem_id: problemId, language, code, judge: true },
     config: {
       headers: makeAuthHeader(),
     },

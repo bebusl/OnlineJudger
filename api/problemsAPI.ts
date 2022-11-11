@@ -1,5 +1,6 @@
 import request from "./request";
 import { LANGUAGES } from "../constants/language";
+import { makeAuthHeader } from "../utils/authUtils";
 
 const { get, post, deleteRequest, putRequest } = request("/problems");
 
@@ -10,7 +11,7 @@ interface problemProps {
   tags?: number[];
 }
 
-export const deleteProblem = async (id: string) =>
+export const deleteProblem = async (id: number) =>
   await deleteRequest(`/${id}`);
 
 export const getProblemDetail = async (id: string) => await get(`/${id}`);
@@ -29,6 +30,28 @@ export const getProblems = async ({
   return await get(defaultQuery + titleQuery + languagesQuery);
 };
 
-export const registerProblem = async () => await post({ url: "" });
+export const registerProblem = async (data: FormData) =>
+  await post({
+    url: "",
+    data: data,
+    config: {
+      headers: {
+        accept: "*/*",
+        "Content-Type": "multipart/form-data",
+        ...makeAuthHeader(),
+      },
+    },
+  });
 
-export const modifyProblem = async (id: number) => await putRequest(`/${id}`);
+export const modifyProblem = async (id: number, data: FormData) =>
+  await putRequest({
+    url: `/${id}`,
+    data,
+    config: {
+      headers: {
+        accept: "*/*",
+        "Content-Type": "multipart/form-data",
+        ...makeAuthHeader(),
+      },
+    },
+  });
