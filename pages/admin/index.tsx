@@ -1,85 +1,138 @@
+import { NextPageContext } from "next";
 import Link from "next/link";
-import React from "react";
+import React, { useMemo, useState } from "react";
+import { deleteProblem, getProblems } from "../../api/problemsAPI";
 import { Button, Table } from "../../components/common";
-import WithSideBar from "../../components/templates/WithSideBar";
-
+import Pagination from "../../components/common/Pagination";
 interface Props {
   header: string[];
-  body: (string | number | JSX.Element)[][];
+  problems: Record<string, string | number>[];
+  pageInfo: Record<string, number>;
 }
 
-const mockHeader = ["id", "제목", "태그", ""];
-const mockBody = [
-  [
-    10,
-    "테스트1",
-    "하이",
-    <Link href="problem/10" key={10}>
-      자세히보기
-    </Link>,
-  ],
-  [
-    12,
-    "테스트1",
-    "하이",
-    <Link href="problem/12" key={12}>
-      자세히보기
-    </Link>,
-  ],
-  [
-    15,
-    "테스트1",
-    "하이",
-    <Link href="problem/15" key={15}>
-      자세히보기
-    </Link>,
-  ],
-  [
-    16,
-    "테스트1",
-    "하이",
-    <Link href="problem/16" key={16}>
-      자세히보기
-    </Link>,
-  ],
-];
+function ManageProblem({ problems, pageInfo }: Props) {
+  const [selectedProblem, setSelectedProblem] = useState<Set<number>>(
+    new Set()
+  );
 
-function ManageProblem({ header = mockHeader, body = mockBody }: Props) {
+  const allProblemIds = useMemo(() => {
+    return problems.map((problem) => problem.id as number);
+  }, []);
+
+  const isAllSelected = selectedProblem.size === allProblemIds.length;
+
+  const deselectProblem = (id: number) => {
+    setSelectedProblem((prev) => {
+      const copy = new Set(prev);
+      copy.delete(id);
+      return copy;
+    });
+  };
+
+  const selectProblem = (id: number) => {
+    setSelectedProblem((prev) => {
+      const copy = new Set(prev);
+      copy.add(id);
+      return copy;
+    });
+  };
+
+  const handleAllSelectCheckBoxClick = () => {
+    if (isAllSelected) setSelectedProblem(new Set());
+    else setSelectedProblem(new Set(allProblemIds));
+  };
+
+  const handleCheckBoxClick = (id: number) => {
+    if (selectedProblem.has(id)) deselectProblem(id);
+    else selectProblem(id);
+  };
+
+  const header = [
+    <input
+      type="checkbox"
+      key={"headerCheckbox"}
+      onClick={handleAllSelectCheckBoxClick}
+      checked={selectedProblem.size === allProblemIds.length}
+      readOnly
+    />,
+    "ID",
+    "제목",
+    "메모리",
+    "시간",
+    "언어",
+  ];
+  const body = problems.reduce(
+    (pre: (string | number)[][], cur: Record<string, string | number>) => {
+      const data = [
+        <input
+          type="checkbox"
+          key={cur.id}
+          defaultValue={cur.id}
+          onClick={() => handleCheckBoxClick(cur.id as number)}
+          checked={selectedProblem.has(cur.id)}
+          readOnly
+        />,
+        cur.id,
+        <Link href={`/admin/problem/${cur.id}`} key={cur.id}>
+          {cur.title}
+        </Link>,
+        cur.memory_limit,
+        cur.time_limit,
+        cur.languages.join(" "),
+      ];
+      return [...pre, data];
+    },
+    []
+  );
   return (
-    <>
+    <section style={{ width: "100%" }}>
       <h1>문제 관리 페이지</h1>
-      <Button>과목 추가하기</Button>
+      <Link href="admin/add-problem" passHref>
+        <Button as="a">과목 추가하기</Button>
+      </Link>
       <div>
         <Table header={header} body={body}></Table>
       </div>
       <div>
-        <Button>선택 삭제</Button>
-        <Button>전체 삭제</Button>
+        <Button
+          onClick={async (e) => {
+            const result = [];
+            for (let number of selectedProblem) {
+              result.push(deleteProblem(number));
+            }
+            const a = await Promise.all(result);
+            console.log(a);
+          }}
+        >
+          선택한 {selectedProblem.size}개 삭제
+        </Button>
       </div>
-    </>
+      <Pagination
+        route="/admin"
+        current_pages={pageInfo.current_pages}
+        total_pages={pageInfo.total_pages}
+      />
+    </section>
   );
+}
+
+export async function getServerSideProps(ctx: NextPageContext) {
+  const { page } = ctx.query;
+  if (page) {
+    const result = await getProblems({ page: page as string });
+    const { page: pageInfo, problems } = result.data;
+    problems.sort((a, b) => (a.id > b.id ? 1 : -1));
+    return {
+      props: {
+        problems,
+        pageInfo,
+      },
+    };
+  }
 }
 
 export default ManageProblem;
 
 ManageProblem.defaultProps = {
   adminOnly: true,
-};
-
-const mock = {
-  title: "Hello World",
-  time_limit: 10000,
-  memory_limit: 10000,
-  desc: "첫번째 단어 입력시 Hello 첫번째 단어, 두번쨰 단어 입력시 Hello2 두번째 단어가 출력되게 하여라.",
-  input_desc: "10자 이내의 단어가 엔터를 기준으로 두 번 입력된다.",
-  output_desc:
-    "첫번째 단어 입력시 Hello 첫번째 단어, 두번쨰 단어 입력시 Hello2 두번째 단어가 출력되어야 한다.",
-  test_case_examples: [
-    {
-      input: "World\nWorld2\n",
-      output: "Hello World\nHello2 World2\n",
-    },
-  ],
-  languages: ["C"],
-  tags: ["string"],
 };
