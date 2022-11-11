@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 interface TableProps {
-  header: string[];
+  header: (string | JSX.Element)[];
   body: (number | string | JSX.Element)[][];
 }
 
@@ -11,8 +11,8 @@ function Table({ header, body }: TableProps) {
     <TableStyle>
       <THead>
         <tr>
-          {header.map((head) => (
-            <th key={head}>{head}</th>
+          {header.map((head, idx) => (
+            <th key={`head${idx}`}>{head}</th>
           ))}
         </tr>
       </THead>
