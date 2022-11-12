@@ -11,8 +11,16 @@ import {
 } from "../../constants/language";
 import dynamic from "next/dynamic";
 import { Button } from "../../components/common";
+import { WEB_SOCKET_URL } from "../../constants/url";
+import { makeAuthHeader } from "../../utils/authUtils";
+import SockJS from "sockjs-client";
+import StompJS from "stompjs";
+import { gradeProblem } from "../../api/submissionsAPI";
+import useNotification from "../../hooks/useNotification";
+
 const MonacoEditor = dynamic(import("@monaco-editor/react"), { ssr: false });
 
+let socketClient: StompJS.Client | null = null;
 interface ProblemDetailProps {
   id: number;
   title: string;
@@ -47,13 +55,35 @@ function ProblemDetail(props: ProblemDetailProps) {
   const editorRef = useRef(null);
   const resultRef = useRef(null);
   const [result, setResult] = useState("기본입니당~");
+  const addNoti = useNotification();
 
-  function handleEditorDidMount(editor) {
-    editorRef.current = editor;
+  function connection() {
+    const sock = new SockJS(WEB_SOCKET_URL);
+    socketClient = StompJS.over(sock);
+    console.log("STOMP CONNECT");
+    socketClient.connect(makeAuthHeader(), function () {
+      socketClient?.subscribe("/user/queue/notification", (msg) => {
+        const body = JSON.parse(msg.body);
+        addNoti(body.message, body.variant);
+        console.log("body", body);
+      });
+    });
+    socketClient.connect("/user/queue/problem/run", (msg) => {
+      console.log("채점 결과왓으으");
+    }); //0번은 컴파일 결과, 1번부터 채점 결과임.
+    //0번만 있고, 그안에 응답이 correct:false면 컴파일 에러임.
   }
-  function handleResultEditorDidMount(editor) {
-    resultRef.current = editor;
-  }
+
+  useEffect(() => {
+    connection();
+    return () => {
+      if (socketClient?.connected) {
+        socketClient?.disconnect(() => {
+          console.log("socket disconnected");
+        });
+      }
+    };
+  }, []);
 
   return (
     <>
@@ -99,7 +129,6 @@ function ProblemDetail(props: ProblemDetailProps) {
       <MonacoEditor
         height="50vh"
         language={language}
-        onMount={handleEditorDidMount}
         options={{
           minimap: {
             enabled: false,
@@ -109,22 +138,27 @@ function ProblemDetail(props: ProblemDetailProps) {
       <MonacoEditor
         height="30vh"
         language={language}
-        onMount={handleResultEditorDidMount}
-        value={result}
+        defaultValue={result}
+        onMount={(editor) => {
+          editorRef.current = editor;
+        }}
         options={{
           readOnly: true,
+          minimap: {
+            enabled: false,
+          },
         }}
       />
 
       <Button
         onClick={() => {
           console.log(
-            "CHECK",
             editorRef.current?.getValue(),
             typeof editorRef.current?.getValue(),
             JSON.stringify(editorRef.current?.getValue()) //JSON.stringify로 new line 포함해서 한 줄로 만들어줄 수 잇음.
           );
-          setResult(Date.now().toString());
+          const code = editorRef.current?.getValue();
+          gradeProblem(id, code, "C");
         }}
       >
         확인하기
