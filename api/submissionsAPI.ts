@@ -1,9 +1,21 @@
+import { LANGUAGES } from "../constants/language";
+import { makeAuthHeader } from "../utils/authUtils";
 import request from "./request";
 
 const { get, post } = request("/submissions");
 
-export const gradeProblem = async () =>
-  await post({ url: "", data: { problem_id: 1, language: "C", code: "" } });
+export const gradeProblem = async (
+  problemId: number,
+  code: string,
+  language: LANGUAGES
+) =>
+  await post({
+    url: "",
+    data: { problem_id: problemId, language, code, judge: true },
+    config: {
+      headers: makeAuthHeader(),
+    },
+  });
 
 export const getAllSubmissions = async (page: number, language?: string) => {
   const pageQuery = "page=" + page;
@@ -29,7 +41,12 @@ export const getSubmissionsByQuery = async ({
   const userIdQuery = userId ? "&user_id=" + userId : "";
   const problemIdQuery = problemId ? "&problem_id=" + problemId : "";
   const languageQuery = language ? "&language=" + language : "";
-  const query = pageQuery + userIdQuery + problemIdQuery + languageQuery;
+  const query =
+    pageQuery +
+    userIdQuery +
+    problemIdQuery +
+    languageQuery +
+    "&is_ranking=false";
   return await get(query);
 };
 

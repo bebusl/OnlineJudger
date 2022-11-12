@@ -48,7 +48,7 @@ const Title = styled.span`
   height: 61px;
   flex-grow: 0;
   -webkit-text-stroke: 1px #9747ff;
-  font-size: ${({ theme }) => theme.fontSizes[6] + "px"};
+  font-size: ${({ theme }) => theme.fontSizes[6]};
   font-weight: 900;
   font-stretch: normal;
   font-style: normal;

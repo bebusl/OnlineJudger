@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { API_BASE_URL } from "../constants/url";
+import { makeAuthHeader } from "../utils/authUtils";
 
 interface GetRequestProps {
   url: string;
@@ -66,18 +67,21 @@ export default function request(
     callback?: Function,
     errorHandler?: Function
   ) {
-    const request = () => axiosInstance.delete(url);
+    const request = () =>
+      axiosInstance.delete(url, { headers: makeAuthHeader() });
     return requestHandler(request, callback, errorHandler);
   }
 
-  function putRequest(url: string) {
-    const request = () => axiosInstance.put(url);
-    return requestHandler(request);
+  function putRequest({
+    url,
+    data,
+    config,
+    callback,
+    errorHandler,
+  }: PostRequestProps) {
+    const request = () => axiosInstance.put(url, data, config);
+    return requestHandler(request, callback, errorHandler);
   }
 
   return { get, post, deleteRequest, putRequest };
 }
-
-/**TODO
- * request 이름 좀 더 명확하게 수정하기
- */

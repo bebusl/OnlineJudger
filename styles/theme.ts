@@ -142,3 +142,7 @@ const theme: DefaultTheme = {
 export default theme;
 
 export type colorType = typeof colors;
+
+export type variantType = "normal" | "success" | "warning" | "error";
+
+// TODO : Notification 본격 스타일링할 떄 같이 커밋

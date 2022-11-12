@@ -21,7 +21,7 @@ const Container = styled.div`
   gap: 50px;
 `;
 
-const Body = styled.div`
+const Body = styled.main`
   flex-basis: 60vh;
   display: flex;
   flex-direction: column;

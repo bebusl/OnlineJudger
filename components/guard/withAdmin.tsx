@@ -5,20 +5,21 @@ import useNotification from "../../hooks/useNotification";
 
 import Cookies from "js-cookie";
 
-const withAuth = (
+import { ROLEADMIN } from "../../constants/role";
+
+const withAdmin = (
   WrappedComponent: React.ComponentType<Record<string, unknown>>
 ) => {
   function AuthenticatedComponent(props: Record<string, unknown>) {
     const router = useRouter();
     const addNotification = useNotification();
-    const { isLogin } = useAppSelector((state) => state.auth);
+    const { isLogin, roles } = useAppSelector((state) => state.auth);
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
       setMounted(true);
     }, []);
-    //window가지고 장난치면 안된단다 얘야~=> window객체가 있냐/없냐에 따라 반환하는 거 달라짐 => hydrating error가 뜸
-    // https://nextjs.org/docs/messages/react-hydration-error 참조
+
     if (mounted) {
       const accessToken = Cookies.get("Authorization");
 
@@ -26,7 +27,10 @@ const withAuth = (
         addNotification("로그인이 필요합니다.", "error");
         router.replace("/");
       }
-
+      if (isLogin && !roles.includes(ROLEADMIN)) {
+        addNotification("관리자 권한이 없습니다.", "error");
+        router.replace("/");
+      }
       return <WrappedComponent {...props} />;
     }
     return null;
@@ -35,4 +39,4 @@ const withAuth = (
   return AuthenticatedComponent;
 };
 
-export default withAuth;
+export default withAdmin;

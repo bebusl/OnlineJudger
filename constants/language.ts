@@ -1,8 +1,8 @@
-export const C = "c";
-export const CPP = "c++";
-export const PYTHON2 = "python2";
-export const PYTHON3 = "python3";
-export const JAVA = "java";
+export const C = "C";
+export const CPP = "CPP";
+export const PYTHON2 = "PYTHON2";
+export const PYTHON3 = "PYTHON3";
+export const JAVA = "JAVA";
 
 export type LANGUAGES =
   | typeof C
