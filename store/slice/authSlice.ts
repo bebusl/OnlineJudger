@@ -1,8 +1,10 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { HYDRATE } from "next-redux-wrapper";
-import { login, signup, getUser } from "../../api/authAPI";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { addNoti } from "./notiSlice";
+
 import Cookies from "js-cookie";
+import { login, signup, getUser } from "../../api/authAPI";
+import { addHours } from "../../utils/dateUtils";
 
 const initialState = { isLogin: false, id: "", roles: [] };
 
@@ -90,6 +92,7 @@ export const authSlice = createSlice({
       Cookies.set("Authorization", `Bearer ${action.payload.access_token}`, {
         secure: true,
         sameSite: "None",
+        expires: addHours(1),
       });
       state.isLogin = true;
       state.id = action.payload.id;
@@ -98,7 +101,6 @@ export const authSlice = createSlice({
     builder.addCase(loginRequest.rejected, (state, action) => {
       state.isLogin = false;
     });
-    builder.addCase(signUpRequest.fulfilled, (state, action) => {});
     builder.addCase(getUserData.fulfilled, (state, action) => {
       state.isLogin = true;
       state.userData = action.payload;

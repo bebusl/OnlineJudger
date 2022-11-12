@@ -15,6 +15,7 @@ import withAdmin from "../components/guard/withAdmin";
 import type { ReactElement, ReactNode } from "react";
 import type { NextPage } from "next";
 import type { AppProps } from "next/app";
+import Cookies from "js-cookie";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -29,7 +30,8 @@ function MyApp({
   pageProps,
 }: AppPropsWithLayout<{ authRequired: boolean; adminOnly: boolean }>) {
   useEffect(() => {
-    store.dispatch(getUserData());
+    const token = Cookies.get("Authorization");
+    if (token) store.dispatch(getUserData());
   }, []);
 
   const getLayout =
