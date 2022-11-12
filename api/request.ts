@@ -1,6 +1,10 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import Cookies from "js-cookie";
 import { API_BASE_URL } from "../constants/url";
+import { logoff } from "../store/slice/authSlice";
+import store from "../store/store";
 import { makeAuthHeader } from "../utils/authUtils";
+import { addHours } from "../utils/dateUtils";
 
 interface GetRequestProps {
   url: string;
@@ -22,6 +26,36 @@ export default function request(
     withCredentials: true,
     ...config,
   });
+
+  axiosInstance.interceptors.response.use(
+    function (response) {
+      return response;
+    },
+    async function (error) {
+      const {
+        config,
+        response: {
+          data: { success, err_msg },
+        },
+      } = error;
+      const originalRequest = config;
+      if (!success && err_msg.includes("userPrincipal")) {
+        const response = await axios.post(API_BASE_URL + "/users/refresh");
+        if (response?.status === 200 && response.data?.success) {
+          Cookies.set("Authorization", `Bearer ${response.data.access_token}`, {
+            secure: true,
+            sameSite: "None",
+            expires: addHours(1),
+          });
+        }
+        originalRequest.headers = {
+          Authorization: `Bearer ${response.data.access_token}`,
+        };
+        return axios(config);
+      }
+      return error;
+    }
+  );
 
   async function requestHandler(
     request: Function,
