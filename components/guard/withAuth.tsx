@@ -17,8 +17,7 @@ const withAuth = (
     useEffect(() => {
       setMounted(true);
     }, []);
-    //window가지고 장난치면 안된단다 얘야~=> window객체가 있냐/없냐에 따라 반환하는 거 달라짐 => hydrating error가 뜸
-    // https://nextjs.org/docs/messages/react-hydration-error 참조
+
     if (mounted) {
       const accessToken = Cookies.get("Authorization");
 

@@ -21,17 +21,17 @@ const withAdmin = (
     }, []);
 
     if (mounted) {
-      const accessToken = Cookies.get("Authorization");
-
-      if (!accessToken) {
+      if (!isLogin) {
         addNotification("로그인이 필요합니다.", "error");
         router.replace("/");
+        return null;
       }
-      if (isLogin && !roles.includes(ROLEADMIN)) {
-        addNotification("관리자 권한이 없습니다.", "error");
-        router.replace("/");
-      }
-      return <WrappedComponent {...props} />;
+      if (isLogin && roles.includes(ROLEADMIN))
+        return <WrappedComponent {...props} />;
+
+      addNotification("관리자 권한이 없습니다.", "error");
+      router.replace("/");
+      return null;
     }
     return null;
   }
