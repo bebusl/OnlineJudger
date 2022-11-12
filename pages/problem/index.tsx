@@ -4,7 +4,7 @@ import type { NextPageContext } from "next";
 
 import { getProblems } from "../../api/problemsAPI";
 
-import { Table } from "../../components/common";
+import { FlexBox, Table } from "../../components/common";
 import Pagination from "../../components/common/Pagination";
 
 interface ProblemProps {
@@ -16,7 +16,6 @@ interface ProblemProps {
 const Error = () => <div>Error</div>;
 
 function ProblemList({ header, problems, pageInfo }: ProblemProps) {
-  console.log(problems);
   const body = problems.reduce(
     (pre: (string | number)[][], cur: Record<string, string | number>) => {
       const data = [
@@ -34,7 +33,12 @@ function ProblemList({ header, problems, pageInfo }: ProblemProps) {
   );
   return (
     <React.Suspense fallback={<Error />}>
-      <Table header={header} body={body} />
+      {body.length ? (
+        <Table header={header} body={body} />
+      ) : (
+        <FlexBox style={{ minHeight: "90vh" }}>등록된 문제가 없습니다.</FlexBox>
+      )}
+
       <Pagination
         route="problem"
         current_pages={pageInfo.current_pages}
@@ -51,7 +55,6 @@ export async function getServerSideProps(ctx: NextPageContext) {
     const { page: pageInfo, problems } = result.data;
     const header = ["ID", "제목", "메모리", "시간", "언어"];
     problems.sort((a, b) => (a.id > b.id ? 1 : -1));
-    // type 설정 안해줘서 빨간데,, 일단 그냥 뒀습니다.
     return {
       props: {
         header,
