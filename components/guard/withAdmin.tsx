@@ -26,7 +26,7 @@ const withAdmin = (
         router.replace("/");
         return null;
       }
-      if (isLogin && roles.includes(ROLEADMIN))
+      if (isLogin && roles?.includes(ROLEADMIN))
         return <WrappedComponent {...props} />;
 
       addNotification("관리자 권한이 없습니다.", "error");

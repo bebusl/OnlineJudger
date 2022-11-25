@@ -47,3 +47,6 @@ export const login = async ({
 export const logout = async () => await post({ url: "/logout" });
 
 export const refresh = async () => await post({ url: "/refresh" });
+
+export const linkOauth = async (linkKey: string) =>
+  await get(`/link/${linkKey}`);
