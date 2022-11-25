@@ -7,11 +7,11 @@ import AuthTemplate from "../components/templates/AuthTemplate";
 import { loginRequest } from "../store/slice/authSlice";
 import { useAppDispatch } from "../hooks/useStore";
 import {
-  GITHUB_AUTH_URL,
-  GOOGLE_AUTH_URL,
-  KAKAO_AUTH_URL,
+  GOOGLE_AUTH_REGISTER_URL,
+  KAKAO_AUTH_REGISTER_URL,
 } from "../constants/url";
 import useForm from "../hooks/useForm";
+import { FlexBox } from "../components/common";
 
 const OAuthLinkButton = React.memo(
   ({ url, type }: { url: string; type: "kakao" | "github" | "google" }) => {
@@ -53,9 +53,10 @@ const LoginForm = () => {
         checkData();
       }}
     >
-      <OAuthLinkButton url={GOOGLE_AUTH_URL} type="google" />
-      <OAuthLinkButton url={KAKAO_AUTH_URL} type="kakao" />
-      <OAuthLinkButton url={GITHUB_AUTH_URL} type="github" />
+      <FlexBox flexDirection="row" justifyContent="space-around">
+        <OAuthLinkButton url={GOOGLE_AUTH_REGISTER_URL} type="google" />
+        <OAuthLinkButton url={KAKAO_AUTH_REGISTER_URL} type="kakao" />
+      </FlexBox>
       <Input name="email" ref={emailRef} onBlur={() => handleBlur("email")} />
       <Input
         name="password"

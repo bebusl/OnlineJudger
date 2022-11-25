@@ -36,11 +36,16 @@ export default function request(
         config,
         response: {
           data: { success, err_msg },
+          status,
         },
       } = error;
       const originalRequest = config;
-      if (!success && err_msg.includes("userPrincipal")) {
-        const response = await axios.post(API_BASE_URL + "/users/refresh");
+      if (!success && (err_msg.includes("userPrincipal") || status == 401)) {
+        const response = await axios.post(
+          API_BASE_URL + "/users/refresh",
+          null,
+          { withCredentials: true }
+        );
         if (response?.status === 200 && response.data?.success) {
           Cookies.set("Authorization", `Bearer ${response.data.access_token}`, {
             secure: true,

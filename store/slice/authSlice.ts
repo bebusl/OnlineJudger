@@ -1,9 +1,8 @@
-import { HYDRATE } from "next-redux-wrapper";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { addNoti } from "./notiSlice";
-
-import Cookies from "js-cookie";
+import { HYDRATE } from "next-redux-wrapper";
 import { login, signup, getUser } from "../../api/authAPI";
+import { addNoti } from "./notiSlice";
+import Cookies from "js-cookie";
 import { addHours } from "../../utils/dateUtils";
 
 const initialState = { isLogin: false, id: "", roles: [] };

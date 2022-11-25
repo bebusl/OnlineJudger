@@ -5,6 +5,7 @@ import { getUser } from "../../api/authAPI";
 import { Button } from "../../components/common";
 import { LabelInput } from "../../components/common/Input";
 import WithSideBar from "../../components/templates/WithSideBar";
+import { GOOGLE_AUTH_LINK_URL } from "../../constants/url";
 import useForm from "../../hooks/useForm";
 
 const default_Img =
@@ -59,14 +60,12 @@ function UserProfile({
             grandchildRef={linkRef}
             type="email"
             name="linkedEmail"
-            value={links[0]}
+            value={links[0]?.email}
           />
         ) : (
           <>
             <p>연동된 소셜 계정이 없습니다</p>
-            <a href="https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/userinfo.profile&response_type=token&redirect_uri=https://localhost:3443/oauth2/redirect/client&client_id=120623111530-5cf3mkdcfed1m9n8eumn9vsa6dodl43l.apps.googleusercontent.com">
-              구글 연동하기
-            </a>
+            <a href={GOOGLE_AUTH_LINK_URL}>구글 연동하기</a>
           </>
         )}
         <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -89,19 +88,14 @@ export async function getServerSideProps(ctx: NextPageContext) {
   const auth_cookie = ctx.req?.cookies.Authorization;
   if (auth_cookie) {
     const userInfo = await getUser(auth_cookie);
-
-    if (userInfo.data.success) {
-      console.log("여기러 옵니다!");
+    if (userInfo.data?.success) {
       return {
         props: { ...userInfo.data.user },
       };
     }
   }
   return {
-    redirect: {
-      destination: "/",
-      permanent: false,
-    },
+    notFound: true,
   };
 }
 
@@ -110,18 +104,3 @@ export default UserProfile;
 UserProfile.defaultProps = {
   authRequired: true,
 };
-
-/**
- * {
-    "id": "jinhee",
-    "name": "brillbejh@naver.com",
-    "avatar_url": "https://lh3.googleusercontent.com/a/ALm5wu3Nq8c1bHdXra164lN--qE4jRJmZRVM3R6VmwQ73w=s96-c",
-    "links": [
-        {
-            "provider": "GOOGLE",
-            "email": "bbcbal12@gmail.com",
-            "avatar_url": "https://lh3.googleusercontent.com/a/ALm5wu3Nq8c1bHdXra164lN--qE4jRJmZRVM3R6VmwQ73w=s96-c"
-        }
-    ]
-}
- */
