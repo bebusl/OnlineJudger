@@ -1,6 +1,6 @@
 import { NextPageContext } from "next";
 import Link from "next/link";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { deleteProblem, getProblems } from "../../api/problemsAPI";
 import { Button, Table } from "../../components/common";
 import Pagination from "../../components/common/Pagination";
@@ -11,9 +11,19 @@ interface Props {
 }
 
 function ManageProblem({ problems, pageInfo }: Props) {
+  const [body, setBody] = useState(problems);
   const [selectedProblem, setSelectedProblem] = useState<Set<number>>(
     new Set()
   );
+
+  useEffect(() => {
+    const newValue = problems.map((problem) => ({
+      ...problem,
+      title: <Link href={`/admin/problem/1`}>{problem.title}</Link>,
+      languages: problem.languages.join(" "),
+    }));
+    setBody(newValue);
+  }, []);
 
   const allProblemIds = useMemo(() => {
     return problems.map((problem) => problem.id as number);
@@ -48,42 +58,13 @@ function ManageProblem({ problems, pageInfo }: Props) {
   };
 
   const header = [
-    <input
-      type="checkbox"
-      key={"headerCheckbox"}
-      onClick={handleAllSelectCheckBoxClick}
-      checked={selectedProblem.size === allProblemIds.length}
-      readOnly
-    />,
-    "ID",
-    "제목",
-    "메모리",
-    "시간",
-    "언어",
+    { field: "id", header: "ID" },
+    { field: "title", header: "제목" },
+    { field: "memory_limit", header: "메모리" },
+    { field: "time_limit", header: "제한시간" },
+    { field: "languages", header: "언어" },
   ];
-  const body = problems.reduce(
-    (pre: (string | number)[][], cur: Record<string, string | number>) => {
-      const data = [
-        <input
-          type="checkbox"
-          key={cur.id}
-          defaultValue={cur.id}
-          onClick={() => handleCheckBoxClick(cur.id as number)}
-          checked={selectedProblem.has(cur.id)}
-          readOnly
-        />,
-        cur.id,
-        <Link href={`/admin/problem/${cur.id}`} key={cur.id}>
-          {cur.title}
-        </Link>,
-        cur.memory_limit,
-        cur.time_limit,
-        cur.languages.join(" "),
-      ];
-      return [...pre, data];
-    },
-    []
-  );
+
   return (
     <section style={{ width: "100%" }}>
       <h1>문제 관리 페이지</h1>
@@ -91,7 +72,7 @@ function ManageProblem({ problems, pageInfo }: Props) {
         <Button as="a">과목 추가하기</Button>
       </Link>
       <div>
-        <Table header={header} body={body}></Table>
+        <Table header={header} body={body} />
       </div>
       <div>
         <Button
@@ -121,7 +102,7 @@ export async function getServerSideProps(ctx: NextPageContext) {
   if (page) {
     const result = await getProblems({ page: page as string });
     const { page: pageInfo, problems } = result.data;
-    problems.sort((a, b) => (a.id > b.id ? 1 : -1));
+
     return {
       props: {
         problems,

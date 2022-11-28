@@ -7,25 +7,25 @@ import Pagination from "../../components/common/Pagination";
 import WithSideBar from "../../components/templates/WithSideBar";
 
 function SolveList({
-  header,
   body,
   pageInfo,
 }: {
-  header: string[];
-  body: (string | number)[][];
+  body: Record<string, string | number | JSX.Element>[];
   pageInfo: { current_pages: number; total_pages: number };
 }) {
-  const linkedBody = body.map((row) => [
-    <Link href={`/solution/${row[0]}?user=test1234`} key={row[0]}>
-      {row[0]}
-    </Link>,
-    ...row.slice(1),
-  ]);
+  const header = [
+    { field: "problem_id", header: "ID" },
+    { field: "memory", header: "메모리" },
+    { field: "real_time", header: "실행시간" },
+    { field: "language", header: "제출언어" },
+    { field: "status", header: "상태" },
+    { field: "", header: "제출코드보기" },
+  ];
   return (
     <WithSideBar>
       <>
         <h2>해결한 문제들</h2>
-        <Table header={header} body={linkedBody} />
+        <Table header={header} body={body} rowHeight={"80px"} />
         <Pagination {...pageInfo} route="user/problem" />
       </>
     </WithSideBar>
@@ -39,20 +39,20 @@ export async function getServerSideProps(ctx: NextPageContext) {
     current_pages: result.data.page.current_pages,
     total_pages: result.data.page.total_pages,
   };
+
+  const header = [
+    { field: "id", header: "ID" },
+    { field: "memory", header: "메모리" },
+    { field: "real_time", header: "실행시간" },
+    { field: "language", header: "제출언어" },
+    { field: "status", header: "상태" },
+    { field: "", header: "제출코드보기" },
+  ];
+
   return {
     props: {
-      header: [
-        "문제번호",
-        "메모리",
-        "실행시간",
-        "제출언어",
-        "성공여부",
-        "제출코드보기",
-      ],
-      body: [
-        [6, 0, 0, "C", "SUCCESS", ""],
-        [7, 1000, 1000, "C++", "FALSE", ""],
-      ],
+      header,
+      body: result.data.submissions,
       pageInfo,
     },
   };
