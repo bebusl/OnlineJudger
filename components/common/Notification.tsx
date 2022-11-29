@@ -38,7 +38,6 @@ const slideInandOut = keyframes`
 0%{
   opacity:0;
 }
-
 10%,90%{
   opacity: 1;
 }
@@ -57,7 +56,7 @@ const Card = styled.div<{ $variant: variantType }>`
   border-radius: 10px;
   box-shadow: 5px 5px 5px ${({ theme }) => theme.colors.gray200};
   border: 1px solid ${({ theme, $variant }) => theme.colors[$variant]};
-  background-color: ${({ theme, $variant }) => theme.colors.white};
+  background-color: ${({ theme }) => theme.colors.white};
   font-size: ${({ theme }) => theme.fontSizes[1]};
   animation-name: ${slideInandOut};
   animation-duration: 3s;
@@ -65,7 +64,8 @@ const Card = styled.div<{ $variant: variantType }>`
 `;
 
 const NotiContainer = styled.aside`
-  width: 100%;
+  width: fit-content;
+  margin: auto;
   position: fixed;
   top: 0;
   left: 0;

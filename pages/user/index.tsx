@@ -1,7 +1,7 @@
 import Image from "next/image";
 import type { InferGetServerSidePropsType, NextPageContext } from "next/types";
 import React from "react";
-import { getUser } from "../../api/authAPI";
+import { getUser, refresh } from "../../api/authAPI";
 import { Button } from "../../components/common";
 import { LabelInput } from "../../components/common/Input";
 import WithSideBar from "../../components/templates/WithSideBar";
@@ -86,6 +86,8 @@ function UserProfile({
 
 export async function getServerSideProps(ctx: NextPageContext) {
   const auth_cookie = ctx.req?.cookies.Authorization;
+  // auth_cookie 없을 떄 로그아웃 처리해주거나 하기.! 아니면 재갱신을 해주등가.
+
   if (auth_cookie) {
     const userInfo = await getUser(auth_cookie);
     if (userInfo.data?.success) {
