@@ -1,8 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import Cookies from "js-cookie";
 import { API_BASE_URL } from "../constants/url";
-import { logoff } from "../store/slice/authSlice";
-import store from "../store/store";
 import { makeAuthHeader } from "../utils/authUtils";
 import { addHours } from "../utils/dateUtils";
 
@@ -40,7 +38,7 @@ export default function request(
         },
       } = error;
       const originalRequest = config;
-      if (!success && (err_msg.includes("userPrincipal") || status == 401)) {
+      if (!success && (status == 401 || err_msg.includes("userPrincipal"))) {
         const response = await axios.post(
           API_BASE_URL + "/users/refresh",
           null,

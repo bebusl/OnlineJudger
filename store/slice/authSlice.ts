@@ -52,7 +52,8 @@ export const loginRequest = createAsyncThunk(
           variant: "success",
         })
       );
-      const { access_token, roles } = loginInfo.data;
+      const { access_token, user } = loginInfo.data;
+      const roles = user.roles;
       return { id, access_token, roles };
     }
     return thunkAPI.rejectWithValue(loginInfo);
@@ -103,6 +104,7 @@ export const authSlice = createSlice({
     builder.addCase(getUserData.fulfilled, (state, action) => {
       state.isLogin = true;
       state.userData = action.payload;
+      state.roles = action.payload.roles;
     });
     builder.addCase(getUserData.rejected, (state) => {
       authSlice.caseReducers.logoff(state);
