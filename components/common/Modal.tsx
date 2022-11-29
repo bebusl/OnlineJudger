@@ -5,16 +5,18 @@ import FlexBox from "./FlexBox";
 
 interface ModalProps {
   onClose: Function;
+  title?: string;
   children?: ReactNode;
 }
 
-function Modal({ children }: ModalProps) {
+function Modal({ children, onClose, title = "" }: ModalProps) {
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
-    setIsMounted(false);
+    setIsMounted(true);
     return () => setIsMounted(false);
   }, []);
-  const ModalTest: ReactNode = (
+
+  const ModalTest = () => (
     <FlexBox
       style={{
         width: "100%",
@@ -35,29 +37,39 @@ function Modal({ children }: ModalProps) {
           backgroundColor: "#000",
           opacity: "0.3",
         }}
-        onClick={(e) => console.log("OUTER CLICK")}
-      ></div>
+        onClick={() => onClose()}
+      />
       <article
         style={{
           backgroundColor: "#fff",
           opacity: 1,
           minWidth: "700px",
-          minHeight: "500px",
+          minHeight: "800px",
           zIndex: 1000,
           color: "#000",
+          borderRadius: "5px",
+          boxShadow: "3px 3px 10px rgba(99, 99, 99, 0.5)",
         }}
-        onClick={(e) => console.log("INNEr CLICK")}
       >
-        <header>
-          이름입니당~<Button>X</Button>
-        </header>
+        <FlexBox
+          as="header"
+          flexDirection="row"
+          justifyContent="space-between"
+          style={{ padding: "10px" }}
+        >
+          <h3>{title}</h3>
+          <Button onClick={() => onClose()} width="50px">
+            X
+          </Button>
+        </FlexBox>
         {children}
       </article>
     </FlexBox>
   );
+
   if (isMounted) {
-    const element = document?.querySelector("#portal") as Element;
-    return ReactDOM.createPortal(ModalTest, element);
+    const element = document.getElementById("portal") as Element;
+    return ReactDOM.createPortal(<ModalTest />, element);
   }
   return null;
 }

@@ -43,8 +43,7 @@ const LoginForm = () => {
     const password = passwordRef.current?.value || "";
     dispatch(loginRequest({ id, password }))
       .unwrap()
-      .then(() => router.push("/"))
-      .catch((e) => console.log("ERROR", e));
+      .then(() => router.back());
   };
   return (
     <form

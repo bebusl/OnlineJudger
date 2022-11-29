@@ -1,8 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import Cookies from "js-cookie";
 import { API_BASE_URL } from "../constants/url";
-import { logoff } from "../store/slice/authSlice";
-import store from "../store/store";
 import { makeAuthHeader } from "../utils/authUtils";
 import { addHours } from "../utils/dateUtils";
 
