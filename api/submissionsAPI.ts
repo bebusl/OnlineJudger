@@ -13,7 +13,20 @@ export const gradeProblem = async (
     url: "",
     data: { problem_id: problemId, language, code, judge: true },
     config: {
-      headers: makeAuthHeader(),
+      headers: { ...makeAuthHeader() },
+    },
+  });
+
+export const runProblem = async (
+  problemId: number,
+  code: string,
+  language: LANGUAGES
+) =>
+  await post({
+    url: "",
+    data: { problem_id: problemId, language, code, judge: false },
+    config: {
+      headers: { ...makeAuthHeader() },
     },
   });
 
@@ -31,27 +44,20 @@ export const getSubmissionsByQuery = async ({
   problemId,
   language,
   page = 0,
+  isRanking = false,
 }: {
   userId?: string;
   problemId?: number;
   language?: string;
   page?: number;
+  isRanking?: boolean;
 }) => {
   const pageQuery = "?page=" + page;
   const userIdQuery = userId ? "&user_id=" + userId : "";
   const problemIdQuery = problemId ? "&problem_id=" + problemId : "";
   const languageQuery = language ? "&language=" + language : "";
+  const rankingQuery = isRanking ? "&is_ranking=true" : "&is_ranking=false";
   const query =
-    pageQuery +
-    userIdQuery +
-    problemIdQuery +
-    languageQuery +
-    "&is_ranking=false";
+    pageQuery + userIdQuery + problemIdQuery + languageQuery + rankingQuery;
   return await get(query);
 };
-
-//   page: 0,
-//   problem_id: 1,
-//   language: "C",
-//   user_id: "test1234",
-// };

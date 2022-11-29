@@ -1,5 +1,6 @@
 import React, { ReactElement, useEffect, useRef, useState } from "react";
 import { NextPageContext } from "next";
+import { useRouter } from "next/router";
 import { getProblemDetail } from "../../api/problemsAPI";
 import {
   JAVA,
@@ -18,6 +19,7 @@ import StompJS from "stompjs";
 import { gradeProblem, runProblem } from "../../api/submissionsAPI";
 import useNotification from "../../hooks/useNotification";
 import ScrollBox from "../../components/common/ScrollBox";
+import { useAppSelector } from "../../hooks/useStore";
 
 const Ranking = dynamic(import("../../components/submissions/Ranking"), {
   ssr: false,
@@ -56,10 +58,13 @@ function ProblemDetail(props: ProblemDetailProps) {
     test_case_examples,
     languages,
   } = props;
+  const router = useRouter();
+  const isLogin = useAppSelector((store) => store.auth.isLogin);
+
   const [isOpen, setIsOpen] = useState(false);
   const [language, setLanguage] = useState<LANGUAGES>(JAVA);
   const editorRef = useRef(null);
-  const [result, setResult] = useState("기본입니당~");
+  const [result, setResult] = useState("실행 결과가 여기에 표시됩니다.");
   const addNoti = useNotification();
 
   function connection() {
@@ -70,16 +75,23 @@ function ProblemDetail(props: ProblemDetailProps) {
       socketClient.connect(
         authToken,
         function () {
-          if (socketClient?.connected)
+          if (socketClient?.connected) {
             socketClient?.subscribe("/user/queue/notification", (msg) => {
               const body = JSON.parse(msg.body);
               addNoti(body.message, body.variant);
-              console.log("body WHY~~", body);
             });
-          socketClient?.subscribe("/user/queue/problem/run", (msg) => {
-            console.log("실행 결과 왔으묘", msg, msg.body);
-          }); //0번은 컴파일 결과, 1번부터 채점 결과임.
-          //0번만 있고, 그안에 응답이 correct:false면 컴파일 에러임.
+            socketClient?.subscribe("/user/queue/problem/run", (msg) => {
+              console.log("실행 결과 왔슴당!", msg);
+              const body = JSON.parse(msg.body);
+              setResult(
+                `컴파일 결과\n${
+                  body.result_list.length > 0 ? "컴파일 성공" : "컴파일 실패"
+                }\n실행 결과${body.result_list[1].result}\n채점 결과${
+                  body.result_list[1].correct
+                }`
+              );
+            });
+          }
         },
         function (error) {
           console.log("ERROR", error);
@@ -102,7 +114,7 @@ function ProblemDetail(props: ProblemDetailProps) {
   return (
     <>
       <React.Suspense fallback={<div> 모달 생성 중</div>}>
-        {isOpen && <Ranking onClose={() => setIsOpen(false)} />}
+        {isOpen && <Ranking onClose={() => setIsOpen(false)} problemId={id} />}
       </React.Suspense>
 
       <FlexBox as={"nav"} flexDirection="row" justifyContent="space-between">
@@ -149,11 +161,16 @@ function ProblemDetail(props: ProblemDetailProps) {
               <h3>예제</h3>
               {console.log("test_CASE", test_case_examples)}
               <Table
-                header={["input", "output"]}
-                body={test_case_examples.map((example) => [
-                  example.input as string,
-                  example.output as string,
-                ])}
+                header={[
+                  { field: "input", header: "입력" },
+                  { field: "output", header: "출력" },
+                ]}
+                body={
+                  test_case_examples as Record<
+                    string,
+                    string | number | JSX.Element
+                  >[]
+                }
               />
             </>
           </article>
@@ -185,25 +202,40 @@ function ProblemDetail(props: ProblemDetailProps) {
           />
         </section>
       </FlexBox>
-      <FlexBox flexDirection="row">
-        <Button onClick={() => setIsOpen(true)}>다른 유저의 코드 보기</Button>
-        <Button onClick={() => editorRef.current.setValue("")}>초기화</Button>
-        <Button
-          onClick={() => {
-            const code = editorRef.current?.getValue();
-            runProblem(id, code, "C");
-          }}
-        >
-          코드 실행
-        </Button>
-        <Button
-          onClick={() => {
-            const code = editorRef.current?.getValue();
-            gradeProblem(id, code, "C");
-          }}
-        >
-          제출 및 채점
-        </Button>
+      <FlexBox flexDirection="row" justifyContent={"space-between"}>
+        {isLogin ? (
+          <>
+            <Button onClick={() => setIsOpen(true)}>
+              다른 유저의 코드 보기
+            </Button>
+            <div>
+              <Button onClick={() => editorRef.current.setValue("")}>
+                초기화
+              </Button>
+              <Button
+                onClick={() => {
+                  const code = editorRef.current?.getValue();
+                  runProblem(id, code, C);
+                }}
+              >
+                코드 실행
+              </Button>
+              <Button
+                onClick={() => {
+                  const code = editorRef.current?.getValue();
+                  gradeProblem(id, code, C);
+                }}
+              >
+                제출 및 채점
+              </Button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div />
+            <Button onClick={() => router.push("/login")}>로그인하기</Button>
+          </>
+        )}
       </FlexBox>
     </>
   );

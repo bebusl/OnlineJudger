@@ -53,6 +53,7 @@ const TableStyle = styled.table<{ $rowHeight?: string }>`
   }
   td {
     height: ${({ $rowHeight }) => $rowHeight || "150px"};
+    white-space: pre;
   }
   background-color: ${({ theme }) => theme.colors.lightGray};
   color: ${({ theme }) => theme.colors.gray600};
