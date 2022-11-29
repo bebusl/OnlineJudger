@@ -57,7 +57,7 @@ function Modal({ children, onClose, title = "" }: ModalProps) {
           justifyContent="space-between"
           style={{ padding: "10px" }}
         >
-          <span>{title}</span>
+          <h3>{title}</h3>
           <Button onClick={() => onClose()} width="50px">
             X
           </Button>
