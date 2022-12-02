@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { useMemo } from "react";
 import styled from "styled-components";
 
@@ -10,6 +11,7 @@ interface Props {
 
 function Pagination({ route, current_pages, total_pages }: Props) {
   // const total_pages = 26; if you want test pagination
+  const router = useRouter();
   const paginationIndex = Math.floor((current_pages - 1) / 5);
   const enablePrev = useMemo(() => paginationIndex !== 0, [paginationIndex]);
   const enableNext = useMemo(
@@ -32,9 +34,13 @@ function Pagination({ route, current_pages, total_pages }: Props) {
     <Wrapper>
       {enablePrev && (
         <Link
-          href={`${route}?page=${
-            current_pages - 5 < 1 ? 1 : current_pages - 5
-          }`}
+          href={{
+            pathname: router.pathname,
+            query: {
+              ...router.query,
+              page: current_pages - 5 < 1 ? 1 : current_pages - 5,
+            },
+          }}
           passHref
           legacyBehavior
         >
@@ -45,7 +51,16 @@ function Pagination({ route, current_pages, total_pages }: Props) {
         {pageNumbers.map((number) => {
           const isCurrentPage = number == current_pages;
           return (
-            <Link href={`${route}?page=${number}`} key={number}>
+            <Link
+              href={{
+                pathname: router.pathname,
+                query: {
+                  ...router.query,
+                  page: number,
+                },
+              }}
+              key={number}
+            >
               <a className={isCurrentPage ? "active" : ""}> {number}</a>
             </Link>
           );
@@ -53,9 +68,19 @@ function Pagination({ route, current_pages, total_pages }: Props) {
       </PageNumbers>
       {enableNext && (
         <Link
-          href={`${route}?page=${
-            current_pages + 5 > total_pages ? total_pages : current_pages + 5
-          }`}
+          // href={`${route}?page=${
+          //   current_pages + 5 > total_pages ? total_pages : current_pages + 5
+          // }`}
+          href={{
+            pathname: router.pathname,
+            query: {
+              ...router.query,
+              page:
+                current_pages + 5 > total_pages
+                  ? total_pages
+                  : current_pages + 5,
+            },
+          }}
           passHref
           legacyBehavior
         >

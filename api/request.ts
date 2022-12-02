@@ -38,7 +38,7 @@ export default function request(
         },
       } = error;
       const originalRequest = config;
-      if (!success && (status == 401 || err_msg.includes("userPrincipal"))) {
+      if (!success && (status == 401 || err_msg?.includes("userPrincipal"))) {
         const response = await axios.post(
           API_BASE_URL + "/users/refresh",
           null,

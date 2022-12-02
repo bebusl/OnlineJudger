@@ -7,8 +7,8 @@ const { get, post, deleteRequest, putRequest } = request("/problems");
 interface problemProps {
   page: string;
   title?: string;
-  languages?: LANGUAGES[];
-  tags?: number[];
+  languages?: LANGUAGES | LANGUAGES[];
+  tags?: number | number[];
 }
 
 export const deleteProblem = async (id: number) =>
@@ -24,8 +24,19 @@ export const getProblems = async ({
 }: problemProps) => {
   const defaultQuery = "?page=" + page;
   const titleQuery = title ? `&title=${title}` : "";
-  const languagesQuery =
-    languages?.length > 0 ? `&languages=${languages[0]}` : "";
+  let languagesQuery = "";
+  let tagsQuery = "";
+
+  if (Array.isArray(languages)) {
+    const key = "&languages=";
+    languages.forEach((language) => (languagesQuery += key + language));
+  }
+  if (languages) languagesQuery = "&languages=" + languages;
+  if (Array.isArray(tags)) {
+    const key = "&tags=";
+    tags.forEach((tag) => (tagsQuery += key + tag));
+  }
+  if (tags) tagsQuery = "&tags=" + languages;
 
   return await get(defaultQuery + titleQuery + languagesQuery);
 };
