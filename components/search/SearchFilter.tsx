@@ -5,34 +5,64 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import {
-  C,
-  CPP,
-  JAVA,
-  LANGUAGES,
-  PYTHON2,
-  PYTHON3,
-} from "../../constants/language";
+import { C, CPP, JAVA, PYTHON2, PYTHON3 } from "../../constants/language";
 import { FlexBox } from "../common";
 import SearchBar from "../common/SearchBar";
 import Selector from "../common/Selector";
 
+const static_tags = [
+  "입출력",
+  "사칙연산",
+  "조건문",
+  "반복문",
+  "함수",
+  "배열",
+  "문자열",
+  "브루트포스",
+  "이분 탐색",
+  "에라토스테네스의 체",
+  "스택",
+  "큐",
+  "덱",
+  "정렬",
+  "해싱",
+  "다이나믹 프로그래밍",
+  "그래프 탐색(DFS/BFS)",
+  "집합과 맵",
+  "우선순위 큐",
+  "분할 정복",
+  "좌표 압축",
+  "백트래킹",
+  "트리",
+  "최단거리알고리즘(데이크스트라등)",
+  "분리집합",
+  "누적합",
+  "배낭문제",
+  "위상정렬",
+  "최소스패닝트리",
+  "비트마스킹",
+  "LIS",
+  "LCS",
+];
+
 function SearchFilter() {
   const router = useRouter();
-  const [selected, setSelected] = useState({
-    C: false,
-    CPP: false,
-    JAVA: false,
-    PYTHON2: false,
-    PYTHON3: false,
-  });
+  const [selectedLanguage, setSelectedLanguage] = useState(new Set());
+  const [selectedTag, setSelectedTag] = useState(new Set());
 
   useEffect(() => {
     const queries = router.query;
-    const { languages } = queries;
-    setSelected((prev) => {
-      return { ...prev, [languages as LANGUAGES]: true };
-    });
+    const { languages, tags } = queries;
+    if (languages) {
+      const newQuery = new Set(
+        Array.isArray(languages) ? languages : [languages]
+      );
+      setSelectedLanguage(newQuery);
+    }
+    if (tags) {
+      const newQuery = new Set(Array.isArray(tags) ? tags : [tags]);
+      setSelectedTag(newQuery);
+    }
   }, []);
 
   const handleTitleSubmit: FormEventHandler = (e) => {
@@ -40,56 +70,78 @@ function SearchFilter() {
     const target = e.target as HTMLFormElement;
     const titleInputElement = target["title"] as unknown as HTMLInputElement;
     const value = titleInputElement.value;
+    const { title, ...restQueries } = router.query;
     if (value)
       router.push({
         pathname: router.pathname,
-        query: { ...router.query, title: titleInputElement.value },
+        query: Object.assign(restQueries, { title: titleInputElement.value }),
       });
+    else router.push({ pathname: router.pathname, query: restQueries });
   };
 
-  const handleOptionChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-    const checked = e.target.checked;
-    if (checked) {
-      router.push({
-        pathname: router.pathname,
-        query: { ...router.query, languages: e.target.value },
-      });
-    } else {
-      const { languages, ...rest } = router.query;
-      router.push({
-        pathname: router.pathname,
-        query: rest,
-      });
-    }
+  const handleLanguageOptionChange: ChangeEventHandler<HTMLInputElement> = (
+    e
+  ) => {
+    const newQuery = new Set(selectedLanguage);
+    if (selectedLanguage.has(e.target.value)) newQuery.delete(e.target.value);
+    else newQuery.add(e.target.value);
+    router.push({
+      pathname: router.pathname,
+      query: {
+        ...router.query,
+        languages: Array.from(newQuery) as string[],
+      },
+    });
+  };
+
+  const handleTagChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const newQuery = new Set(selectedTag);
+    if (selectedTag.has(e.target.value)) newQuery.delete(e.target.value);
+    else newQuery.add(e.target.value);
+    router.push({
+      pathname: router.pathname,
+      query: {
+        ...router.query,
+        tags: Array.from(newQuery) as string[],
+      },
+    });
   };
 
   return (
     <FlexBox
+      flexDirection="row"
       justifyContent="start"
-      alignItems="start"
       gap="1rem"
-      style={{ width: "100%" }}
+      style={{ width: "100%", flexWrap: "wrap" }}
     >
       <SearchBar onSubmit={handleTitleSubmit} />
       <Selector
         options={[
           {
             text: C,
-            checked: selected.C,
+            checked: selectedLanguage.has(C),
           },
-          { text: CPP, checked: selected.CPP },
-          { text: JAVA, checked: selected.JAVA },
+          { text: CPP, checked: selectedLanguage.has(CPP) },
+          { text: JAVA, checked: selectedLanguage.has(JAVA) },
           {
             text: PYTHON2,
-            checked: selected.PYTHON2,
+            checked: selectedLanguage.has(PYTHON2),
           },
           {
             text: PYTHON3,
-            checked: selected.PYTHON3,
+            checked: selectedLanguage.has(PYTHON3),
           },
         ]}
-        onChange={handleOptionChange}
+        onChange={handleLanguageOptionChange}
         groupName="채점가능언어"
+      />
+      <Selector
+        options={static_tags.map((tag) => ({
+          text: tag,
+          checked: selectedTag.has(tag),
+        }))}
+        onChange={handleTagChange}
+        groupName="태그"
       />
     </FlexBox>
   );
