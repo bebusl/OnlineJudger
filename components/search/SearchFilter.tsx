@@ -5,6 +5,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import styled from "styled-components";
 import { C, CPP, JAVA, PYTHON2, PYTHON3 } from "../../constants/language";
 import { FlexBox } from "../common";
 import SearchBar from "../common/SearchBar";
@@ -108,43 +109,69 @@ function SearchFilter() {
   };
 
   return (
-    <FlexBox
-      flexDirection="row"
-      justifyContent="start"
-      gap="1rem"
-      style={{ width: "100%", flexWrap: "wrap" }}
-    >
-      <SearchBar onSubmit={handleTitleSubmit} />
-      <Selector
-        options={[
-          {
-            text: C,
-            checked: selectedLanguage.has(C),
-          },
-          { text: CPP, checked: selectedLanguage.has(CPP) },
-          { text: JAVA, checked: selectedLanguage.has(JAVA) },
-          {
-            text: PYTHON2,
-            checked: selectedLanguage.has(PYTHON2),
-          },
-          {
-            text: PYTHON3,
-            checked: selectedLanguage.has(PYTHON3),
-          },
-        ]}
-        onChange={handleLanguageOptionChange}
-        groupName="채점가능언어"
-      />
-      <Selector
-        options={static_tags.map((tag) => ({
-          text: tag,
-          checked: selectedTag.has(tag),
-        }))}
-        onChange={handleTagChange}
-        groupName="태그"
-      />
-    </FlexBox>
+    <>
+      <FlexBox
+        flexDirection="row"
+        justifyContent="start"
+        gap="1rem"
+        style={{ width: "100%", flexWrap: "wrap" }}
+      >
+        <SearchBar onSubmit={handleTitleSubmit} />
+        <Selector
+          options={[
+            {
+              text: C,
+              checked: selectedLanguage.has(C),
+            },
+            { text: CPP, checked: selectedLanguage.has(CPP) },
+            { text: JAVA, checked: selectedLanguage.has(JAVA) },
+            {
+              text: PYTHON2,
+              checked: selectedLanguage.has(PYTHON2),
+            },
+            {
+              text: PYTHON3,
+              checked: selectedLanguage.has(PYTHON3),
+            },
+          ]}
+          onChange={handleLanguageOptionChange}
+          groupName="채점가능언어"
+        />
+        <Selector
+          options={static_tags.map((tag) => ({
+            text: tag,
+            checked: selectedTag.has(tag),
+          }))}
+          onChange={handleTagChange}
+          groupName="태그"
+        />
+      </FlexBox>
+      <div style={{ width: "100%", height: "2rem", margin: "1rem" }}>
+        {Array.from(selectedLanguage).map((a) => (
+          <Tag key={a}>
+            {a}
+            <button>x</button>
+          </Tag>
+        ))}
+        {Array.from(selectedTag).map((t) => (
+          <Tag key={t}>
+            {t}
+            <button>x</button>
+          </Tag>
+        ))}
+      </div>
+    </>
   );
 }
 
 export default SearchFilter;
+
+const Tag = styled.span`
+  display: inline-block;
+  width: fit-content;
+  padding: 10px;
+  margin-right: 5px;
+  background-color: #f6d8d8;
+  border-radius: 5px;
+  font-size: ${({ theme }) => theme.fontSizes[0]};
+`;
