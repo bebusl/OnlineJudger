@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 export interface TableProps {
@@ -7,33 +7,64 @@ export interface TableProps {
     header: string | JSX.Element;
     width?: number;
     sortable?: boolean;
+    link?: string;
   }[];
   body: Record<string, number | string | JSX.Element>[];
   rowHeight?: string;
+  checkable?: boolean;
+  handleCheckedData?: Function;
 }
 
-function Table({ header, body, rowHeight }: TableProps) {
+const sortAsc = (field) => (prev, next) => {
+  if (prev[field] === next[field]) return 0;
+  return prev[field] > next[field] ? 1 : -1;
+};
+
+const sortDesc = (field) => (prev, next) => {
+  if (prev[field] === next[field]) return 0;
+  return prev[field] < next[field] ? 1 : -1;
+};
+
+function Table({ header, body, rowHeight, checkable }: TableProps) {
   const dataFields = header.map((content) => content.field);
+  const [sort, setSort] = useState({ field: "id", asc: true });
 
   return (
-    <TableStyle $rowHeight={rowHeight}>
-      <THead>
-        <tr>
-          {header.map((content) => (
-            <th key={content.field}>{content.header}</th>
-          ))}
-        </tr>
-      </THead>
-      <tbody>
-        {body.map((data, idx) => (
-          <tr key={idx}>
-            {dataFields.map((field) => (
-              <td key={field}>{data[field]}</td>
-            ))}
+    <>
+      <TableStyle $rowHeight={rowHeight}>
+        <THead>
+          <tr>
+            {header.map((content) =>
+              content.sortable ? (
+                <th
+                  key={content.field}
+                  onClick={() => {
+                    setSort({ field: content.field, asc: !sort.asc });
+                  }}
+                >
+                  {content.header}
+                </th>
+              ) : (
+                <th key={content.field}>{content.header}</th>
+              )
+            )}
           </tr>
-        ))}
-      </tbody>
-    </TableStyle>
+        </THead>
+        <tbody>
+          {body
+            .sort(sort.asc ? sortAsc(sort.field) : sortDesc(sort.field))
+            .map((data, idx) => {
+              return (
+                <tr key={idx}>
+                  {dataFields.map((field) => (
+                    <td key={field}>{data[field]}</td>
+                  ))}
+                </tr>
+              );
+            })}
+        </tbody>
+      </TableStyle>
+    </>
   );
 }
 
@@ -55,6 +86,7 @@ const TableStyle = styled.table<{ $rowHeight?: string }>`
     height: ${({ $rowHeight }) => $rowHeight || "150px"};
     white-space: pre;
   }
+
   background-color: ${({ theme }) => theme.colors.lightGray};
   color: ${({ theme }) => theme.colors.gray600};
 `;
