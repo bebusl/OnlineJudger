@@ -5,6 +5,9 @@ import { addNoti } from "./notiSlice";
 import Cookies from "js-cookie";
 import { addHours } from "../../utils/dateUtils";
 
+const dummyImg =
+  "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=50&q=50";
+
 const initialState = { isLogin: false, id: "", roles: [] };
 
 export const signUpRequest = createAsyncThunk(
@@ -54,7 +57,9 @@ export const loginRequest = createAsyncThunk(
       );
       const { access_token, user } = loginInfo.data;
       const roles = user.roles;
-      return { id, access_token, roles };
+      const name = user.name;
+      const avatar = user.avatar_url;
+      return { id, access_token, roles, name, avatar };
     }
     return thunkAPI.rejectWithValue(loginInfo);
   }
@@ -97,6 +102,8 @@ export const authSlice = createSlice({
       state.isLogin = true;
       state.id = action.payload.id;
       state.roles = action.payload.roles;
+      state.name = action.payload.name;
+      state.avatar = action.payload.avatar || dummyImg;
     });
     builder.addCase(loginRequest.rejected, (state, action) => {
       state.isLogin = false;
@@ -105,6 +112,9 @@ export const authSlice = createSlice({
       state.isLogin = true;
       state.userData = action.payload;
       state.roles = action.payload.roles;
+      state.roles = action.payload.roles;
+      state.name = action.payload.name;
+      state.avatar = action.payload.avatar || dummyImg;
     });
     builder.addCase(getUserData.rejected, (state) => {
       authSlice.caseReducers.logoff(state);
