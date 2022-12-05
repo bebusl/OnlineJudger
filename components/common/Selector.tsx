@@ -1,5 +1,8 @@
-import React, { ChangeEventHandler } from "react";
+import React, { ChangeEventHandler, useRef, useState } from "react";
 import styled from "styled-components";
+import Button from "./Button";
+import ErrorBoundary from "./ErrorBoundary";
+import Popover from "./Popover";
 
 interface selectorProps {
   options: { text: string; checked: boolean }[];
@@ -11,52 +14,78 @@ function Selector({
   onChange,
   groupName = "채점 가능 언어",
 }: selectorProps) {
-  console.log(groupName);
+  const [expand, setExpand] = useState(false);
+  const [expandPosition, setExpandPosition] = useState({
+    top: 0,
+    left: 0,
+    width: 0,
+  });
+
   return (
-    <Wrapper $groupName={groupName}>
-      {options.map((option) => {
-        const { text, checked } = option;
-        return (
-          <CheckLabel key={text}>
-            <input
-              type={"checkbox"}
-              name={text}
-              id={text}
-              defaultValue={text}
-              checked={checked}
-              style={{ display: "none" }}
-              onChange={onChange}
-            />
-            <label htmlFor={text}>{text}</label>
-          </CheckLabel>
-        );
-      })}
-    </Wrapper>
+    <>
+      <Expander
+        $variant="outline"
+        onClick={(e) => {
+          e.preventDefault();
+          setExpand((prev) => !prev);
+          const target = e.target as HTMLButtonElement;
+          const rect = target.getBoundingClientRect();
+          if (rect)
+            setExpandPosition({
+              top: rect.top + rect.height,
+              left: rect.left,
+              width: rect.width,
+            });
+        }}
+      >
+        {groupName}
+      </Expander>
+      {expand && (
+        <Popover top={expandPosition.top} left={expandPosition.left}>
+          <form style={{ width: expandPosition.width }}>
+            {options.map((option) => {
+              const { text, checked } = option;
+              return (
+                <CheckLabel key={text}>
+                  <input
+                    type={"checkbox"}
+                    name={text}
+                    id={text}
+                    defaultValue={text}
+                    checked={checked}
+                    onChange={onChange}
+                  />
+                  <label htmlFor={text}>{text}</label>
+                </CheckLabel>
+              );
+            })}
+          </form>
+        </Popover>
+      )}
+    </>
   );
 }
 
 export default Selector;
 
-const Wrapper = styled.div<{ $groupName: string }>`
-  &:before {
-    content: ${({ $groupName }) => `\"${$groupName}\"`};
-    font-size: ${({ theme }) => theme.fontSizes[1]};
-    font-weight: ${({ theme }) => theme.fontWeights.bold};
-    padding-right: 1.325rem;
-    margin-right: 0.3rem;
-    border-right: 1px solid ${({ theme }) => theme.colors.gray200};
+const Expander = styled(Button)`
+  &:after {
+    content: "";
+    margin-top: 0.3em;
+    vertical-align: middle;
+    border-top: 0.3em solid;
+    border-bottom: 0.3em solid transparent;
+    border-right: 0.3em solid transparent;
+    border-left: 0.3em solid transparent;
+    float: right;
+  }
+  &:focus {
+    background-color: ${({ theme }) => theme.colors.gray150};
   }
 `;
 
-const CheckLabel = styled.span`
+const CheckLabel = styled.div`
   label {
     width: fit-content;
-    padding: 5px;
-    background-color: ${({ theme }) => theme.colors.white};
-    border: 1px solid ${({ theme }) => theme.colors.gray100};
-    border-radius: 5px;
-  }
-  & input[type="checkbox"]:checked + label {
-    color: red;
   }
 `;

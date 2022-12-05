@@ -1,7 +1,8 @@
 import React from "react";
+import Ranking from "../components/submissions/Ranking";
 
 function scoreboard() {
-  return <div>scoreboard</div>;
+  return <Ranking />;
 }
 
 export default scoreboard;
