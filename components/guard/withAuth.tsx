@@ -4,6 +4,9 @@ import { useAppSelector } from "../../hooks/useStore";
 import useNotification from "../../hooks/useNotification";
 
 import Cookies from "js-cookie";
+import { API_BASE_URL } from "../../constants/url";
+import axios from "axios";
+import { addHours } from "../../utils/dateUtils";
 
 const withAuth = (
   WrappedComponent: React.ComponentType<Record<string, unknown>>
@@ -13,18 +16,40 @@ const withAuth = (
     const addNotification = useNotification();
     const { isLogin } = useAppSelector((state) => state.auth);
     const [mounted, setMounted] = useState(false);
+    const accessToken = Cookies.get("Authorization");
 
     useEffect(() => {
       setMounted(true);
     }, []);
 
     if (mounted) {
-      const accessToken = Cookies.get("Authorization");
-
       if (!accessToken) {
-        addNotification("로그인이 필요합니다.", "error");
-        router.replace("/");
+        try {
+          (async () => {
+            const a = await axios.post(API_BASE_URL + "/users/refresh", null, {
+              withCredentials: true,
+            });
+            if (a.data.success) {
+              Cookies.set("Authorization", `Bearer ${a.data.access_token}`, {
+                secure: true,
+                sameSite: "None",
+                expires: addHours(1),
+              });
+            }
+          })();
+        } catch (e) {
+          addNotification(
+            "인증이 만료되었습니다. 로그인이 필요합니다.",
+            "error"
+          );
+          router.replace("/login");
+        }
       }
+      if (!isLogin) {
+        addNotification("로그인이 필요합니다.", "error");
+        router.replace("/login");
+      }
+      if (!accessToken) return <div>권한 확인 중..</div>;
 
       return <WrappedComponent {...props} />;
     }
