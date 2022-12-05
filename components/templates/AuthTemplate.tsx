@@ -43,30 +43,18 @@ const RightBox = styled(FlexBox)`
   height: 100%;
 `;
 
-const Title = styled.span`
-  width: 142px;
-  height: 61px;
-  flex-grow: 0;
+const Title = styled.h1`
   -webkit-text-stroke: 1px #9747ff;
   font-size: ${({ theme }) => theme.fontSizes[6]};
-  font-weight: 900;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: 1.36;
-  letter-spacing: normal;
+  margin: 0;
+
   color: ${({ theme }) => theme.colors.white};
 `;
 
-const SubTitle = styled.span`
-  width: 324px;
-  height: 22px;
-  flex-grow: 0;
-  font-size: ${({ theme }) => theme.fontSizes[2] + "px"};
-  font-weight: normal;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: 1.36;
-  letter-spacing: normal;
+const SubTitle = styled.p`
+  margin: 0;
+  font-size: ${({ theme }) => theme.fontSizes[1]};
+
   color: ${({ theme }) => theme.colors.white};
 `;
 
