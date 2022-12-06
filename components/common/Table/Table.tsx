@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import {
+  sortObjectListAscByField,
+  sortObjectListDescByField,
+} from "../../../utils/sortUtils";
 
 export interface TableProps {
   header: {
@@ -7,26 +11,13 @@ export interface TableProps {
     header: string | JSX.Element;
     width?: number;
     sortable?: boolean;
-    link?: string;
   }[];
-  body: Record<string, number | string | JSX.Element>[];
+  body: object[];
   rowHeight?: string;
-  checkable?: boolean;
-  handleCheckedData?: Function;
 }
 
-const sortAsc = (field) => (prev, next) => {
-  if (prev[field] === next[field]) return 0;
-  return prev[field] > next[field] ? 1 : -1;
-};
-
-const sortDesc = (field) => (prev, next) => {
-  if (prev[field] === next[field]) return 0;
-  return prev[field] < next[field] ? 1 : -1;
-};
-
-function Table({ header, body, rowHeight, checkable }: TableProps) {
-  const dataFields = header.map((content) => content.field);
+export default function Table({ header, body, rowHeight }: TableProps) {
+  const dataFields: string[] = header.map((content) => content.field);
   const [sort, setSort] = useState({ field: "id", asc: true });
 
   return (
@@ -52,7 +43,11 @@ function Table({ header, body, rowHeight, checkable }: TableProps) {
         </THead>
         <tbody>
           {body
-            .sort(sort.asc ? sortAsc(sort.field) : sortDesc(sort.field))
+            .sort(
+              sort.asc
+                ? sortObjectListAscByField(sort.field)
+                : sortObjectListDescByField(sort.field)
+            )
             .map((data, idx) => {
               return (
                 <tr key={idx}>
@@ -67,8 +62,6 @@ function Table({ header, body, rowHeight, checkable }: TableProps) {
     </>
   );
 }
-
-export default Table;
 
 const TableStyle = styled.table<{ $rowHeight?: string }>`
   width: 100%;
