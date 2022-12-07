@@ -8,7 +8,7 @@ interface Props {
 }
 
 const useForm = ({ types }: Props) => {
-  const [getRef, setRef] = useDynamicRefs<HTMLInputElement>();
+  const [getRef, setRef] = useDynamicRefs<any>();
   types.forEach((type) => setRef(type));
 
   const initialRecord = (value: boolean) =>
@@ -45,7 +45,7 @@ const useForm = ({ types }: Props) => {
     const allRefs = types.reduce((accum, current) => {
       const currentRef = getRef(current);
       return { ...accum, [current]: currentRef };
-    }, {} as Record<regexType, RefObject<HTMLInputElement>>);
+    }, {} as Record<regexType, RefObject<HTMLInputElement | HTMLTextAreaElement>>);
     return allRefs;
   };
 
