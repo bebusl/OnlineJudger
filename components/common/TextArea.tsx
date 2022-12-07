@@ -5,7 +5,7 @@ import React, {
   TextareaHTMLAttributes,
 } from "react";
 import styled from "styled-components";
-import { FormGroup, InputWrapper } from "./Input";
+import { FormGroup } from "./Input";
 
 interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   errorMessage?: string;
@@ -17,11 +17,6 @@ interface LabeledTextAreaProps extends TextAreaProps {
   name: string;
   text: string;
 }
-
-// interface FormGroupProps extends TextAreaProps {
-//   text: string;
-//   children: React.ReactNode;
-// }
 
 const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
   ({ errorMessage = "잘못된 입력값입니다.", isValid = true, ...rest }, ref) => {
