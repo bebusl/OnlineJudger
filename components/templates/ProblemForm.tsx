@@ -10,9 +10,11 @@ import { LANGUAGES } from "../../constants/language";
 import { TAGS } from "../../constants/tag";
 
 import { Button, FlexBox, Seperator } from "../../components/common";
-import TextArea, { LabeledTextArea } from "../../components/common/TextArea";
+import { LabeledTextArea } from "../../components/common/TextArea";
 import { LabeledInput } from "../../components/common/Input";
 import Selector from "../common/Selector";
+import DropZone from "../common/DropZone";
+import Subscription from "../common/Typhography/Subscription";
 
 interface FormProps extends AddProblemRequest {
   readOnly: boolean;
@@ -42,7 +44,7 @@ function ProblemForm({
   const { getRef, getAllValues, isValid, handleBlur, isValidInputs } = useForm({
     types: ["title", "timeLimit", "memoryLimit", "description"],
   });
-  const [testcaseFile, setTestcaseFile] = useState<File | null>();
+  const [testcaseFile, setTestcaseFile] = useState<File | null>(null);
 
   const tagOptions = TAGS.map((tag) => ({
     text: tag,
@@ -152,13 +154,10 @@ function ProblemForm({
       {examples.map((exampleValue, idx) => {
         return (
           <>
-            <FlexBox
-              key={idx}
-              flexDirection="row"
-              alignItems="stretch"
-              justifyContent="space-around"
-            >
-              <TextArea
+            <FlexBox key={idx} flexDirection="row" alignItems="stretch">
+              <LabeledTextArea
+                text={`입력예제${idx}`}
+                name={`input_example_${idx}`}
                 readOnly={readOnly}
                 value={exampleValue.input}
                 onChange={(e) => {
@@ -174,7 +173,9 @@ function ProblemForm({
                   });
                 }}
               />
-              <TextArea
+              <LabeledTextArea
+                text={`출력예제${idx}`}
+                name={`output_example_${idx}`}
                 readOnly={readOnly}
                 value={exampleValue.output}
                 onChange={(e) => {
@@ -184,11 +185,8 @@ function ProblemForm({
                       input: examples[idx].input,
                       output: value,
                     };
-                    const updatedExample = [...prev].splice(
-                      idx,
-                      1,
-                      currentValue
-                    ); //splice는 map처럼 새로운 배열을 만들어 반호나
+                    const updatedExample = [...prev];
+                    updatedExample.splice(idx, 1, currentValue);
                     return updatedExample;
                   });
                 }}
@@ -200,7 +198,8 @@ function ProblemForm({
                   onClick={(e) => {
                     e.preventDefault();
                     setExamples((prev) => {
-                      const updatedState = prev.splice(idx, 1);
+                      const updatedState = [...prev];
+                      updatedState.splice(idx, 1);
                       return updatedState;
                     });
                   }}
@@ -227,65 +226,20 @@ function ProblemForm({
       {!readOnly && (
         <>
           <h4>테스트케이스 파일 업로드</h4>
-          <p>
+          <Subscription>
             [title].in, [title].out 쌍으로 이루어진 zip파일만 정상적으로 등록
             가능합니다.
-          </p>
-          {testcaseFile ? (
-            <div
-              style={{
-                width: "100%",
-                height: "250px",
-                backgroundColor: "#fff",
-                border: "1px solid #ededed",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <p>
-                <b>
-                  {testcaseFile.name}({testcaseFile.size})
-                </b>
-              </p>
-              <Button onClick={(e) => setTestcaseFile(null)}>취소하기</Button>
-            </div>
-          ) : (
-            <div
-              style={{
-                width: "100%",
-                height: "250px",
-                backgroundColor: "#fff",
-                border: "1px solid #ededed",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-              onDragOver={(e) => {
-                e.preventDefault();
-              }}
-              onDrop={(e) => {
-                e.preventDefault();
-                if (e.dataTransfer.items.length === 1) {
-                  const file = e.dataTransfer.items[0].getAsFile();
-                  if (file) setTestcaseFile(file);
-                }
-              }}
-            >
-              <input
-                type="file"
-                accept=".zip"
-                onChange={(e) => {
-                  const target = e.target;
-                  if (target && target.files?.length === 1) {
-                    setTestcaseFile(target.files[0]);
-                  }
-                }}
-              />
-            </div>
-          )}
-          <Button>취소</Button>
-          <Button type="submit">제출</Button>
+          </Subscription>
+          <Seperator />
+          <DropZone
+            file={testcaseFile}
+            cancleFile={() => setTestcaseFile(null)}
+            setFile={(file: File) => setTestcaseFile(file)}
+          />
+          <FlexBox justifyContent="space-between" flexDirection="row">
+            <Button $variant="outline">취소</Button>
+            <Button type="submit">제출</Button>
+          </FlexBox>
         </>
       )}
     </form>
