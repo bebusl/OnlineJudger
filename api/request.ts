@@ -78,12 +78,12 @@ export default function request(
       throw error;
     }
   }
-  function get(
+  function get<T = unknown, R = AxiosResponse<T>>(
     url: string,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig<T>,
     callback?: Function,
     errorHandler?: Function
-  ) {
+  ): Promise<R> {
     const request = () => axiosInstance.get(url, config);
     return requestHandler(request, callback, errorHandler);
   }

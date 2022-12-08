@@ -1,69 +1,70 @@
-import { NextPageContext } from "next";
 import Link from "next/link";
-import React, { useEffect, useMemo, useState } from "react";
-import { deleteProblem, getProblems } from "../../api/problemsAPI";
-import { Button, Table } from "../../components/common";
+import React, { useEffect, useState } from "react";
+import {
+  deleteMultiProblems,
+  getProblems,
+  PageInfo,
+  ProblemInfo,
+} from "../../api/problemsAPI";
+import useNotification from "../../hooks/useNotification";
+
 import Pagination from "../../components/common/Pagination";
-interface Props {
-  header: string[];
-  problems: Record<string, string | number>[];
-  pageInfo: Record<string, number>;
+import { Button } from "../../components/common";
+import CheckableTable from "../../components/common/Table/CheckableTable";
+
+const header = [
+  { field: "id", header: "ID" },
+  { field: "title", header: "제목" },
+  { field: "memory_limit", header: "메모리" },
+  { field: "time_limit", header: "제한시간" },
+  { field: "languages", header: "언어" },
+];
+
+interface ProblemTableInfo extends Omit<ProblemInfo, "title" | "languages"> {
+  title: string | JSX.Element;
+  languages: string;
 }
 
-function ManageProblem({ problems, pageInfo }: Props) {
-  const [body, setBody] = useState(problems);
-  const [selectedProblem, setSelectedProblem] = useState<Set<number>>(
-    new Set()
-  );
+function ManageProblem() {
+  const [problems, setProblems] = useState<ProblemTableInfo[]>([]);
+  const [pageInfo, setPageInfo] = useState<PageInfo>({
+    current_pages: 0,
+    total_elements: 0,
+    total_pages: 0,
+    is_first: false,
+    is_last: false,
+  });
+  const addNotification = useNotification();
+
+  const fetchProblem = async () => {
+    try {
+      const res = await getProblems({ page: pageInfo.current_pages });
+      const { page, problems } = res.data;
+
+      const newValue = problems.map((problem) => ({
+        ...problem,
+        title: (
+          <Link href={`/admin/problem/${problem.id}`}>{problem.title}</Link>
+        ),
+        languages: problem.languages.join(" "),
+      }));
+      setProblems(newValue);
+      setPageInfo(page);
+    } catch (e) {}
+  };
 
   useEffect(() => {
-    const newValue = problems.map((problem) => ({
-      ...problem,
-      title: <Link href={`/admin/problem/1`}>{problem.title}</Link>,
-      languages: problem.languages.join(" "),
-    }));
-    setBody(newValue);
+    fetchProblem();
   }, []);
 
-  const allProblemIds = useMemo(() => {
-    return problems.map((problem) => problem.id as number);
-  }, []);
-
-  const isAllSelected = selectedProblem.size === allProblemIds.length;
-
-  const deselectProblem = (id: number) => {
-    setSelectedProblem((prev) => {
-      const copy = new Set(prev);
-      copy.delete(id);
-      return copy;
-    });
+  const handleCheckedDataBtnClick = async (value) => {
+    const responses = await deleteMultiProblems(value);
+    const isErrorOccured = responses.some((response) => response.error);
+    if (isErrorOccured)
+      addNotification("일부 문제 삭제에 실패했습니다", "error");
+    else addNotification("선택한 문제 삭제를 성공했습니다", "success");
+    fetchProblem();
   };
-
-  const selectProblem = (id: number) => {
-    setSelectedProblem((prev) => {
-      const copy = new Set(prev);
-      copy.add(id);
-      return copy;
-    });
-  };
-
-  const handleAllSelectCheckBoxClick = () => {
-    if (isAllSelected) setSelectedProblem(new Set());
-    else setSelectedProblem(new Set(allProblemIds));
-  };
-
-  const handleCheckBoxClick = (id: number) => {
-    if (selectedProblem.has(id)) deselectProblem(id);
-    else selectProblem(id);
-  };
-
-  const header = [
-    { field: "id", header: "ID" },
-    { field: "title", header: "제목" },
-    { field: "memory_limit", header: "메모리" },
-    { field: "time_limit", header: "제한시간" },
-    { field: "languages", header: "언어" },
-  ];
 
   return (
     <section style={{ width: "100%" }}>
@@ -72,44 +73,16 @@ function ManageProblem({ problems, pageInfo }: Props) {
         <Button as="a">과목 추가하기</Button>
       </Link>
       <div>
-        <Table header={header} body={body} />
+        <CheckableTable
+          header={header}
+          body={problems}
+          handleCheckedDataBtnClick={handleCheckedDataBtnClick}
+          checkedDataBtnText="삭제"
+        />
       </div>
-      <div>
-        <Button
-          onClick={async (e) => {
-            const result = [];
-            for (let number of selectedProblem) {
-              result.push(deleteProblem(number));
-            }
-            const a = await Promise.all(result);
-            console.log(a);
-          }}
-        >
-          선택한 {selectedProblem.size}개 삭제
-        </Button>
-      </div>
-      <Pagination
-        route="/admin"
-        current_pages={pageInfo.current_pages}
-        total_pages={pageInfo.total_pages}
-      />
+      <Pagination route="/admin" {...pageInfo} />
     </section>
   );
-}
-
-export async function getServerSideProps(ctx: NextPageContext) {
-  const { page } = ctx.query;
-  if (page) {
-    const result = await getProblems({ page: page as string });
-    const { page: pageInfo, problems } = result.data;
-
-    return {
-      props: {
-        problems,
-        pageInfo,
-      },
-    };
-  }
 }
 
 export default ManageProblem;

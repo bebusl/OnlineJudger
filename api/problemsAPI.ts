@@ -1,11 +1,54 @@
 import request from "./request";
 import { LANGUAGES } from "../constants/language";
 import { makeAuthHeader } from "../utils/authUtils";
+import axios from "axios";
 
 const { get, post, deleteRequest, putRequest } = request("/problems");
 
-interface problemProps {
-  page: string;
+export type ProblemInfo = {
+  success: boolean;
+  err_msg: string;
+  id: number;
+  title: string;
+  time_limit: number;
+  memory_limit: number;
+  desc: string;
+  input_desc: string;
+  output_desc: string;
+  test_case_examples: [
+    {
+      input: string;
+      output: string;
+    }
+  ];
+  languages: LANGUAGES[];
+  tags: [
+    {
+      created_at: Date;
+      updated_at: Date;
+      id: number;
+      name: string;
+    }
+  ];
+};
+
+export type PageInfo = {
+  total_elements: number;
+  current_pages: number;
+  total_pages: number;
+  is_first: boolean;
+  is_last: boolean;
+};
+
+export interface GetAllResponseType {
+  success: boolean;
+  err_msg: string;
+  page: PageInfo;
+  problems: ProblemInfo[];
+}
+
+export interface problemProps {
+  page?: string | number;
   title?: string;
   languages?: LANGUAGES | LANGUAGES[];
   tags?: number | number[];
@@ -14,10 +57,18 @@ interface problemProps {
 export const deleteProblem = async (id: number) =>
   await deleteRequest(`/${id}`);
 
+export const deleteMultiProblems = async (ids: Set<number>) => {
+  const problemWillDelete = Array.from(ids);
+  const requests = problemWillDelete.map((problemId) =>
+    deleteRequest(`/${problemId}`)
+  );
+  return axios.all(requests);
+};
+
 export const getProblemDetail = async (id: string) => await get(`/${id}`);
 
 export const getProblems = async ({
-  page,
+  page = "1",
   title,
   languages = [],
   tags,
@@ -38,7 +89,9 @@ export const getProblems = async ({
   }
   if (tags) tagsQuery = "&tags=" + languages;
 
-  return await get(defaultQuery + titleQuery + languagesQuery);
+  return await get<GetAllResponseType>(
+    defaultQuery + titleQuery + languagesQuery
+  );
 };
 
 export const registerProblem = async (data: FormData) =>

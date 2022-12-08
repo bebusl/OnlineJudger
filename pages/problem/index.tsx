@@ -6,8 +6,7 @@ import { getProblems } from "../../api/problemsAPI";
 
 import { FlexBox } from "../../components/common";
 import Pagination from "../../components/common/Pagination";
-import Table from "../../components/common/Table";
-import type { TableProps } from "../../components/common/Table";
+import Table, { TableProps } from "../../components/common/Table/Table";
 import SearchFilter from "../../components/search/SearchFilter";
 
 interface ProblemProps extends TableProps {
@@ -23,6 +22,7 @@ export default function ProblemList({
   pageInfo,
 }: ProblemProps) {
   const [body, setBody] = useState(problems);
+
   useEffect(() => {
     const body = problems.map((problem) => ({
       ...problem,
@@ -71,6 +71,7 @@ export async function getServerSideProps(ctx: NextPageContext) {
       languages,
       tags,
     });
+
     const { page: pageInfo, problems } = result.data;
 
     return {

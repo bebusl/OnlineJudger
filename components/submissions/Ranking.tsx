@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { getSubmissionsByQuery } from "../../api/submissionsAPI";
 import useInfiniteScroll from "../../hooks/useIntersectionObserver";
-import { Table } from "../common";
+import Table from "../common/Table/Table";
 import Modal from "../common/Modal";
 import ScrollBox from "../common/ScrollBox";
 
