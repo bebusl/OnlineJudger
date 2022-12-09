@@ -2,9 +2,6 @@ import { LANGUAGES_TYPE } from "../../constants/language";
 import { TagsType } from "../../constants/tag";
 import { APIResponse } from "./common";
 import { PagingResponse } from "./page";
-
-export interface SubmitProblemResponse extends APIResponse {}
-
 export interface AddProblemRequest {
   title: string;
   time_limit: number;
@@ -41,10 +38,10 @@ export interface GetProblemResponse extends APIResponse {
     }
   ];
 }
-export interface GetAllProblemRequest {
+export interface GetProblemRequest {
   page: number;
   title: string;
-  languages: LANGUAGES_TYPE;
+  languages: LANGUAGES_TYPE[];
   tags: string[];
 }
 
