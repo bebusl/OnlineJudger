@@ -47,5 +47,5 @@ export interface GetSubmissionRequest {
 
 export interface GetSubmissionResponse extends APIResponse {
   page: PagingResponse;
-  submissions?: Submission[];
+  submissions: Submission[];
 }
