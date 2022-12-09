@@ -88,34 +88,34 @@ export default function request(
     return requestHandler(request, callback, errorHandler);
   }
 
-  function post<T>({
+  function post<T = unknown, R = AxiosResponse<T>>({
     url,
     data,
     config,
     callback,
     errorHandler,
-  }: PostRequestProps) {
+  }: PostRequestProps): Promise<R> {
     const request = () => axiosInstance.post<T>(url, data, config);
     return requestHandler(request, callback, errorHandler);
   }
 
-  function deleteRequest(
+  function deleteRequest<T = unknown, R = AxiosResponse<T>>(
     url: string,
     callback?: Function,
     errorHandler?: Function
-  ) {
+  ): Promise<R> {
     const request = () =>
       axiosInstance.delete(url, { headers: makeAuthHeader() });
     return requestHandler(request, callback, errorHandler);
   }
 
-  function putRequest({
+  function putRequest<T = unknown, R = AxiosResponse<T>>({
     url,
     data,
     config,
     callback,
     errorHandler,
-  }: PostRequestProps) {
+  }: PostRequestProps): Promise<R> {
     const request = () => axiosInstance.put(url, data, config);
     return requestHandler(request, callback, errorHandler);
   }
