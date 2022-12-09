@@ -8,7 +8,7 @@ import { FlexBox } from "../common";
 import Image from "next/image";
 
 function Header() {
-  const { isLogin, avatar, name, id } = useAppSelector((state) => state.auth);
+  const { isLogin, avatar, name } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const [isMount, setIsMount] = useState(false);
   const [openUserPopover, setOpenUserPopover] = useState(false);
