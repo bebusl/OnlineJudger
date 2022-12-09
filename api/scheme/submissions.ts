@@ -24,7 +24,7 @@ export interface Submission {
   status: SubmissionStatus;
   memory: number;
   real_time: number;
-  create_at: string;
+  created_at: string;
   updated_at: string;
   code: string;
   code_length: number;
@@ -38,11 +38,12 @@ export interface SubmitProblemRequest {
 }
 
 export interface GetSubmissionRequest {
-  page: number;
-  problem_id: number;
-  language: LANGUAGES_TYPE;
-  user_id: string;
-  is_ranking: boolean;
+  page?: number;
+  id?: number;
+  problem_id?: number;
+  language?: LANGUAGES_TYPE;
+  user_id?: string;
+  is_ranking?: boolean;
 }
 
 export interface GetSubmissionResponse extends APIResponse {
