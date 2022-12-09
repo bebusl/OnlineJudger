@@ -20,9 +20,7 @@ export interface SignUpResponse extends APIResponse {
   access_token: string;
 }
 
-export interface LinkKey {
-  link_key: string;
-}
+export type LinkKey = string;
 
 export interface OAuthResponse {
   provider: string;

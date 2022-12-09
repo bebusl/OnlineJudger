@@ -48,7 +48,7 @@ export const logout = () => post<APIResponse>({ url: "/logout" });
 
 export const refresh = () => post<RefreshTokenResponse>({ url: "/refresh" });
 
-export const linkOauth = async (linkKey: LinkKey) =>
-  await get(`/link/${linkKey}`);
+export const linkOauth = (linkKey: LinkKey) =>
+  get<APIResponse>(`/link/${linkKey}`);
 
 export const secession = () => deleteRequest<SecessionResponse>("");
