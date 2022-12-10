@@ -1,32 +1,27 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { HYDRATE } from "next-redux-wrapper";
-import { login, signup, getUser } from "../../api/authAPI";
+import { login, signup, getUser, logout } from "../../api/authAPI";
 import { addNoti } from "./notiSlice";
 import Cookies from "js-cookie";
 import { addHours } from "../../utils/dateUtils";
+import { SignInRequest, SignUpRequest } from "../../api/scheme/auth";
 
-const dummyImg =
-  "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=50&q=50";
-
-const initialState = { isLogin: false, id: "", roles: [] };
+const misteryManSrc =
+  "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+const initialState = {
+  isLogin: false,
+  id: "",
+  avatar: misteryManSrc,
+  name: "",
+  roles: [],
+  links: [],
+  userData: {},
+};
 
 export const signUpRequest = createAsyncThunk(
   "auth/signup",
-  async (
-    {
-      name,
-      id,
-      password,
-      link_key = "",
-    }: {
-      name: string;
-      id: string;
-      password: string;
-      link_key: string;
-    },
-    thunkAPI
-  ) => {
-    const response = await signup(name, id, password, link_key);
+  async (props: SignUpRequest, thunkAPI) => {
+    const response = await signup(props);
     if (response) return response;
     return thunkAPI.rejectWithValue(response);
   }
@@ -34,19 +29,8 @@ export const signUpRequest = createAsyncThunk(
 
 export const loginRequest = createAsyncThunk(
   "auth/login",
-  async (
-    {
-      id,
-      password,
-      link_key = "",
-    }: {
-      id: string;
-      password: string;
-      link_key?: string;
-    },
-    thunkAPI
-  ) => {
-    const loginInfo = await login({ id, password, link_key });
+  async ({ email, password, link_key = "" }: SignInRequest, thunkAPI) => {
+    const loginInfo = await login({ email, password, link_key });
     if (loginInfo.data.success) {
       thunkAPI.dispatch(
         addNoti({
@@ -56,14 +40,24 @@ export const loginRequest = createAsyncThunk(
         })
       );
       const { access_token, user } = loginInfo.data;
-      const roles = user.roles;
-      const name = user.name;
-      const avatar = user.avatar_url;
-      return { id, access_token, roles, name, avatar };
+
+      return { access_token, ...user };
     }
     return thunkAPI.rejectWithValue(loginInfo);
   }
 );
+
+export const logoff = createAsyncThunk("auth/logoff", async (_, thunkAPI) => {
+  try {
+    const res = await logout();
+    if (res.data.success) {
+      thunkAPI.dispatch(removeToken());
+      return res;
+    }
+  } catch (e) {
+    console.log("ERROR", e);
+  }
+});
 
 export const getUserData = createAsyncThunk(
   "auth/getMe",
@@ -82,14 +76,12 @@ export const authSlice = createSlice({
       ...state,
       ...action.payload.auth,
     }),
-    logoff: (state) => {
+    removeToken: (state) => {
       Cookies.remove("Authorization", {
         secure: false,
         sameSite: "Strict",
       });
-
-      state.isLogin = false;
-      state.id = "";
+      return Object.assign({}, initialState);
     },
   },
   extraReducers: (builder) => {
@@ -103,25 +95,29 @@ export const authSlice = createSlice({
       state.id = action.payload.id;
       state.roles = action.payload.roles;
       state.name = action.payload.name;
-      state.avatar = action.payload.avatar || dummyImg;
+      state.avatar = action.payload.links.avatar_url || misteryManSrc;
+      state.links = action.payload.links;
     });
     builder.addCase(loginRequest.rejected, (state, action) => {
       state.isLogin = false;
     });
     builder.addCase(getUserData.fulfilled, (state, action) => {
       state.isLogin = true;
-      state.userData = action.payload;
-      state.roles = action.payload.roles;
+      state.id = action.payload.id;
+      state.links = action.payload.links;
       state.roles = action.payload.roles;
       state.name = action.payload.name;
-      state.avatar = action.payload.avatar || dummyImg;
+      state.avatar = action.payload.avatar || misteryManSrc;
     });
     builder.addCase(getUserData.rejected, (state) => {
-      authSlice.caseReducers.logoff(state);
+      authSlice.caseReducers.removeToken(state);
+    });
+    builder.addCase(logoff.fulfilled, (state) => {
+      authSlice.caseReducers.removeToken(state);
     });
   },
 });
 
-export const { logoff } = authSlice.actions;
+export const { removeToken } = authSlice.actions;
 
 export default authSlice.reducer;
