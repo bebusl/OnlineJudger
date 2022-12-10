@@ -1,18 +1,24 @@
-import React, { useState } from "react";
+import React, { MouseEventHandler, useState } from "react";
+import type { NextPageContext } from "next";
 
-import type { InferGetServerSidePropsType, NextPageContext } from "next";
 import { getProblemDetail, modifyProblem } from "../../../api/problemsAPI";
+import { GetAllProblemResponse } from "../../../api/scheme/problem";
+
 import useNotification from "../../../hooks/useNotification";
+
 import ProblemForm from "../../../components/templates/ProblemForm";
 import { Button } from "../../../components/common";
 
-function ProblemDetail({
-  id,
-  ...data
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+interface Props {
+  id: string;
+  data: GetAllProblemResponse;
+}
+
+function ProblemDetail({ id, data }: Props) {
   const [readOnly, setReadOnly] = useState(true);
 
   const addNotification = useNotification();
+
   const handleSubmit = (data: FormData) => {
     modifyProblem(id, data).then((data) => {
       if (data.data.success) {
@@ -22,9 +28,15 @@ function ProblemDetail({
     });
   };
 
+  const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
+    setReadOnly(false);
+  };
+
   return (
-    <section>
+    <section style={{ width: "100%" }}>
       <h1>문제 보기/수정</h1>
+
       {readOnly ? (
         <p style={{ color: "red" }}>
           수정하려면 하단의 &apos;수정하기&apos;버튼을 눌러주세요
@@ -32,22 +44,15 @@ function ProblemDetail({
       ) : (
         <p style={{ color: "blue" }}>수정 가능한 상태입니다.</p>
       )}
+
+      {readOnly && <Button onClick={handleClick}>수정하기</Button>}
+
       <ProblemForm
         readOnly={readOnly}
         handleSubmit={handleSubmit}
         submitButtonText="문제 등록"
         {...data}
       />
-      {readOnly && (
-        <Button
-          onClick={(e) => {
-            e.preventDefault();
-            setReadOnly(false);
-          }}
-        >
-          수정하기
-        </Button>
-      )}
     </section>
   );
 }
@@ -55,18 +60,21 @@ function ProblemDetail({
 export async function getServerSideProps(ctx: NextPageContext) {
   const { problemId } = ctx.query;
 
-  const response = await getProblemDetail(problemId as string);
-  if (response.data.success) {
+  try {
+    const response = await getProblemDetail(problemId as string);
+    if (response.data?.success) {
+      return {
+        props: {
+          id: problemId,
+          data: response.data,
+        },
+      };
+    }
+  } catch (e) {
     return {
-      props: {
-        id: problemId,
-        ...response.data,
-      },
+      notFound: true,
     };
   }
-  return {
-    notFound: true,
-  };
 }
 
 export default ProblemDetail;
