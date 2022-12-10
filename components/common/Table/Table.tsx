@@ -1,3 +1,4 @@
+import Head from "next/head";
 import React, { useState } from "react";
 import styled from "styled-components";
 import {
@@ -18,7 +19,7 @@ export interface TableProps {
 
 export default function Table({ header, body, rowHeight }: TableProps) {
   const dataFields: string[] = header.map((content) => content.field);
-  const [sort, setSort] = useState({ field: "id", asc: true });
+  const [sort, setSort] = useState({ field: "id", asc: false });
 
   return (
     <>

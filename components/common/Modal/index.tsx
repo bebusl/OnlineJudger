@@ -1,7 +1,7 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import Button from "./Button";
-import FlexBox from "./FlexBox";
+import Button from "../Buttons/BasicButton/Button";
+import FlexBox from "../FlexBox";
 
 interface ModalProps {
   onClose: Function;
@@ -11,21 +11,26 @@ interface ModalProps {
 
 function Modal({ children, onClose, title = "" }: ModalProps) {
   const [isMounted, setIsMounted] = useState(false);
+  const ref = (element: HTMLDivElement) => {
+    if (element) element.focus();
+  };
   useEffect(() => {
     setIsMounted(true);
     return () => setIsMounted(false);
   }, []);
 
-  const ModalTest = () => (
+  const Element = () => (
     <FlexBox
       style={{
-        width: "100%",
+        width: "100vw",
         height: "100vh",
         position: "fixed",
         top: 0,
         left: 0,
         zIndex: 999,
       }}
+      ref={ref}
+      tabIndex={-1}
     >
       <div
         style={{
@@ -43,8 +48,6 @@ function Modal({ children, onClose, title = "" }: ModalProps) {
         style={{
           backgroundColor: "#fff",
           opacity: 1,
-          minWidth: "700px",
-          minHeight: "800px",
           zIndex: 1000,
           color: "#000",
           borderRadius: "5px",
@@ -69,7 +72,7 @@ function Modal({ children, onClose, title = "" }: ModalProps) {
 
   if (isMounted) {
     const element = document.getElementById("portal") as Element;
-    return ReactDOM.createPortal(<ModalTest />, element);
+    return ReactDOM.createPortal(<Element />, element);
   }
   return null;
 }

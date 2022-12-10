@@ -1,5 +1,5 @@
 import { SetStateAction, useMemo, useState } from "react";
-import Button from "../Button";
+import Button from "../Buttons/BasicButton/Button";
 import Table, { TableProps } from "./Table";
 
 interface CheckableTableProps extends TableProps {

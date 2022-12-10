@@ -10,7 +10,6 @@ interface Props {
 }
 
 function Pagination({ route, current_pages, total_pages }: Props) {
-  // const total_pages = 26; if you want test pagination
   const router = useRouter();
   const paginationIndex = Math.floor((current_pages - 1) / 5);
   const enablePrev = useMemo(() => paginationIndex !== 0, [paginationIndex]);
@@ -25,9 +24,9 @@ function Pagination({ route, current_pages, total_pages }: Props) {
       ...[1, 2, 3, 4, 5].map((number) => 5 * paginationIndex + number)
     );
   else {
-    const lastPageIndex = total_pages % 5;
-    for (let i = 0; i < lastPageIndex; i++) {
-      pageNumbers.push(5 * paginationIndex + i + 1);
+    const restPages = total_pages % 5;
+    for (let i = 1; i <= restPages; i++) {
+      pageNumbers.push(5 * paginationIndex + i);
     }
   }
   return (
@@ -68,9 +67,6 @@ function Pagination({ route, current_pages, total_pages }: Props) {
       </PageNumbers>
       {enableNext && (
         <Link
-          // href={`${route}?page=${
-          //   current_pages + 5 > total_pages ? total_pages : current_pages + 5
-          // }`}
           href={{
             pathname: router.pathname,
             query: {

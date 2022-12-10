@@ -12,6 +12,12 @@ function Popover({
 }) {
   const [isMount, setIsMount] = useState(false);
 
+  const ref = (element: HTMLDivElement) => {
+    if (element) {
+      element.focus();
+    }
+  };
+
   useEffect(() => {
     setIsMount(true);
   }, []);
@@ -27,6 +33,8 @@ function Popover({
           borderRadius: "5px",
           boxShadow: "3px 3px 10px rgba(99, 99, 99, 0.5)",
         }}
+        tabIndex={-1}
+        ref={ref}
       >
         {children}
       </div>,

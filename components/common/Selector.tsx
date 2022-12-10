@@ -1,7 +1,6 @@
-import React, { ChangeEventHandler, useRef, useState } from "react";
+import React, { ChangeEventHandler, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import Button from "./Button";
-import ErrorBoundary from "./ErrorBoundary";
+import Button from "./Buttons/BasicButton/Button";
 import Popover from "./Popover";
 
 interface selectorProps {
@@ -15,6 +14,7 @@ function Selector({
   groupName = "채점 가능 언어",
 }: selectorProps) {
   const [expand, setExpand] = useState(false);
+
   const [expandPosition, setExpandPosition] = useState({
     top: 0,
     left: 0,
@@ -22,19 +22,20 @@ function Selector({
   });
 
   return (
-    <>
+    <div>
       <Expander
         $variant="outline"
         onClick={(e) => {
           e.preventDefault();
           setExpand((prev) => !prev);
+
           const target = e.target as HTMLButtonElement;
           const rect = target.getBoundingClientRect();
           if (rect)
             setExpandPosition({
-              top: rect.top + rect.height,
+              top: rect.top + rect.height + window.scrollY,
               left: rect.left,
-              width: rect.width,
+              width: rect.width > 320 ? rect.width : 320,
             });
         }}
       >
@@ -42,7 +43,7 @@ function Selector({
       </Expander>
       {expand && (
         <Popover top={expandPosition.top} left={expandPosition.left}>
-          <form style={{ width: expandPosition.width }}>
+          <form tabIndex={-1} style={{ width: expandPosition.width }}>
             {options.map((option) => {
               const { text, checked } = option;
               return (
@@ -62,7 +63,7 @@ function Selector({
           </form>
         </Popover>
       )}
-    </>
+    </div>
   );
 }
 
