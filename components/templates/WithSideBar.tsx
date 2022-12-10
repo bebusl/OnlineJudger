@@ -1,8 +1,7 @@
 import { useRouter } from "next/router";
 import React, { ReactNode } from "react";
 import { FlexBox } from "../common";
-import { IconButton } from "../common/Button";
-
+import { IconButton } from "../common/Buttons/IconButton/IconButton";
 function WithSideBar({ children }: { children: ReactNode }) {
   const router = useRouter();
   const path = router.pathname;
@@ -32,6 +31,15 @@ function WithSideBar({ children }: { children: ReactNode }) {
             router.push("/user/problem");
           }}
           isActive={path === "/user/problem"}
+        />
+        <IconButton
+          text="비밀번호 재설정"
+          subText="비밀번호를 변경합니다"
+          onClick={(e) => {
+            e.preventDefault();
+            router.push("/user/password-reset");
+          }}
+          isActive={path === "/user/password-reset"}
         />
       </div>
       <div style={{ flex: 3 }}>{children}</div>
