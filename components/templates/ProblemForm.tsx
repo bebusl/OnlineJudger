@@ -1,6 +1,7 @@
 import React, { FormEventHandler, useRef, useState } from "react";
 
 import useForm from "../../hooks/useForm";
+import { useRouter } from "next/router";
 
 import { AddProblemRequest } from "../../api/scheme/problem";
 
@@ -16,7 +17,7 @@ import Selector from "../common/Selector";
 import DropZone from "../common/DropZone";
 import Subscription from "../common/Typhography/Subscription";
 
-interface FormProps extends AddProblemRequest {
+interface FormProps extends Partial<AddProblemRequest> {
   readOnly: boolean;
   handleSubmit(data: FormData): void;
   submitButtonText?: string;
@@ -37,14 +38,23 @@ function ProblemForm({
   output_desc,
   handleSubmit,
 }: FormProps) {
+  const router = useRouter();
+
   const [examples, setExamples] =
     useState<{ input: string; output: string }[]>(test_case_examples);
   const [selectedTags, setSelectedTag] = useState(new Set());
   const [selectedLanguages, setSelectedLanguages] = useState(new Set());
-  const { getRef, getAllValues, isValid, handleBlur, isValidInputs } = useForm({
-    types: ["title", "timeLimit", "memoryLimit", "description"],
-  });
   const [testcaseFile, setTestcaseFile] = useState<File | null>(null);
+  const { getRef, getAllValues, isValid, handleBlur, isValidInputs } = useForm({
+    types: [
+      "title",
+      "time_limit",
+      "memory_limit",
+      "desc",
+      "input_desc",
+      "output_desc",
+    ],
+  });
 
   const tagOptions = TAGS.map((tag) => ({
     text: tag,
@@ -56,35 +66,30 @@ function ProblemForm({
     checked: selectedLanguages.has(language),
   }));
 
-  const formRef = useRef<HTMLFormElement>(null); //제거대상
+  const generateSubmitFormData = () => {
+    const refValues = getAllValues();
+    const allValues = Object.assign(refValues, {
+      tags: Array.from(selectedTags),
+      languages: Array.from(selectedLanguages),
+      level: 0,
+      test_case_examples: examples,
+    });
+
+    const submitFormData = new FormData();
+    submitFormData.append("req", JSON.stringify(allValues));
+    if (testcaseFile) submitFormData.append("file", testcaseFile);
+
+    return submitFormData;
+  };
 
   const handleGeSubmit: FormEventHandler = (e) => {
     e.preventDefault();
-    const languages: string[] = [];
-    const checkedElements = e.currentTarget.querySelectorAll(
-      "input[type=checkbox]:checked"
-    ) as NodeListOf<HTMLInputElement>;
-    checkedElements.forEach((element) => languages.push(element.value));
-
-    if (formRef.current) {
-      const test = new FormData(formRef.current);
-      const value = Object.fromEntries(test.entries()) as Record<
-        string,
-        unknown
-      >;
-      value.languages = languages;
-      value.tags = ["DP"];
-      value.test_case_examples = examples;
-      const result = new FormData();
-      result.append("req", JSON.stringify(value));
-      if (testcaseFile) result.append("file", testcaseFile, testcaseFile.name);
-      console.log(getAllValues());
-      //handleSubmit(result);
-    }
+    const submitData = generateSubmitFormData();
+    handleSubmit(submitData);
   };
 
   return (
-    <form ref={formRef} onSubmit={handleGeSubmit} style={{ maxWidth: "800px" }}>
+    <form onSubmit={handleGeSubmit} style={{ maxWidth: "800px" }}>
       <LabeledInput
         name="title"
         forwardref={getRef("title")}
@@ -98,7 +103,7 @@ function ProblemForm({
         text="시간제한"
         name="time_limit"
         type="number"
-        forwardref={getRef("timeLimit")}
+        forwardref={getRef("time_limit")}
         defaultValue={time_limit}
         readOnly={readOnly}
       />
@@ -106,7 +111,7 @@ function ProblemForm({
         text="메모리제한"
         name="memory_limit"
         type="number"
-        forwardref={getRef("memoryLimit")}
+        forwardref={getRef("memory_limit")}
         defaultValue={memory_limit}
         readOnly={readOnly}
       />
@@ -130,9 +135,9 @@ function ProblemForm({
         />
       </FlexBox>
       <LabeledTextArea
-        forwardRef={getRef("description")}
+        forwardRef={getRef("desc")}
         text="문제 설명"
-        name="description"
+        name="desc"
         defaultValue={desc}
         readOnly={readOnly}
       />
@@ -140,13 +145,15 @@ function ProblemForm({
       <LabeledTextArea
         text="입력 설명"
         name="input_desc"
-        value={input_desc}
+        forwardRef={getRef("input_desc")}
+        defaultValue={input_desc}
         readOnly={readOnly}
       />
       <LabeledTextArea
         text="출력 설명"
         name="output_desc"
-        value={input_desc}
+        forwardRef={getRef("output_desc")}
+        defaultValue={output_desc}
         readOnly={readOnly}
       />
       <h3>예시</h3>
@@ -154,9 +161,9 @@ function ProblemForm({
       {examples.map((exampleValue, idx) => {
         return (
           <>
-            <FlexBox key={idx} flexDirection="row" alignItems="stretch">
+            <FlexBox key={idx} flexDirection="row" alignItems="flex-end">
               <LabeledTextArea
-                text={`입력예제${idx}`}
+                text={`입력예제${idx + 1}`}
                 name={`input_example_${idx}`}
                 readOnly={readOnly}
                 value={exampleValue.input}
@@ -174,7 +181,7 @@ function ProblemForm({
                 }}
               />
               <LabeledTextArea
-                text={`출력예제${idx}`}
+                text={`출력예제${idx + 1}`}
                 name={`output_example_${idx}`}
                 readOnly={readOnly}
                 value={exampleValue.output}
@@ -237,7 +244,9 @@ function ProblemForm({
             setFile={(file: File) => setTestcaseFile(file)}
           />
           <FlexBox justifyContent="space-between" flexDirection="row">
-            <Button $variant="outline">취소</Button>
+            <Button $variant="outline" onClick={() => router.back()}>
+              취소
+            </Button>
             <Button type="submit">제출</Button>
           </FlexBox>
         </>

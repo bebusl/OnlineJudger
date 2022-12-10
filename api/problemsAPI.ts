@@ -1,78 +1,36 @@
 import request from "./request";
-import { LANGUAGES } from "../constants/language";
 import { makeAuthHeader } from "../utils/authUtils";
+import {
+  AddProblemResponse,
+  GetProblemRequest,
+  GetAllProblemResponse,
+  GetProblemResponse,
+} from "./scheme/problem";
 import axios from "axios";
+import { APIResponse } from "./scheme/common";
 
 const { get, post, deleteRequest, putRequest } = request("/problems");
 
-export type ProblemInfo = {
-  success: boolean;
-  err_msg: string;
-  id: number;
-  title: string;
-  time_limit: number;
-  memory_limit: number;
-  desc: string;
-  input_desc: string;
-  output_desc: string;
-  test_case_examples: [
-    {
-      input: string;
-      output: string;
-    }
-  ];
-  languages: LANGUAGES[];
-  tags: [
-    {
-      created_at: Date;
-      updated_at: Date;
-      id: number;
-      name: string;
-    }
-  ];
-};
+export const deleteProblem = (id: number) =>
+  deleteRequest<APIResponse>(`/${id}`);
 
-export type PageInfo = {
-  total_elements: number;
-  current_pages: number;
-  total_pages: number;
-  is_first: boolean;
-  is_last: boolean;
-};
-
-export interface GetAllResponseType {
-  success: boolean;
-  err_msg: string;
-  page: PageInfo;
-  problems: ProblemInfo[];
-}
-
-export interface problemProps {
-  page?: string | number;
-  title?: string;
-  languages?: LANGUAGES | LANGUAGES[];
-  tags?: number | number[];
-}
-
-export const deleteProblem = async (id: number) =>
-  await deleteRequest(`/${id}`);
-
-export const deleteMultiProblems = async (ids: Set<number>) => {
+export const deleteMultiProblems = (ids: Set<number>) => {
   const problemWillDelete = Array.from(ids);
   const requests = problemWillDelete.map((problemId) =>
-    deleteRequest(`/${problemId}`)
+    deleteRequest<APIResponse>(`/${problemId}`)
   );
   return axios.all(requests);
 };
 
-export const getProblemDetail = async (id: string) => await get(`/${id}`);
+export const getProblemDetail = (id: string) =>
+  get<GetProblemResponse>(`/${id}`);
 
-export const getProblems = async ({
-  page = "1",
+export const getProblems = ({
+  page = 1,
   title,
   languages = [],
   tags,
-}: problemProps) => {
+}: GetProblemRequest) => {
   const defaultQuery = "?page=" + page;
   const titleQuery = title ? `&title=${title}` : "";
   let languagesQuery = "";
@@ -89,13 +47,11 @@ export const getProblems = async ({
   }
   if (tags) tagsQuery = "&tags=" + languages;
 
-  return await get<GetAllResponseType>(
-    defaultQuery + titleQuery + languagesQuery
-  );
+  return get<GetAllProblemResponse>(defaultQuery + titleQuery + languagesQuery);
 };
 
-export const registerProblem = async (data: FormData) =>
-  await post({
+export const registerProblem = (data: FormData) =>
+  post<AddProblemResponse>({
     url: "",
     data: data,
     config: {
@@ -107,8 +63,8 @@ export const registerProblem = async (data: FormData) =>
     },
   });
 
-export const modifyProblem = async (id: number, data: FormData) =>
-  await putRequest({
+export const modifyProblem = (id: string, data: FormData) =>
+  putRequest<APIResponse>({
     url: `/${id}`,
     data,
     config: {

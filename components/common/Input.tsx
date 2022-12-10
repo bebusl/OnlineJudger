@@ -6,6 +6,7 @@ import React, {
   useEffect,
 } from "react";
 import styled from "styled-components";
+import Subscription from "./Typhography/Subscription";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   type?: string;
@@ -32,9 +33,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <InputWrapper>
         <input ref={ref} type={type} {...rest} />
-        <p style={{ visibility: isValid ? "hidden" : "visible" }}>
+        <Subscription
+          style={{ visibility: isValid ? "hidden" : "visible", color: "red" }}
+        >
           {errorMessage}
-        </p>
+        </Subscription>
       </InputWrapper>
     );
   }
@@ -54,7 +57,6 @@ export const FormGroup = ({ children, ...props }: FormGroupProps) => {
 };
 
 export const LabeledInput = ({ forwardref, ...props }: LabelInputProps) => {
-  console.log(forwardref);
   return (
     <FormGroup text={props.text}>
       <Input {...props} ref={forwardref} />
@@ -79,6 +81,7 @@ export const InputWrapper = styled.div`
 
 const FormGroupWrapper = styled.div`
   margin: 1rem 0;
+  flex-grow: 1;
   & > label {
     font-weight: bold;
     font-size: ${({ theme }) => theme.fontSizes[3]};

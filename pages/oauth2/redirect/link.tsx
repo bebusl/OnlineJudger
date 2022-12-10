@@ -1,8 +1,5 @@
 import React, { useEffect } from "react";
 import type { NextPageContext } from "next";
-import { LINK_KEY } from "../../../constants/url";
-
-import { loginRequest } from "../../../store/slice/authSlice";
 
 import { useRouter } from "next/router";
 import { useAppDispatch } from "../../../hooks/useStore";
@@ -21,25 +18,18 @@ function Oauth2Link({
   provider: string;
 }) {
   const router = useRouter();
-  const dispatch = useAppDispatch();
   const addNotification = useNotification();
-
-  console.log("?!", isNew, linkKey, error, provider);
-
   useEffect(() => {
     if (isNew) {
       (async () => {
         const response = await linkOauth(encodeURI(linkKey));
-        console.log(response.data.success);
         if (response.data.success) {
           addNotification("연동에 성공했습니다.", "success");
           router.replace("/user");
         }
       })();
-      // router.replace("/user");
     } else {
-      addNotification("이미 있는 ", "error");
-      // router.replace("/");
+      addNotification("다른 계정과 연동된 소셜 계정입니다.", "error");
     }
   }, []);
 

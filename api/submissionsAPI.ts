@@ -1,15 +1,20 @@
-import { LANGUAGES } from "../constants/language";
+import { LANGUAGES_TYPE } from "../constants/language";
 import { makeAuthHeader } from "../utils/authUtils";
 import request from "./request";
+import { APIResponse } from "./scheme/common";
+import {
+  GetSubmissionRequest,
+  GetSubmissionResponse,
+} from "./scheme/submissions";
 
 const { get, post } = request("/submissions");
 
-export const gradeProblem = async (
+export const gradeProblem = (
   problemId: number,
   code: string,
-  language: LANGUAGES
+  language: LANGUAGES_TYPE
 ) =>
-  await post({
+  post<APIResponse>({
     url: "",
     data: { problem_id: problemId, language, code, judge: true },
     config: {
@@ -17,12 +22,12 @@ export const gradeProblem = async (
     },
   });
 
-export const runProblem = async (
+export const runProblem = (
   problemId: number,
   code: string,
-  language: LANGUAGES
+  language: LANGUAGES_TYPE
 ) =>
-  await post({
+  post<APIResponse>({
     url: "",
     data: { problem_id: problemId, language, code, judge: false },
     config: {
@@ -30,34 +35,28 @@ export const runProblem = async (
     },
   });
 
-export const getAllSubmissions = async (page: number, language?: string) => {
+export const getAllSubmissions = (page: number, language?: string) => {
   const pageQuery = "page=" + page;
   const languageQuery = language ? "&language=" + language : "";
   const query = "?" + pageQuery + languageQuery;
-  return await get(query);
+  return get(query);
 };
 //모든 제출 기록 가져오기(scoreboard), scoreboard는 모든 페이지 정보 다 들고와서 해야할 것 같음..!
 //맨 첫번째 걸 먼저 들고옴. 1페이지 응답 => total_page저장되어 있음. => Promise.all안에 2페이지부터 total_page까지 결과를 다 가져옴 => data합쳐서 return
 
-export const getSubmissionsByQuery = async ({
-  userId,
-  problemId,
+export const getSubmissionsByQuery = ({
+  user_id,
+  problem_id,
   language,
   page = 0,
-  isRanking = false,
-}: {
-  userId?: string;
-  problemId?: number;
-  language?: string;
-  page?: number;
-  isRanking?: boolean;
-}) => {
+  is_ranking = false,
+}: GetSubmissionRequest) => {
   const pageQuery = "?page=" + page;
-  const userIdQuery = userId ? "&user_id=" + userId : "";
-  const problemIdQuery = problemId ? "&problem_id=" + problemId : "";
+  const userIdQuery = user_id ? "&user_id=" + user_id : "";
+  const problemIdQuery = problem_id ? "&problem_id=" + problem_id : "";
   const languageQuery = language ? "&language=" + language : "";
-  const rankingQuery = isRanking ? "&is_ranking=true" : "&is_ranking=false";
+  const rankingQuery = is_ranking ? "&is_ranking=true" : "&is_ranking=false";
   const query =
     pageQuery + userIdQuery + problemIdQuery + languageQuery + rankingQuery;
-  return await get(query);
+  return get<GetSubmissionResponse>(query);
 };

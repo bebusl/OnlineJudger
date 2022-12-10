@@ -1,19 +1,30 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Container, Logo } from "./Header.style";
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 import { logoff } from "../../store/slice/authSlice";
-
-const dummyImg =
-  "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=50&q=50";
+import Popover from "../common/Popover";
+import { FlexBox } from "../common";
+import Image from "next/image";
 
 function Header() {
-  const isLogin = useAppSelector((state) => state.auth?.isLogin);
+  const { isLogin, avatar, name } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const [isMount, setIsMount] = useState(false);
+  const [openUserPopover, setOpenUserPopover] = useState(false);
+  const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
+  const popoverRef = useRef<HTMLDivElement>(null);
+  const countRef = useRef<number>(0);
   useEffect(() => {
     setIsMount(true);
+    const handleResizeEvent = (e) => {
+      countRef.current = countRef.current + 1;
+      const popoverBoxElement = document.getElementById("popoverbox");
+      const rect = popoverBoxElement?.getBoundingClientRect();
+      if (rect) setPopoverPosition({ top: rect.top, left: rect.left });
+    };
+    window.addEventListener("resize", handleResizeEvent);
+    return () => window.removeEventListener("resize", handleResizeEvent);
   }, []);
 
   return (
@@ -21,29 +32,54 @@ function Header() {
       <Logo>
         <Link href="/">Online Judge</Link>
       </Logo>
-      <div style={{ width: "30%" }}>
+      <FlexBox flexDirection="row" gap="1.325rem" style={{ maxWidth: "50%" }}>
         {isMount && isLogin ? (
           <>
             <Link href="/scoreboard">채점현황</Link>
             <Link href="/problem?page=1">문제보기</Link>
             <Link href="/user/problem">푼 문제</Link>
-            <Link href="/user" passHref>
-              <span>
-                <Image
-                  alt="profile image"
-                  src={dummyImg}
-                  width="50px"
-                  height="50px"
-                />
-              </span>
-            </Link>
-            <button
-              onClick={() => {
-                dispatch(logoff());
+            <div
+              onClick={(e) => {
+                const target = e.target as HTMLDivElement;
+                const rect = target.getBoundingClientRect();
+                setOpenUserPopover(true);
+                setPopoverPosition({
+                  top: rect.top + rect.height,
+                  left: rect.left - 50,
+                });
               }}
+              id="popoverbox"
             >
-              로그아웃
-            </button>
+              {name}님
+            </div>
+            {openUserPopover && (
+              <Popover top={popoverPosition.top} left={popoverPosition.left}>
+                <FlexBox
+                  flexDirection="column"
+                  style={{ width: "200px", height: "200px" }}
+                  onMouseLeave={() => setOpenUserPopover(false)}
+                >
+                  <div ref={popoverRef}>
+                    <Image
+                      width="50px"
+                      height="50px"
+                      src={avatar}
+                      alt="user profile image"
+                    />
+                    <p>@test1234</p>
+                  </div>
+                  <Link href="/user">마이 페이지</Link>
+                  <Link href="/user/problem">푼 문제</Link>
+                  <button
+                    onClick={() => {
+                      dispatch(logoff());
+                    }}
+                  >
+                    로그아웃
+                  </button>
+                </FlexBox>
+              </Popover>
+            )}
           </>
         ) : (
           <>
@@ -51,7 +87,7 @@ function Header() {
             <Link href="/register">회원가입</Link>
           </>
         )}
-      </div>
+      </FlexBox>
     </Container>
   );
 }
