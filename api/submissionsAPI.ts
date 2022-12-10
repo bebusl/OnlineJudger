@@ -49,14 +49,21 @@ export const getSubmissionsByQuery = ({
   problem_id,
   language,
   page = 0,
+  id,
   is_ranking = false,
 }: GetSubmissionRequest) => {
   const pageQuery = "?page=" + page;
+  const submitIdQuery = id ? "&submission_id=" + id : "";
   const userIdQuery = user_id ? "&user_id=" + user_id : "";
   const problemIdQuery = problem_id ? "&problem_id=" + problem_id : "";
   const languageQuery = language ? "&language=" + language : "";
   const rankingQuery = is_ranking ? "&is_ranking=true" : "&is_ranking=false";
   const query =
-    pageQuery + userIdQuery + problemIdQuery + languageQuery + rankingQuery;
+    pageQuery +
+    userIdQuery +
+    problemIdQuery +
+    submitIdQuery +
+    languageQuery +
+    rankingQuery;
   return get<GetSubmissionResponse>(query);
 };
