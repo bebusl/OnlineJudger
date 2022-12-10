@@ -7,7 +7,11 @@ const nextConfig = {
       "images.unsplash.com",
       "cdn.pixabay.com",
       "lh3.googleusercontent.com",
+      "cdn.jsdelivr.net",
     ],
+    typescript: {
+      ignoreBuildErros: true,
+    },
   },
 };
 
