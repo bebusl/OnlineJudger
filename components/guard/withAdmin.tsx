@@ -3,8 +3,6 @@ import { useRouter } from "next/router";
 import { useAppSelector } from "../../hooks/useStore";
 import useNotification from "../../hooks/useNotification";
 
-import Cookies from "js-cookie";
-
 import { ROLEADMIN } from "../../constants/role";
 
 const withAdmin = (
@@ -26,12 +24,11 @@ const withAdmin = (
         router.replace("/");
         return null;
       }
-      if (isLogin && roles?.includes(ROLEADMIN))
-        return <WrappedComponent {...props} />;
-
-      addNotification("관리자 권한이 없습니다.", "error");
-      router.replace("/");
-      return null;
+      // if (isLogin && roles?.includes(ROLEADMIN))
+      //   return <WrappedComponent {...props} />;
+      return <WrappedComponent {...props} />;
+      // addNotification("관리자 권한이 없습니다.", "error");
+      // router.replace("/");
     }
     return null;
   }

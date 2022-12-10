@@ -45,11 +45,6 @@ const withAuth = (
           router.replace("/login");
         }
       }
-      if (!isLogin) {
-        addNotification("로그인이 필요합니다.", "error");
-        router.replace("/login");
-      }
-      if (!accessToken) return <div>권한 확인 중..</div>;
 
       return <WrappedComponent {...props} />;
     }
