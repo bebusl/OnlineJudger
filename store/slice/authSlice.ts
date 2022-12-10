@@ -104,10 +104,10 @@ export const authSlice = createSlice({
     builder.addCase(getUserData.fulfilled, (state, action) => {
       state.isLogin = true;
       state.id = action.payload.id;
-      state.links = action.payload.links;
       state.roles = action.payload.roles;
       state.name = action.payload.name;
-      state.avatar = action.payload.avatar || misteryManSrc;
+      state.avatar = action.payload.links.avatar_url || misteryManSrc;
+      state.links = action.payload.links;
     });
     builder.addCase(getUserData.rejected, (state) => {
       authSlice.caseReducers.removeToken(state);
