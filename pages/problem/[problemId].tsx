@@ -8,10 +8,11 @@ import {
   CPP,
   PYTHON2,
   PYTHON3,
-  LANGUAGES,
+  LANGUAGES_TYPE,
 } from "../../constants/language";
 import dynamic from "next/dynamic";
-import { Button, FlexBox, Table } from "../../components/common";
+import { Button, FlexBox } from "../../components/common";
+import Table from "../../components/common/Table/Table";
 import { WEB_SOCKET_URL } from "../../constants/url";
 import { makeAuthHeader } from "../../utils/authUtils";
 import SockJS from "sockjs-client";
@@ -20,33 +21,20 @@ import { gradeProblem, runProblem } from "../../api/submissionsAPI";
 import useNotification from "../../hooks/useNotification";
 import ScrollBox from "../../components/common/ScrollBox";
 import { useAppSelector } from "../../hooks/useStore";
+import { GetProblemResponse } from "../../api/scheme/problem";
+import styled from "styled-components";
 
-const Ranking = dynamic(import("../../components/submissions/Ranking"), {
-  ssr: false,
-});
+const RankingModal = dynamic(
+  import("../../components/submissions/RankingModal"),
+  {
+    ssr: false,
+  }
+);
 const MonacoEditor = dynamic(import("@monaco-editor/react"), { ssr: false });
-
-interface ProblemDetailProps {
-  id: number;
-  title: string;
-  time_limit: number;
-  memory_limit: number;
-  desc: string;
-  input_desc: string;
-  output_desc: string;
-  test_case_examples: Record<string, unknown>[];
-  languages: (
-    | typeof JAVA
-    | typeof C
-    | typeof CPP
-    | typeof PYTHON2
-    | typeof PYTHON3
-  )[];
-}
 
 let socketClient: StompJS.Client | null = null;
 
-function ProblemDetail(props: ProblemDetailProps) {
+function ProblemDetail(props: GetProblemResponse) {
   const {
     id,
     title,
@@ -62,9 +50,9 @@ function ProblemDetail(props: ProblemDetailProps) {
   const isLogin = useAppSelector((store) => store.auth.isLogin);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [language, setLanguage] = useState<LANGUAGES>(JAVA);
+  const [language, setLanguage] = useState<LANGUAGES_TYPE>(JAVA);
   const editorRef = useRef(null);
-  const [result, setResult] = useState("실행 결과가 여기에 표시됩니다.");
+  const [result, setResult] = useState();
   const addNoti = useNotification();
 
   function connection() {
@@ -81,15 +69,14 @@ function ProblemDetail(props: ProblemDetailProps) {
               addNoti(body.message, body.variant);
             });
             socketClient?.subscribe("/user/queue/problem/run", (msg) => {
-              console.log("실행 결과 왔슴당!", msg);
               const body = JSON.parse(msg.body);
-              setResult(
-                `컴파일 결과\n${
-                  body.result_list.length > 0 ? "컴파일 성공" : "컴파일 실패"
-                }\n실행 결과${body.result_list[1].result}\n채점 결과${
-                  body.result_list[1].correct
-                }`
-              );
+              // setResult(
+              //   `컴파일 결과\n${
+              //     body.result_list.length > 0 ? "컴파일 성공" : "컴파일 실패"
+              //   }\n실행 결과${body.result_list[1].result}\n채점 결과${
+              //     body.result_list[1].correct
+              //   }`
+              // );
             });
           }
         },
@@ -113,9 +100,9 @@ function ProblemDetail(props: ProblemDetailProps) {
 
   return (
     <>
-      <React.Suspense fallback={<div> 모달 생성 중</div>}>
-        {isOpen && <Ranking onClose={() => setIsOpen(false)} problemId={id} />}
-      </React.Suspense>
+      {isOpen && (
+        <RankingModal onClose={() => setIsOpen(false)} problemId={id} />
+      )}
 
       <FlexBox as={"nav"} flexDirection="row" justifyContent="space-between">
         <h1>{title}</h1>
@@ -127,8 +114,8 @@ function ProblemDetail(props: ProblemDetailProps) {
           }}
         >
           <option value="java">JAVA</option>
-          <option value="python">PYTHON2</option>
-          <option value="python">python3</option>
+          <option value="python2">PYTHON2</option>
+          <option value={PYTHON3}>PYTHON3</option>
           <option value="c++">c++</option>
           <option value="c">c</option>
         </select>
@@ -142,6 +129,7 @@ function ProblemDetail(props: ProblemDetailProps) {
             <h3>문제 설명</h3>
             <p>{desc}</p>
           </article>
+          <hr />
           <article>
             <h3>제한사항</h3>
             <h4>메모리</h4>
@@ -151,6 +139,7 @@ function ProblemDetail(props: ProblemDetailProps) {
             <h4>제출 가능 언어</h4>
             <p>{languages.join(" ")}</p>
           </article>
+          <hr />
           <article>
             <>
               <h3>입출력 설명</h3>
@@ -158,8 +147,8 @@ function ProblemDetail(props: ProblemDetailProps) {
               <p>{input_desc}</p>
               <h4>출력 설명</h4>
               <p>{output_desc}</p>
+              <hr />
               <h3>예제</h3>
-              {console.log("test_CASE", test_case_examples)}
               <Table
                 header={[
                   { field: "input", header: "입력" },
@@ -189,17 +178,67 @@ function ProblemDetail(props: ProblemDetailProps) {
               },
             }}
           />
-          <MonacoEditor
-            height="30vh"
-            language={language}
-            value={result}
-            options={{
-              readOnly: true,
-              minimap: {
-                enabled: false,
-              },
-            }}
-          />
+          <FlexBox style={{ height: "30vh" }}>
+            <ScrollBox>
+              <code>{result}</code>
+              <ul>
+                {RIGHT_ANSWER?.result_list.length > 1 &&
+                  RIGHT_ANSWER?.result_list.slice(1).map((result, idx) => {
+                    return (
+                      <>
+                        <STable>
+                          <tbody>
+                            <tr className="title">
+                              <td>테스트{idx + 1}</td>
+                            </tr>
+                            <tr>
+                              <td align="right">
+                                입력 <span>〉</span>
+                              </td>
+                              <td>{test_case_examples[idx]?.input}</td>
+                            </tr>
+                            <tr>
+                              <td align="right">
+                                기대값 <span>〉</span>
+                              </td>
+                              <td>
+                                <pre>{test_case_examples[idx]?.output}</pre>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td align="right">
+                                실행결과 <span>〉</span>
+                              </td>
+                              <td>
+                                <pre>{result.output}</pre>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td align="right">
+                                출력 <span>〉</span>
+                              </td>
+                              <td
+                                className={result.correct ? "right" : "wrong"}
+                              >
+                                {result.correct ? "맞았습니다" : "틀렸습니다"}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </STable>
+                      </>
+                    );
+                  })}
+              </ul>
+              <code>
+                <pre>
+                  테스트 결과 (~˘▾˘)~
+                  {RIGHT_ANSWER.status}
+                </pre>
+              </code>
+              <code>{RIGHT_ANSWER.status}</code>
+              <code>n개 중 m개 성공</code>
+            </ScrollBox>
+          </FlexBox>
         </section>
       </FlexBox>
       <FlexBox flexDirection="row" justifyContent={"space-between"}>
@@ -215,7 +254,7 @@ function ProblemDetail(props: ProblemDetailProps) {
               <Button
                 onClick={() => {
                   const code = editorRef.current?.getValue();
-                  runProblem(id, code, C);
+                  runProblem(id, code, language);
                 }}
               >
                 코드 실행
@@ -223,7 +262,7 @@ function ProblemDetail(props: ProblemDetailProps) {
               <Button
                 onClick={() => {
                   const code = editorRef.current?.getValue();
-                  gradeProblem(id, code, C);
+                  gradeProblem(id, code, language);
                 }}
               >
                 제출 및 채점
@@ -246,9 +285,10 @@ export async function getServerSideProps(ctx: NextPageContext) {
   if (problemId) {
     try {
       const problemDetail = await getProblemDetail(problemId as string);
-      return {
-        props: problemDetail.data,
-      };
+      if (problemDetail.data.success)
+        return {
+          props: problemDetail.data,
+        };
     } catch (e) {
       return {
         redirect: {
@@ -265,3 +305,77 @@ ProblemDetail.getLayout = function getLayout(page: ReactElement) {
 };
 
 export default ProblemDetail;
+
+const STable = styled.table`
+  width: 100%;
+  background-color: ${({ theme }) => theme.colors.gray50};
+  border: 1px solid ${({ theme }) => theme.colors.gray100};
+  border-collapse: collapse;
+  font-size: ${({ theme }) => theme.fontSizes[2]};
+  color: ${({ theme }) => theme.colors.gray500};
+  & tr {
+    border: 1px solid ${({ theme }) => theme.colors.gray100};
+  }
+  & .title {
+    font-weight: bold;
+  }
+  & .right {
+    color: #5a65ff;
+  }
+
+  & .wrong {
+    color: #ff5a5a;
+  }
+`;
+
+export const RIGHT_ANSWER = {
+  created_at: "2022-12-08T11:47:19.079",
+  updated_at: "2022-12-08T11:47:19.174215858",
+  id: "6391cec77b89c103bda4e108",
+  user_id: "test1234",
+  problem_id: 3,
+  code: 'a = input()\nb= input()\nprint("Hello "+a)\nprint("Hello2 "+b)',
+  language: "PYTHON3",
+  status: "SUCCESS",
+  memory: 0,
+  real_time: 13,
+  code_length: 59,
+  result_list: [
+    {
+      id: 0,
+      cpu_time: 0,
+      real_time: 0,
+      memory: 0,
+      signal: 0,
+      exit_code: 0,
+      error: 0,
+      result: 0,
+      correct: true,
+    },
+    {
+      id: 0,
+      cpu_time: 0,
+      real_time: 13,
+      memory: 0,
+      signal: 0,
+      exit_code: 0,
+      error: 0,
+      result: 0,
+      output: "Hello World\nHello2 World2",
+      correct: true,
+    },
+    {
+      id: 1,
+      cpu_time: 0,
+      real_time: 11,
+      memory: 0,
+      signal: 0,
+      exit_code: 0,
+      error: 0,
+      result: 0,
+      output: "Hello World3\nHello2 World4",
+      correct: true,
+    },
+  ],
+  judge: false,
+};
