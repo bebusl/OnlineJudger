@@ -1,14 +1,19 @@
 import type { NextPage } from "next";
 import Link from "next/link";
 import styled from "styled-components";
+import { Button } from "../components/common";
 
-const Home: NextPage = () => (
-  <Container>
-    <h1>온라인 져저를 통해</h1>
-    <h1>문제를 풀어보세요</h1>
-    <Link href="problem?page=1">문제풀러가기 Go</Link>
-  </Container>
-);
+const Home: NextPage = () => {
+  return (
+    <Container>
+      <h1>온라인 져저를 통해</h1>
+      <h1>문제를 풀어보세요</h1>
+      <Link href="problem?page=1">
+        <Button style={{ backgroundColor: "black" }}>문제풀러가기 Go</Button>
+      </Link>
+    </Container>
+  );
+};
 
 const Container = styled.div`
   background-color: ${({ theme }) => theme.colors.gray100};
