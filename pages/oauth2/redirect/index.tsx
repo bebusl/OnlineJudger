@@ -34,7 +34,7 @@ function Oauth2Redirect({
         "/register"
       );
     } else if (linkKey) {
-      dispatch(loginRequest({ id: "", password: "", link_key: linkKey }))
+      dispatch(loginRequest({ email: "", password: "", link_key: linkKey }))
         .unwrap()
         .then(() => {
           addNotification("로그인에 성공했습니다!", "success");
