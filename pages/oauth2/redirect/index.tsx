@@ -37,7 +37,6 @@ function Oauth2Redirect({
       dispatch(loginRequest({ email: "", password: "", link_key: linkKey }))
         .unwrap()
         .then(() => {
-          addNotification("로그인에 성공했습니다!", "success");
           router.push("/");
         });
     } else {

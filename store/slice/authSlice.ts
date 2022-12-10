@@ -15,7 +15,7 @@ const initialState = {
   name: "",
   roles: [],
   links: [],
-  userData: {},
+  email: "",
 };
 
 export const signUpRequest = createAsyncThunk(
@@ -39,9 +39,8 @@ export const loginRequest = createAsyncThunk(
           variant: "success",
         })
       );
-      const { access_token, user } = loginInfo.data;
-
-      return { access_token, ...user };
+      thunkAPI.dispatch(addUserData(loginInfo.data.user));
+      return loginInfo.data.user;
     }
     return thunkAPI.rejectWithValue(loginInfo);
   }
@@ -63,7 +62,10 @@ export const getUserData = createAsyncThunk(
   "auth/getMe",
   async (_, thunkAPI) => {
     const userInfo = await getUser();
-    if (userInfo.data?.success) return userInfo.data.user;
+    if (userInfo.data?.success) {
+      thunkAPI.dispatch(addUserData(userInfo.data.user));
+      return userInfo.data.user;
+    }
     return thunkAPI.rejectWithValue(userInfo);
   }
 );
@@ -83,6 +85,15 @@ export const authSlice = createSlice({
       });
       return Object.assign({}, initialState);
     },
+    addUserData: (state, action) => {
+      state.isLogin = true;
+      state.id = action.payload.id;
+      state.roles = action.payload.roles;
+      state.name = action.payload.name;
+      state.avatar = action.payload.links.avatar_url || misteryManSrc;
+      state.links = action.payload.links;
+      state.email = action.payload.email;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loginRequest.fulfilled, (state, action) => {
@@ -91,24 +102,11 @@ export const authSlice = createSlice({
         sameSite: "None",
         expires: addHours(1),
       });
-      state.isLogin = true;
-      state.id = action.payload.id;
-      state.roles = action.payload.roles;
-      state.name = action.payload.name;
-      state.avatar = action.payload.links.avatar_url || misteryManSrc;
-      state.links = action.payload.links;
     });
     builder.addCase(loginRequest.rejected, (state, action) => {
       state.isLogin = false;
     });
-    builder.addCase(getUserData.fulfilled, (state, action) => {
-      state.isLogin = true;
-      state.id = action.payload.id;
-      state.roles = action.payload.roles;
-      state.name = action.payload.name;
-      state.avatar = action.payload.links.avatar_url || misteryManSrc;
-      state.links = action.payload.links;
-    });
+    builder.addCase(getUserData.fulfilled, (state, action) => {});
     builder.addCase(getUserData.rejected, (state) => {
       authSlice.caseReducers.removeToken(state);
     });
@@ -118,6 +116,6 @@ export const authSlice = createSlice({
   },
 });
 
-export const { removeToken } = authSlice.actions;
+export const { removeToken, addUserData } = authSlice.actions;
 
 export default authSlice.reducer;

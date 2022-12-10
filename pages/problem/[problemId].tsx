@@ -50,7 +50,7 @@ function ProblemDetail(props: GetProblemResponse) {
   const isLogin = useAppSelector((store) => store.auth.isLogin);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [language, setLanguage] = useState<LANGUAGES_TYPE>(JAVA);
+  const [language, setLanguage] = useState<LANGUAGES_TYPE>(PYTHON3);
   const editorRef = useRef(null);
   const [result, setResult] = useState();
   const addNoti = useNotification();
@@ -70,13 +70,7 @@ function ProblemDetail(props: GetProblemResponse) {
             });
             socketClient?.subscribe("/user/queue/problem/run", (msg) => {
               const body = JSON.parse(msg.body);
-              // setResult(
-              //   `컴파일 결과\n${
-              //     body.result_list.length > 0 ? "컴파일 성공" : "컴파일 실패"
-              //   }\n실행 결과${body.result_list[1].result}\n채점 결과${
-              //     body.result_list[1].correct
-              //   }`
-              // );
+              setResult(body);
             });
           }
         },
@@ -113,11 +107,11 @@ function ProblemDetail(props: GetProblemResponse) {
             setLanguage(e.target.value);
           }}
         >
-          <option value="java">JAVA</option>
-          <option value="python2">PYTHON2</option>
-          <option value={PYTHON3}>PYTHON3</option>
-          <option value="c++">c++</option>
-          <option value="c">c</option>
+          {languages.map((language) => (
+            <option value={language} key={language}>
+              {language}
+            </option>
+          ))}
         </select>
       </FlexBox>
       <FlexBox flexDirection="row" style={{ width: "100vw" }}>
@@ -180,10 +174,11 @@ function ProblemDetail(props: GetProblemResponse) {
           />
           <FlexBox style={{ height: "30vh" }}>
             <ScrollBox>
-              <code>{result}</code>
+              {/* <code>{result}</code> */}
               <ul>
-                {RIGHT_ANSWER?.result_list.length > 1 &&
-                  RIGHT_ANSWER?.result_list.slice(1).map((result, idx) => {
+                {result &&
+                  result.result_list.length > 1 &&
+                  result?.result_list.slice(1).map((result, idx) => {
                     return (
                       <>
                         <STable>
@@ -232,11 +227,22 @@ function ProblemDetail(props: GetProblemResponse) {
               <code>
                 <pre>
                   테스트 결과 (~˘▾˘)~
-                  {RIGHT_ANSWER.status}
+                  {result?.status}
                 </pre>
               </code>
-              <code>{RIGHT_ANSWER.status}</code>
-              <code>n개 중 m개 성공</code>
+              <code>{result?.status}</code>
+
+              {result && (
+                <code>
+                  {result.result_list.length - 1}개 중{" "}
+                  {
+                    result.result_list
+                      .slice(1)
+                      .filter((result) => result.correct).length
+                  }
+                  개 성공
+                </code>
+              )}
             </ScrollBox>
           </FlexBox>
         </section>
