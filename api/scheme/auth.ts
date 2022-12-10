@@ -9,9 +9,11 @@ export interface User {
   roles: typeof ROLEUSER | typeof ROLEADMIN;
 }
 
+export type Code = string;
+
 export interface SignUpRequest {
   name: string;
-  id: string;
+  email: string;
   password: string;
   link_key: string;
 }
@@ -28,7 +30,11 @@ export interface OAuthResponse {
   avatar_url: string;
 }
 
-export type SignInRequest = { id: string; password: string; link_key: string };
+export type SignInRequest = {
+  email: string;
+  password: string;
+  link_key: string;
+};
 
 export interface SignInResponse extends APIResponse {
   access_token: string;
@@ -50,3 +56,28 @@ export interface GetUserResponse extends APIResponse {
 }
 
 export interface SecessionResponse extends APIResponse {}
+
+export interface VerifyEmailRequest {
+  code: Code;
+}
+
+export interface VerifyEmailResponse extends APIResponse {}
+
+export interface SendResetPasswordEmailRequest {
+  email: string;
+}
+
+export interface SendResetPasswordEmailResponse extends APIResponse {}
+
+export interface ResetPasswordRequest {
+  code: string;
+  password: string;
+}
+export interface ResetPasswordResponse extends APIResponse {}
+
+export interface UpdatePasswordRequest {
+  oldPassword: string;
+  password: string;
+}
+
+export interface UpdatePasswordResponse extends APIResponse {}
