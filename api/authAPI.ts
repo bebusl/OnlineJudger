@@ -100,7 +100,7 @@ export const resetPassword = (requestProps: ResetPasswordRequest) => {
   //     "&password=" +
   //     requestProps.password
   // );
-  return axios.patch<ResetPasswordRequest>(
+  return axios.patch<ResetPasswordResponse>(
     API_BASE_URL + "/users/password/reset",
     requestProps
   );
