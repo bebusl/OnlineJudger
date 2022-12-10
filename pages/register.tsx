@@ -12,18 +12,23 @@ const RegisterForm = ({ linkKey }: { linkKey: string | undefined }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { handleBlur, isValidInputs, isValid, getRef } = useForm({
-    types: ["id", "email", "password"],
+    types: ["name", "email", "password"],
   });
-  const idRef = getRef("id");
+  const nameRef = getRef("name");
   const emailRef = getRef("email");
   const passwordRef = getRef("password");
 
   const checkData = async () => {
-    const nickname = idRef.current?.value || "";
-    const id = emailRef.current?.value || "";
+    const email = emailRef.current?.value || "";
+    const name = nameRef.current?.value || "";
     const password = passwordRef.current?.value || "";
     dispatch(
-      signUpRequest({ name: nickname, id, password, link_key: linkKey ?? "" })
+      signUpRequest({
+        name,
+        email,
+        password,
+        link_key: linkKey ?? "",
+      })
     )
       .unwrap()
       .then(() => router.push("/"));
@@ -36,16 +41,20 @@ const RegisterForm = ({ linkKey }: { linkKey: string | undefined }) => {
       }}
     >
       <Input
-        name="nickname"
-        ref={idRef}
-        isValid={isValid.id}
-        onBlur={() => handleBlur("id")}
-      />
-      <Input
         name="email"
         ref={emailRef}
         isValid={isValid.email}
-        onBlur={() => handleBlur("email")}
+        onBlur={() => {
+          handleBlur("email");
+        }}
+        placeholder="이메일"
+      />
+      <Input
+        name="nickname"
+        ref={nameRef}
+        isValid={isValid.id}
+        onBlur={() => handleBlur("name")}
+        placeholder="닉네임"
       />
       <Input
         name="password"
@@ -53,6 +62,7 @@ const RegisterForm = ({ linkKey }: { linkKey: string | undefined }) => {
         ref={passwordRef}
         isValid={isValid.password}
         onBlur={() => handleBlur("password")}
+        placeholder="비밀번호"
       />
       <Button disabled={!isValidInputs()} onClick={checkData}>
         SIGNUP

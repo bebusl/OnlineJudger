@@ -119,6 +119,16 @@ export default function request(
     const request = () => axiosInstance.put(url, data, config);
     return requestHandler(request, callback, errorHandler);
   }
+  function patchRequest<T = unknown, R = AxiosResponse<T>>({
+    url,
+    data,
+    config,
+    callback,
+    errorHandler,
+  }: PostRequestProps): Promise<R> {
+    const request = () => axiosInstance.put(url, data, config);
+    return requestHandler(request, callback, errorHandler);
+  }
 
-  return { get, post, deleteRequest, putRequest };
+  return { get, post, deleteRequest, putRequest, patchRequest };
 }
