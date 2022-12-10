@@ -13,9 +13,8 @@ function UserProfile() {
   });
   const nameRef = getRef("name");
   const emailRef = getRef("email");
-  const linkRef = getRef("link");
 
-  const { avatar, id, name, links } = useAppSelector((state) => state.auth);
+  const { avatar, name, email, links } = useAppSelector((state) => state.auth);
 
   return (
     <WithSideBar>
@@ -31,22 +30,26 @@ function UserProfile() {
           </Button> */}
         </form>
         <LabeledInput
-          text="ID"
-          name="name"
-          forwardref={nameRef}
-          defaultValue={id}
+          text="EMAIL"
+          name="email"
+          forwardref={emailRef}
+          defaultValue={email}
         />
         <LabeledInput
-          text="EMAIL"
+          text="NAME"
           name="name"
-          forwardref={emailRef}
-          defaultValue={id}
+          forwardref={nameRef}
+          defaultValue={name}
         />
 
         <h3>연동된 소셜 계정</h3>
 
         {links?.length > 0 ? (
-          <Input type="email" name="linkedEmail" value={links[0]?.email} />
+          <Input
+            type="email"
+            name="linkedEmail"
+            defaultValue={links[0]?.email}
+          />
         ) : (
           <>
             <p>연동된 소셜 계정이 없습니다</p>
@@ -73,28 +76,6 @@ function UserProfile() {
     </WithSideBar>
   );
 }
-
-// export async function getServerSideProps(ctx: NextPageContext) {
-//   const auth_cookie = ctx.req?.headers.cookie;
-//   console.log("COOKIE", Authorization.cookie);
-//   // auth_cookie 없을 떄 로그아웃 처리해주거나 하기.! 아니면 재갱신을 해주등가.
-//   try {
-//     const userInfo = await getUser(auth_cookie);
-//     if (userInfo.data?.success) {
-//       return {
-//         props: { ...userInfo.data.user },
-//       };
-//     }
-//   } catch (e) {
-//     return {
-//       props: {},
-//     };
-//   }
-
-//   return {
-//     notFound: true,
-//   };
-// }
 
 export default UserProfile;
 
