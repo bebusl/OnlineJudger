@@ -14,7 +14,8 @@ function DefaultLayout({ page }: { page: ReactElement }) {
 }
 
 const Container = styled.div`
-  width: 1200px;
+  max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
