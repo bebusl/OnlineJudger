@@ -80,7 +80,7 @@ export const sendResetPasswordEmailLink = (
   // );
 
   return axios.post<SendResetPasswordEmailResponse>(
-    API_BASE_URL + "/users/password/resetPassword",
+    API_BASE_URL + "/users/password/reset",
     requestProps
   );
 };
