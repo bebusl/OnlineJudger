@@ -1,4 +1,4 @@
-import React, { RefObject, useState } from "react";
+import React, { RefObject, useEffect, useState } from "react";
 import validator from "../utils/validator";
 import type { regexType } from "../utils/validator";
 import useDynamicRefs from "./useDynamicRefs";
@@ -27,18 +27,23 @@ const useForm = ({ types }: Props) => {
 
   const handleBlur = (type: regexType, validate?: boolean) => {
     const currentRef = getRef(type);
+    const isDirtied = "" !== currentRef.current?.value;
     if (currentRef) {
-      setIsValid({
-        ...isValid,
-        [type]: validate
-          ? validator(type, currentRef.current?.value as string)
-          : true,
-      });
-      setDirtyField({
-        ...isDirtyField,
-        [type]: "" !== currentRef.current?.value,
-      });
+      const updatedValidate = validate
+        ? validator(type, currentRef.current?.value as string)
+        : true;
+
+      if (updatedValidate !== isValid[type]) {
+        setIsValid({ ...isValid, [type]: updatedValidate });
+      }
+      if (isDirtied !== isDirtyField[type]) {
+        setDirtyField({
+          ...isDirtyField,
+          [type]: "" !== currentRef.current?.value,
+        });
+      }
     }
+    // 이전 스테이트와 다를때만 업데이트되도록 수정
   }; // 더 좋은 이름이 있을 것 같은딩.
 
   const getAllRefs = () => {
