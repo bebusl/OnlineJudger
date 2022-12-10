@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useRef, useState } from "react";
-import Button from "../components/common/Button";
+import React from "react";
+import { Button } from "../components/common";
 import Input from "../components/common/Input";
 import AuthTemplate from "../components/templates/AuthTemplate";
 import { loginRequest } from "../store/slice/authSlice";

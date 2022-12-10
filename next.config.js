@@ -9,9 +9,9 @@ const nextConfig = {
       "lh3.googleusercontent.com",
       "cdn.jsdelivr.net",
     ],
-    typescript: {
-      ignoreBuildErros: true,
-    },
+  },
+  typescript: {
+    ignoreBuildErrors: true,
   },
 };
 
