@@ -1,17 +1,22 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React from "react";
-import { Button } from "../components/common";
+
+import React, { useRef } from "react";
+
+import useForm from "../hooks/useForm";
+import { useAppDispatch } from "../hooks/useStore";
+import { loginRequest } from "../store/slice/authSlice";
+
+import Button from "../components/common/Buttons/BasicButton/Button";
 import Input from "../components/common/Input";
 import AuthTemplate from "../components/templates/AuthTemplate";
-import { loginRequest } from "../store/slice/authSlice";
-import { useAppDispatch } from "../hooks/useStore";
+import { FlexBox, Seperator } from "../components/common";
+
 import {
   GOOGLE_AUTH_REGISTER_URL,
   KAKAO_AUTH_REGISTER_URL,
 } from "../constants/url";
-import useForm from "../hooks/useForm";
-import { FlexBox } from "../components/common";
+import Link from "next/link";
 
 const OAuthLinkButton = React.memo(
   ({ url, type }: { url: string; type: "kakao" | "github" | "google" }) => {
@@ -39,12 +44,13 @@ const LoginForm = () => {
   const passwordRef = getRef("password");
 
   const checkData = async () => {
-    const id = emailRef.current?.value || "";
+    const email = emailRef.current?.value || "";
     const password = passwordRef.current?.value || "";
-    dispatch(loginRequest({ id, password }))
+    dispatch(loginRequest({ email, password }))
       .unwrap()
       .then(() => router.back());
   };
+
   return (
     <form
       onSubmit={(e) => {
@@ -56,15 +62,27 @@ const LoginForm = () => {
         <OAuthLinkButton url={GOOGLE_AUTH_REGISTER_URL} type="google" />
         <OAuthLinkButton url={KAKAO_AUTH_REGISTER_URL} type="kakao" />
       </FlexBox>
-      <Input name="email" ref={emailRef} onBlur={() => handleBlur("email")} />
+      <Input
+        name="email"
+        ref={emailRef}
+        isValid={!!emailRef.current?.value.length || isValid.email}
+        onChange={() => handleBlur("email", true)}
+        placeholder="이메일"
+      />
       <Input
         name="password"
         type="password"
         ref={passwordRef}
-        isValid={isValid.password}
-        onBlur={() => handleBlur("password", true)}
+        isValid={!!passwordRef.current?.value.length || isValid.password}
+        onChange={() => handleBlur("password", true)}
+        placeholder="비밀번호"
       />
       <Button disabled={!isValidInputs()}>LOGIN</Button>
+      <Seperator>또는</Seperator>
+      <FlexBox>
+        <Link href="/register">회원가입</Link>
+        <Link href="/send-message">비밀번호 재설정</Link>
+      </FlexBox>
     </form>
   );
 };
