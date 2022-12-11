@@ -16,7 +16,7 @@ import Table from "../../components/common/Table/Table";
 import { WEB_SOCKET_URL } from "../../constants/url";
 import { makeAuthHeader } from "../../utils/authUtils";
 import SockJS from "sockjs-client";
-import StompJS from "stompjs";
+import { Client, Stomp } from "@stomp/stompjs";
 import { gradeProblem, runProblem } from "../../api/submissionsAPI";
 import useNotification from "../../hooks/useNotification";
 import ScrollBox from "../../components/common/ScrollBox";
@@ -32,7 +32,7 @@ const RankingModal = dynamic(
 );
 const MonacoEditor = dynamic(import("@monaco-editor/react"), { ssr: false });
 
-let socketClient: StompJS.Client | null = null;
+let socketClient: Client | null = null;
 
 function ProblemDetail(props: GetProblemResponse) {
   const {
@@ -56,38 +56,44 @@ function ProblemDetail(props: GetProblemResponse) {
   const addNoti = useNotification();
 
   function connection() {
-    const sock = new SockJS(WEB_SOCKET_URL);
-    socketClient = StompJS.over(sock);
+    // const sock = new SockJS(WEB_SOCKET_URL);
+    socketClient = Stomp.over(() => new SockJS(WEB_SOCKET_URL));
+    socketClient.reconnectDelay = 5000;
+    socketClient.heartbeatIncoming = 4000;
+
+    // socketClient = StompJS.over(so ck);
+    // socketClient.configure()
+
     const authToken = makeAuthHeader();
     if (authToken && socketClient) {
-      socketClient.connect(
-        authToken,
-        function () {
-          if (socketClient?.connected) {
-            socketClient?.subscribe("/user/queue/notification", (msg) => {
-              const body = JSON.parse(msg.body);
-              addNoti(body.message, body.variant);
-            });
-            socketClient?.subscribe("/user/queue/problem/run", (msg) => {
-              const body = JSON.parse(msg.body);
-              setResult(body);
-            });
-          }
-        },
-        function (error) {
-          console.log("ERROR", error);
+      socketClient.connectHeaders = authToken;
+      socketClient.onConnect = () => {
+        if (socketClient?.connected) {
+          socketClient.subscribe("/user/queue/notification", (msg) => {
+            const body = JSON.parse(msg.body);
+            addNoti(body.message, body.variant);
+          });
+          socketClient.subscribe("/user/queue/problem/run", (msg) => {
+            const body = JSON.parse(msg.body);
+            setResult(body);
+          });
         }
-      );
+      };
+      socketClient.onDisconnect = () => {
+        console.log("disconnected");
+      };
+      socketClient.activate();
     }
   }
 
   useEffect(() => {
     connection();
+    if (socketClient) {
+      connection();
+    }
     return () => {
-      if (socketClient?.connected) {
-        socketClient?.disconnect(() => {
-          console.log("socket disconnected");
-        });
+      if (socketClient) {
+        socketClient.deactivate();
       }
     };
   }, []);
