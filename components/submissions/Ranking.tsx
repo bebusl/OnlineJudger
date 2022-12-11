@@ -3,7 +3,6 @@ import { getSubmissionsByQuery } from "../../api/submissionsAPI";
 import useInfiniteScroll from "../../hooks/useIntersectionObserver";
 import Table from "../common/Table/Table";
 import { Submission } from "../../api/scheme/submissions";
-import Link from "next/link";
 
 function Ranking({ problemId }: { problemId?: number }) {
   const [body, setBody] = useState<Submission[]>([]);
@@ -40,9 +39,13 @@ function Ranking({ problemId }: { problemId?: number }) {
         submissions.map((submission) => {
           return Object.assign(submission, {
             problem_id: (
-              <Link href={`/solution/${submission.id}`}>
+              <a
+                href={`/solution/${submission.id}`}
+                rel="noreferrer"
+                target="_blank"
+              >
                 <p>{submission.problem_id}</p>
-              </Link>
+              </a>
             ),
           });
         });
