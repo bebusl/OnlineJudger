@@ -1,17 +1,19 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import authReducer from "./slice/authSlice";
 import notiReducer from "./slice/notiSlice";
+import socketReducer from "./slice/socketSlice";
+import socketManager from "./middleware/socketManager";
 
-const reducer = { auth: authReducer, noti: notiReducer };
+const reducer = { auth: authReducer, noti: notiReducer, socket: socketReducer };
 
-const makeStore = () =>
+const generateStore = () =>
   configureStore({
     reducer: reducer,
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware({ serializableCheck: false }),
+      getDefaultMiddleware({ serializableCheck: false }).concat(socketManager),
   });
 
-const store = makeStore();
+const store = generateStore();
 
 export type StoreState = ReturnType<typeof store.getState>;
 
