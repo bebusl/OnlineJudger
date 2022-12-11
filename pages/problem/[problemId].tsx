@@ -13,10 +13,6 @@ import {
 import dynamic from "next/dynamic";
 import { Button, FlexBox } from "../../components/common";
 import Table from "../../components/common/Table/Table";
-import { WEB_SOCKET_URL } from "../../constants/url";
-import { makeAuthHeader } from "../../utils/authUtils";
-import SockJS from "sockjs-client";
-import StompJS from "stompjs";
 import { gradeProblem, runProblem } from "../../api/submissionsAPI";
 import useNotification from "../../hooks/useNotification";
 import ScrollBox from "../../components/common/ScrollBox";
@@ -31,8 +27,6 @@ const RankingModal = dynamic(
   }
 );
 const MonacoEditor = dynamic(import("@monaco-editor/react"), { ssr: false });
-
-let socketClient: StompJS.Client | null = null;
 
 function ProblemDetail(props: GetProblemResponse) {
   const {
@@ -54,43 +48,6 @@ function ProblemDetail(props: GetProblemResponse) {
   const editorRef = useRef(null);
   const [result, setResult] = useState();
   const addNoti = useNotification();
-
-  function connection() {
-    const sock = new SockJS(WEB_SOCKET_URL);
-    socketClient = StompJS.over(sock);
-    const authToken = makeAuthHeader();
-    if (authToken && socketClient) {
-      socketClient.connect(
-        authToken,
-        function () {
-          if (socketClient?.connected) {
-            socketClient?.subscribe("/user/queue/notification", (msg) => {
-              const body = JSON.parse(msg.body);
-              addNoti(body.message, body.variant);
-            });
-            socketClient?.subscribe("/user/queue/problem/run", (msg) => {
-              const body = JSON.parse(msg.body);
-              setResult(body);
-            });
-          }
-        },
-        function (error) {
-          console.log("ERROR", error);
-        }
-      );
-    }
-  }
-
-  useEffect(() => {
-    connection();
-    return () => {
-      if (socketClient?.connected) {
-        socketClient?.disconnect(() => {
-          console.log("socket disconnected");
-        });
-      }
-    };
-  }, []);
 
   return (
     <>
