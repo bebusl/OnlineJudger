@@ -73,13 +73,14 @@ export const getSubmissionsByQuery = ({
 };
 
 export const likeSubmission = ({ submission_id }: LikeSubmissionRequest) => {
-  return post<LikeSubmissionResponse>({ url: "/like/" + submission_id });
+  return post<LikeSubmissionResponse>({
+    url: "/like/" + submission_id,
+    config: { headers: makeAuthHeader() },
+  });
 };
 
 export const deleteLikeSubmission = ({
   submission_id,
 }: DeleteLikeSubmissionRequest) => {
-  return deleteRequest<DeleteLikeSubmissionResponse>({
-    url: "/like/" + submission_id,
-  });
+  return deleteRequest<DeleteLikeSubmissionResponse>("/like/" + submission_id);
 };
