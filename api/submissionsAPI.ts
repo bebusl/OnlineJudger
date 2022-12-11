@@ -2,12 +2,16 @@ import { LANGUAGES_TYPE } from "../constants/language";
 import { makeAuthHeader } from "../utils/authUtils";
 import request from "./request";
 import { APIResponse } from "./scheme/common";
-import {
+import type {
   GetSubmissionRequest,
   GetSubmissionResponse,
+  LikeSubmissionRequest,
+  LikeSubmissionResponse,
+  DeleteLikeSubmissionRequest,
+  DeleteLikeSubmissionResponse,
 } from "./scheme/submissions";
 
-const { get, post } = request("/submissions");
+const { get, post, deleteRequest } = request("/submissions");
 
 export const gradeProblem = (
   problemId: number,
@@ -66,4 +70,17 @@ export const getSubmissionsByQuery = ({
     languageQuery +
     rankingQuery;
   return get<GetSubmissionResponse>(query);
+};
+
+export const likeSubmission = ({ submission_id }: LikeSubmissionRequest) => {
+  return post<LikeSubmissionResponse>({
+    url: "/like/" + submission_id,
+    config: { headers: makeAuthHeader() },
+  });
+};
+
+export const deleteLikeSubmission = ({
+  submission_id,
+}: DeleteLikeSubmissionRequest) => {
+  return deleteRequest<DeleteLikeSubmissionResponse>("/like/" + submission_id);
 };

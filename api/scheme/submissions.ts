@@ -50,3 +50,15 @@ export interface GetSubmissionResponse extends APIResponse {
   page: PagingResponse;
   submissions: Submission[];
 }
+
+export interface LikeSubmissionRequest {
+  submission_id: string;
+}
+
+export interface LikeSubmissionResponse extends APIResponse {}
+
+export interface DeleteLikeSubmissionRequest {
+  submission_id: string;
+}
+
+export interface DeleteLikeSubmissionResponse extends APIResponse {}
