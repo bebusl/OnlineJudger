@@ -56,13 +56,9 @@ function ProblemDetail(props: GetProblemResponse) {
   const addNoti = useNotification();
 
   function connection() {
-    // const sock = new SockJS(WEB_SOCKET_URL);
     socketClient = Stomp.over(() => new SockJS(WEB_SOCKET_URL));
     socketClient.reconnectDelay = 5000;
     socketClient.heartbeatIncoming = 4000;
-
-    // socketClient = StompJS.over(so ck);
-    // socketClient.configure()
 
     const authToken = makeAuthHeader();
     if (authToken && socketClient) {
