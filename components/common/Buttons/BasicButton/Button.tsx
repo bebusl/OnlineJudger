@@ -9,9 +9,9 @@ interface ButtonProps {
 }
 
 const Button = styled.button<ButtonProps>`
-  width: fit-content;
+  width: ${({ width }) => width};
+  height: ${({ height }) => height};
   padding: 0.5rem;
-  // height: ${({ height }) => height};
   ${({ $variant, theme }) => {
     if ($variant === "full") {
       return `background-color:${theme.colors.primary};color:${theme.colors.white};border:none;`;
@@ -27,8 +27,8 @@ const Button = styled.button<ButtonProps>`
 `;
 
 Button.defaultProps = {
-  width: "320px",
-  height: "50px",
+  width: "fit-content",
+  height: "fit-content",
   $variant: "full",
 };
 
