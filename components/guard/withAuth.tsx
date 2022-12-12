@@ -4,9 +4,7 @@ import { useAppSelector } from "../../hooks/useStore";
 import useNotification from "../../hooks/useNotification";
 
 import Cookies from "js-cookie";
-import { API_BASE_URL } from "../../constants/url";
-import axios from "axios";
-import { addHours } from "../../utils/dateUtils";
+import refreshAccessToken from "../../api/refreshAPI";
 
 const withAuth = (
   WrappedComponent: React.ComponentType<Record<string, unknown>>
@@ -24,26 +22,17 @@ const withAuth = (
 
     if (mounted) {
       if (!accessToken) {
-        try {
-          (async () => {
-            const a = await axios.post(API_BASE_URL + "/users/refresh", null, {
-              withCredentials: true,
-            });
-            if (a.data.success) {
-              Cookies.set("Authorization", `Bearer ${a.data.access_token}`, {
-                secure: true,
-                sameSite: "None",
-                expires: addHours(1),
-              });
-            }
-          })();
-        } catch (e) {
-          addNotification(
-            "인증이 만료되었습니다. 로그인이 필요합니다.",
-            "error"
-          );
-          router.replace("/login");
-        }
+        (async () => {
+          const successRefresh = await refreshAccessToken();
+          if (!successRefresh) {
+            //리프레시마저도 실패!
+            addNotification(
+              "인증이 만료되었습니다. 로그인이 필요합니다.",
+              "error"
+            );
+            router.replace("/login");
+          }
+        })();
       }
 
       return <WrappedComponent {...props} />;

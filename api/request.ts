@@ -1,8 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import Cookies from "js-cookie";
 import { API_BASE_URL } from "../constants/url";
-import { makeAuthHeader } from "../utils/authUtils";
-import { addHours } from "../utils/dateUtils";
+import { generateAuthHeader, setAuthorizationCookie } from "../utils/authUtils";
 
 interface GetRequestProps {
   url: string;
@@ -45,11 +43,7 @@ export default function request(
           { withCredentials: true }
         );
         if (response?.status === 200 && response.data?.success) {
-          Cookies.set("Authorization", `Bearer ${response.data.access_token}`, {
-            secure: true,
-            sameSite: "None",
-            expires: addHours(1),
-          });
+          setAuthorizationCookie(response.data.access_token);
         }
         originalRequest.headers = {
           Authorization: `Bearer ${response.data.access_token}`,
@@ -105,7 +99,7 @@ export default function request(
     errorHandler?: Function
   ): Promise<R> {
     const request = () =>
-      axiosInstance.delete(url, { headers: makeAuthHeader() });
+      axiosInstance.delete(url, { headers: generateAuthHeader() });
     return requestHandler(request, callback, errorHandler);
   }
 

@@ -1,16 +1,21 @@
 import axios from "axios";
-import Cookies from "js-cookie";
 import { API_BASE_URL } from "../constants/url";
-import { addHours } from "../utils/dateUtils";
+import { setAuthorizationCookie } from "../utils/authUtils";
+import { RefreshTokenResponse } from "./scheme/auth";
 
-const response = () =>
-  axios.post(API_BASE_URL + "/users/refresh", null, {
-    withCredentials: true,
-  });
-if (response?.status === 200 && response.data?.success) {
-  Cookies.set("Authorization", `Bearer ${response.data.access_token}`, {
-    secure: true,
-    sameSite: "None",
-    expires: addHours(1),
-  });
-}
+const refreshAccessToken = async () => {
+  const response = await axios.post<RefreshTokenResponse>(
+    API_BASE_URL + "/users/refresh",
+    null,
+    {
+      withCredentials: true,
+    }
+  );
+  if (response?.status === 200 && response.data?.success) {
+    setAuthorizationCookie(response.data.access_token);
+    return true;
+  }
+  return false;
+};
+
+export default refreshAccessToken;
