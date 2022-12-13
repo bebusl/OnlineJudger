@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
 import React, { ChangeEventHandler, FormEventHandler, useRef } from "react";
 import styled from "styled-components";
-import { C, CPP, JAVA, PYTHON2, PYTHON3 } from "../../constants/language";
-import { tagMapper, TAGS } from "../../constants/tag";
+import { C, CPP, JAVA, PYTHON2, PYTHON3 } from "../../utils/constants/language";
+import { tagMapper, TAGS } from "../../utils/constants/tag";
 import { toggleSetItem } from "../../utils/setTypeUtils";
 import { FlexBox } from "../common";
 import SearchBar from "../common/SearchBar";
