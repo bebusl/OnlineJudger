@@ -48,7 +48,7 @@ const useForm = (mode: "onChange" | "onBlur" = "onChange") => {
       setIsValid((prev) => Object.assign(prev, { [name]: true }));
     }
     if (!Object.keys(isDirtyField).includes(name))
-      setDirtyField(Object.assign(isValid, { [name]: false }));
+      setDirtyField((prev) => Object.assign(prev, { [name]: false }));
 
     const validator = () => {
       const currentValue = getCurrentValue();
@@ -106,6 +106,7 @@ const useForm = (mode: "onChange" | "onBlur" = "onChange") => {
   const isValidInputs = () => {
     const allDirty = Object.values(isDirtyField).every((field) => field);
     const allValid = Object.values(isValid).every((field) => field);
+    console.log(isDirtyField);
     return allDirty && allValid;
   };
 
