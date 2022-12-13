@@ -1,5 +1,5 @@
 import request from "./request";
-import { makeAuthHeader } from "../utils/authUtils";
+import { generateAuthHeader } from "../utils/authUtils";
 import {
   AddProblemResponse,
   GetProblemRequest,
@@ -30,24 +30,17 @@ export const getProblems = ({
   title,
   languages = [],
   tags,
-}: GetProblemRequest) => {
-  const defaultQuery = "?page=" + page;
-  const titleQuery = title ? `&title=${title}` : "";
-  let languagesQuery = "";
-  let tagsQuery = "";
-
-  if (Array.isArray(languages)) {
-    const key = "&languages=";
-    languages.forEach((language) => (languagesQuery += key + language));
-  }
-  if (languages) languagesQuery = "&languages=" + languages;
-  if (Array.isArray(tags)) {
-    const key = "&tags=";
-    tags.forEach((tag) => (tagsQuery += key + tag));
-  }
-  if (tags) tagsQuery = "&tags=" + languages;
-
-  return get<GetAllProblemResponse>(defaultQuery + titleQuery + languagesQuery);
+  levels,
+}: Partial<GetProblemRequest>) => {
+  return get<GetAllProblemResponse>("", {
+    params: {
+      page,
+      title,
+      languages,
+      tags,
+      levels,
+    },
+  });
 };
 
 export const registerProblem = (data: FormData) =>
@@ -58,7 +51,7 @@ export const registerProblem = (data: FormData) =>
       headers: {
         accept: "*/*",
         "Content-Type": "multipart/form-data",
-        ...makeAuthHeader(),
+        ...generateAuthHeader(),
       },
     },
   });
@@ -71,7 +64,7 @@ export const modifyProblem = (id: string, data: FormData) =>
       headers: {
         accept: "*/*",
         "Content-Type": "multipart/form-data",
-        ...makeAuthHeader(),
+        ...generateAuthHeader(),
       },
     },
   });
