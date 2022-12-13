@@ -2,16 +2,18 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { HYDRATE } from "next-redux-wrapper";
 import { login, signup, getUser, logout } from "../../api/authAPI";
 import { addNoti } from "./notiSlice";
-import Cookies from "js-cookie";
-import { addHours } from "../../utils/dateUtils";
+
 import { SignInRequest, SignUpRequest } from "../../api/scheme/auth";
-import { setAuthorizationCookie } from "../../utils/authUtils";
+import {
+  removeAuthorizationCookie,
+  setAuthorizationCookie,
+} from "../../utils/authUtils";
 
 const misteryManSrc =
   "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
 const initialState = {
   isLogin: false,
-  isAuthenticating: true,
+  isAuthenticating: false,
   id: "",
   avatar: misteryManSrc,
   name: "",
@@ -22,26 +24,30 @@ const initialState = {
 
 export const signUpRequest = createAsyncThunk(
   "auth/signup",
-  async (props: SignUpRequest, thunkAPI) => {
-    const response = await signup(props);
-    if (response) {
+  async (props: Partial<SignUpRequest>, thunkAPI) => {
+    try {
+      const response = await signup(props);
+      if (response.data.success) {
+        thunkAPI.dispatch(
+          addNoti({
+            id: Date.now(),
+            message: "회원가입에 성공했습니다.",
+            variant: "success",
+          })
+        );
+        return response;
+      } else {
+        return thunkAPI.rejectWithValue(response.data.err_msg);
+      }
+    } catch (e) {
       thunkAPI.dispatch(
         addNoti({
           id: Date.now(),
-          message: "회원가입에 성공했습니다.",
-          variant: "success",
+          message: "회원가입에 실패했습니다.",
+          variant: "error",
         })
       );
-      return response;
     }
-    thunkAPI.dispatch(
-      addNoti({
-        id: Date.now(),
-        message: "회원가입에 실패했습니다.",
-        variant: "error",
-      })
-    );
-    return thunkAPI.rejectWithValue(response);
   }
 );
 
@@ -104,10 +110,7 @@ export const authSlice = createSlice({
       ...action.payload.auth,
     }),
     removeToken: (state) => {
-      Cookies.remove("Authorization", {
-        secure: false,
-        sameSite: "Strict",
-      });
+      removeAuthorizationCookie();
       return Object.assign({}, initialState);
     },
     addUserData: (state, action) => {
@@ -124,12 +127,22 @@ export const authSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(loginRequest.fulfilled, (state, action) => {
       setAuthorizationCookie(action.payload.access_token);
+      state.isAuthenticating = false;
+    });
+    builder.addCase(loginRequest.pending, (state) => {
+      state.isAuthenticating = true;
     });
     builder.addCase(loginRequest.rejected, (state) => {
       authSlice.caseReducers.removeToken(state);
     });
+    builder.addCase(getUserData.pending, (state) => {
+      state.isAuthenticating = true;
+    });
     builder.addCase(getUserData.rejected, (state) => {
       authSlice.caseReducers.removeToken(state);
+    });
+    builder.addCase(getUserData.fulfilled, (state) => {
+      state.isAuthentication = false;
     });
     builder.addCase(logoff.fulfilled, (state) => {
       authSlice.caseReducers.removeToken(state);
