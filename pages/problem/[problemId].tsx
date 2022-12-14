@@ -1,24 +1,21 @@
 import React, { ReactElement, useEffect, useRef, useState } from "react";
 import { NextPageContext } from "next";
-import { useRouter } from "next/router";
-import { getProblemDetail } from "../../api/problemsAPI";
-import {
-  JAVA,
-  C,
-  CPP,
-  PYTHON2,
-  PYTHON3,
-  LANGUAGES_TYPE,
-} from "../../constants/language";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
+
+import { getProblemDetail } from "../../api/problemsAPI";
+import { GetProblemResponse } from "../../api/scheme/problem";
+
+import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
+import { resetRunMessage } from "../../store/slice/socketSlice";
+
+import { LANGUAGES_TYPE } from "../../constants/language";
+import styled from "styled-components";
 import { Button, FlexBox } from "../../components/common";
 import Table from "../../components/common/Table/Table";
 import { gradeProblem, runProblem } from "../../api/submissionsAPI";
-import useNotification from "../../hooks/useNotification";
 import ScrollBox from "../../components/common/ScrollBox";
-import { useAppSelector } from "../../hooks/useStore";
-import { GetProblemResponse } from "../../api/scheme/problem";
-import styled from "styled-components";
+import BreadCrumbs from "../../components/layouts/BreadCrumbs";
 
 const RankingModal = dynamic(
   import("../../components/submissions/RankingModal"),
@@ -42,12 +39,18 @@ function ProblemDetail(props: GetProblemResponse) {
   } = props;
   const router = useRouter();
   const isLogin = useAppSelector((store) => store.auth.isLogin);
+  const runResult = useAppSelector((store) => store.socket.runResult);
+  const dispatch = useAppDispatch();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [language, setLanguage] = useState<LANGUAGES_TYPE>(PYTHON3);
+  const [language, setLanguage] = useState<LANGUAGES_TYPE>(languages[0]);
   const editorRef = useRef(null);
-  const [result, setResult] = useState();
-  const addNoti = useNotification();
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetRunMessage());
+    };
+  }, []);
 
   return (
     <>
@@ -55,7 +58,7 @@ function ProblemDetail(props: GetProblemResponse) {
         <RankingModal onClose={() => setIsOpen(false)} problemId={id} />
       )}
 
-      <FlexBox as={"nav"} flexDirection="row" justifyContent="space-between">
+      <Header as={"nav"} flexDirection="row" justifyContent="space-between">
         <h1>{title}</h1>
         <select
           name="language"
@@ -70,11 +73,17 @@ function ProblemDetail(props: GetProblemResponse) {
             </option>
           ))}
         </select>
-      </FlexBox>
+      </Header>
+      {/**문제 설명 섹션 */}
       <FlexBox flexDirection="row" style={{ width: "100vw" }}>
         <ScrollBox
           as="section"
-          style={{ width: "50%", height: "80vh", padding: "16px" }}
+          style={{
+            width: "50%",
+            height: "80vh",
+            padding: "16px",
+            color: "#263747",
+          }}
         >
           <article>
             <h3>문제 설명</h3>
@@ -105,18 +114,14 @@ function ProblemDetail(props: GetProblemResponse) {
                   { field: "input", header: "입력" },
                   { field: "output", header: "출력" },
                 ]}
-                body={
-                  test_case_examples as Record<
-                    string,
-                    string | number | JSX.Element
-                  >[]
-                }
+                body={test_case_examples}
               />
             </>
           </article>
         </ScrollBox>
-
+        {/**화면 오른쪽 섹션 */}
         <section style={{ width: "50%", padding: "16px" }}>
+          {/**에디터 */}
           <MonacoEditor
             height="50vh"
             language={language}
@@ -129,13 +134,13 @@ function ProblemDetail(props: GetProblemResponse) {
               },
             }}
           />
+          {/**테스트 결과 콘솔 */}
           <FlexBox style={{ height: "30vh" }}>
             <ScrollBox>
-              {/* <code>{result}</code> */}
               <ul>
-                {result &&
-                  result.result_list.length > 1 &&
-                  result?.result_list.slice(1).map((result, idx) => {
+                {!!Object.keys(runResult).length &&
+                  runResult?.result_list?.length > 1 &&
+                  runResult?.result_list?.slice(1).map((result, idx) => {
                     return (
                       <>
                         <STable>
@@ -181,29 +186,30 @@ function ProblemDetail(props: GetProblemResponse) {
                     );
                   })}
               </ul>
-              <code>
-                <pre>
-                  테스트 결과 (~˘▾˘)~
-                  {result?.status}
-                </pre>
-              </code>
-              <code>{result?.status}</code>
+              {!Object.keys(runResult).length && (
+                <code>실행 결과가 여기에 표시됩니다.</code>
+              )}
 
-              {result && (
-                <code>
-                  {result.result_list.length - 1}개 중{" "}
-                  {
-                    result.result_list
-                      .slice(1)
-                      .filter((result) => result.correct).length
-                  }
-                  개 성공
-                </code>
+              {!!Object.keys(runResult).length && (
+                <>
+                  <code>테스트 결과 (~˘▾˘)~</code>
+                  <code>{runResult?.status}</code>
+                  <code>
+                    {runResult?.result_list?.length - 1}개 중
+                    {
+                      runResult.result_list
+                        ?.slice(1)
+                        .filter((result) => result.correct).length
+                    }
+                    개 성공
+                  </code>
+                </>
               )}
             </ScrollBox>
           </FlexBox>
         </section>
       </FlexBox>
+      {/* 하단 바 */}
       <FlexBox flexDirection="row" justifyContent={"space-between"}>
         {isLogin ? (
           <>
@@ -211,7 +217,12 @@ function ProblemDetail(props: GetProblemResponse) {
               다른 유저의 코드 보기
             </Button>
             <div>
-              <Button onClick={() => editorRef.current.setValue("")}>
+              <Button
+                onClick={() => {
+                  editorRef.current.setValue("");
+                  editorRef.current.focus();
+                }}
+              >
                 초기화
               </Button>
               <Button
@@ -264,7 +275,12 @@ export async function getServerSideProps(ctx: NextPageContext) {
 }
 
 ProblemDetail.getLayout = function getLayout(page: ReactElement) {
-  return <>{page}</>;
+  return (
+    <>
+      <BreadCrumbs />
+      <main>{page}</main>
+    </>
+  );
 };
 
 export default ProblemDetail;
@@ -291,54 +307,11 @@ const STable = styled.table`
   }
 `;
 
-export const RIGHT_ANSWER = {
-  created_at: "2022-12-08T11:47:19.079",
-  updated_at: "2022-12-08T11:47:19.174215858",
-  id: "6391cec77b89c103bda4e108",
-  user_id: "test1234",
-  problem_id: 3,
-  code: 'a = input()\nb= input()\nprint("Hello "+a)\nprint("Hello2 "+b)',
-  language: "PYTHON3",
-  status: "SUCCESS",
-  memory: 0,
-  real_time: 13,
-  code_length: 59,
-  result_list: [
-    {
-      id: 0,
-      cpu_time: 0,
-      real_time: 0,
-      memory: 0,
-      signal: 0,
-      exit_code: 0,
-      error: 0,
-      result: 0,
-      correct: true,
-    },
-    {
-      id: 0,
-      cpu_time: 0,
-      real_time: 13,
-      memory: 0,
-      signal: 0,
-      exit_code: 0,
-      error: 0,
-      result: 0,
-      output: "Hello World\nHello2 World2",
-      correct: true,
-    },
-    {
-      id: 1,
-      cpu_time: 0,
-      real_time: 11,
-      memory: 0,
-      signal: 0,
-      exit_code: 0,
-      error: 0,
-      result: 0,
-      output: "Hello World3\nHello2 World4",
-      correct: true,
-    },
-  ],
-  judge: false,
-};
+const Header = styled(FlexBox)`
+  background-color: ${({ theme }) => theme.colors.gray100};
+  padding: 0 60px;
+  ${({ theme }) => theme.text.header}
+  & h1 {
+    font-size: ${({ theme }) => theme.fontSizes[3]};
+  }
+`;
