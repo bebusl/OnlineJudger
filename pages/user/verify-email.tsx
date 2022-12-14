@@ -2,7 +2,7 @@ import { Router, useRouter } from "next/router";
 import React from "react";
 import { verifyEmail } from "../../api/authAPI";
 import { Button, FlexBox, Input } from "../../components/common";
-import Subscription from "../../components/common/Typhography/Subscription";
+import Description from "../../components/common/Typhography/Description";
 import useForm from "../../hooks/useForm";
 import useNotification from "../../hooks/useNotification";
 
@@ -14,9 +14,7 @@ function VerifyEmail() {
   return (
     <FlexBox>
       <h1>이메일 인증</h1>
-      <Subscription>
-        이메일 인증을 마치면 문제를 풀어볼 수 있습니다.
-      </Subscription>
+      <Description>이메일 인증을 마치면 문제를 풀어볼 수 있습니다.</Description>
       <Input
         ref={getRef("code")}
         isValid={!!getRef("code").current?.value?.length || isValid.code}
