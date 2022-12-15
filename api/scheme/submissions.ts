@@ -1,4 +1,4 @@
-import { LANGUAGES_TYPE } from "../../constants/language";
+import { LANGUAGES_TYPE } from "../../utils/constants/language";
 import { APIResponse } from "./common";
 import { PagingResponse } from "./page";
 

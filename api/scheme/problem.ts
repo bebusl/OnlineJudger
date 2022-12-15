@@ -1,5 +1,5 @@
-import { LANGUAGES_TYPE } from "../../constants/language";
-import { TagsType } from "../../constants/tag";
+import { LANGUAGES_TYPE } from "../../utils/constants/language";
+import { TagsType } from "../../utils/constants/tag";
 import { APIResponse } from "./common";
 import { PagingResponse } from "./page";
 
@@ -20,15 +20,16 @@ export interface AddProblemRequest extends ProblemDetail {}
 
 export interface AddProblemResponse extends APIResponse {}
 
-export interface GetProblemRequest {
+export interface GetProblemsRequest {
   page: number;
   title?: string;
   languages?: LANGUAGES_TYPE[] | LANGUAGES_TYPE;
-  tags?: string[] | string;
+  tags?: number[] | number;
+  levels?: number[] | number;
 }
 export interface GetProblemResponse extends APIResponse, ProblemDetail {}
 
-export interface GetAllProblemResponse extends APIResponse {
+export interface GetProblemsResponse extends APIResponse {
   page: PagingResponse;
   problems: GetProblemResponse[];
 }

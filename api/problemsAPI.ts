@@ -1,29 +1,27 @@
-import request from "./request";
-import { generateAuthHeader } from "../utils/authUtils";
+import { common, secure } from "./fetchClient";
+import { getAuthToken } from "../utils/authUtils";
 import {
   AddProblemResponse,
-  GetProblemRequest,
-  GetAllProblemResponse,
+  GetProblemsRequest,
+  GetProblemsResponse,
   GetProblemResponse,
 } from "./scheme/problem";
 import axios from "axios";
 import { APIResponse } from "./scheme/common";
 
-const { get, post, deleteRequest, putRequest } = request("/problems");
-
 export const deleteProblem = (id: number) =>
-  deleteRequest<APIResponse>(`/${id}`);
+  secure.delete<APIResponse>(`/problems/${id}`);
 
 export const deleteMultiProblems = (ids: Set<number>) => {
   const problemWillDelete = Array.from(ids);
   const requests = problemWillDelete.map((problemId) =>
-    deleteRequest<APIResponse>(`/${problemId}`)
+    secure.delete<APIResponse>(`/problems/${problemId}`)
   );
   return axios.all(requests);
 };
 
 export const getProblemDetail = (id: string) =>
-  get<GetProblemResponse>(`/${id}`);
+  common.get<GetProblemResponse>(`/problems/${id}`);
 
 export const getProblems = ({
   page = 1,
@@ -31,8 +29,8 @@ export const getProblems = ({
   languages = [],
   tags,
   levels,
-}: Partial<GetProblemRequest>) => {
-  return get<GetAllProblemResponse>("", {
+}: Partial<GetProblemsRequest>) => {
+  return common.get<GetProblemsResponse>("/problems", {
     params: {
       page,
       title,
@@ -43,28 +41,20 @@ export const getProblems = ({
   });
 };
 
+/**TEST. 잘 되나 */
 export const registerProblem = (data: FormData) =>
-  post<AddProblemResponse>({
-    url: "",
-    data: data,
-    config: {
-      headers: {
-        accept: "*/*",
-        "Content-Type": "multipart/form-data",
-        ...generateAuthHeader(),
-      },
+  secure.post<AddProblemResponse>("/problems", data, {
+    headers: {
+      accept: "*/*",
+      "Content-Type": "multipart/form-data",
     },
   });
 
+/**TEST. 잘 되나 */
 export const modifyProblem = (id: string, data: FormData) =>
-  putRequest<APIResponse>({
-    url: `/${id}`,
-    data,
-    config: {
-      headers: {
-        accept: "*/*",
-        "Content-Type": "multipart/form-data",
-        ...generateAuthHeader(),
-      },
+  secure.put<APIResponse>(`/problems/${id}`, data, {
+    headers: {
+      accept: "*/*",
+      "Content-Type": "multipart/form-data",
     },
   });
