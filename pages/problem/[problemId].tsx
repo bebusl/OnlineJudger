@@ -9,13 +9,14 @@ import { GetProblemResponse } from "../../api/scheme/problem";
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 import { resetRunMessage } from "../../store/slice/socketSlice";
 
-import { LANGUAGES_TYPE } from "../../constants/language";
+import { LANGUAGES_TYPE } from "../../utils/constants/language";
 import styled from "styled-components";
 import { Button, FlexBox } from "../../components/common";
 import Table from "../../components/common/Table/Table";
 import { gradeProblem, runProblem } from "../../api/submissionsAPI";
 import ScrollBox from "../../components/common/ScrollBox";
 import BreadCrumbs from "../../components/layouts/BreadCrumbs";
+import ConfirmDialogue from "../../components/common/Dialogue/ConfirmDialogue";
 
 const RankingModal = dynamic(
   import("../../components/submissions/RankingModal"),
@@ -25,26 +26,30 @@ const RankingModal = dynamic(
 );
 const MonacoEditor = dynamic(import("@monaco-editor/react"), { ssr: false });
 
-function ProblemDetail(props: GetProblemResponse) {
-  const {
-    id,
-    title,
-    time_limit,
-    memory_limit,
-    desc,
-    input_desc,
-    output_desc,
-    test_case_examples,
-    languages,
-  } = props;
+function ProblemDetail({
+  id,
+  title,
+  time_limit,
+  memory_limit,
+  desc,
+  input_desc,
+  output_desc,
+  test_case_examples,
+  languages,
+}: GetProblemResponse) {
   const router = useRouter();
   const isLogin = useAppSelector((store) => store.auth.isLogin);
   const runResult = useAppSelector((store) => store.socket.runResult);
   const dispatch = useAppDispatch();
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [openModal, setOpenModal] = useState({ open: false, content: 0 });
   const [language, setLanguage] = useState<LANGUAGES_TYPE>(languages[0]);
   const editorRef = useRef(null);
+
+  const submitCode = () => {
+    const code = editorRef.current?.getValue();
+    gradeProblem(id, code, language);
+  };
 
   useEffect(() => {
     return () => {
@@ -54,8 +59,21 @@ function ProblemDetail(props: GetProblemResponse) {
 
   return (
     <>
-      {isOpen && (
-        <RankingModal onClose={() => setIsOpen(false)} problemId={id} />
+      {openModal.open && openModal.content === 0 && (
+        <RankingModal
+          onClose={() => setOpenModal({ open: false, content: -1 })}
+          problemId={id}
+        />
+      )}
+      {openModal.open && openModal.content === 1 && (
+        <ConfirmDialogue
+          onConfirm={() => {
+            submitCode();
+            router.push("/user/problem");
+          }}
+          onClose={() => setOpenModal({ open: false, content: -1 })}
+          message={"제출을 하면 이 페이지를 벗어나게 됩니다."}
+        />
       )}
 
       <Header as={"nav"} flexDirection="row" justifyContent="space-between">
@@ -194,15 +212,17 @@ function ProblemDetail(props: GetProblemResponse) {
                 <>
                   <code>테스트 결과 (~˘▾˘)~</code>
                   <code>{runResult?.status}</code>
-                  <code>
-                    {runResult?.result_list?.length - 1}개 중
-                    {
-                      runResult.result_list
-                        ?.slice(1)
-                        .filter((result) => result.correct).length
-                    }
-                    개 성공
-                  </code>
+                  {runResult?.result_list?.length && (
+                    <code>
+                      {runResult?.result_list?.length - 1}개 중
+                      {
+                        runResult.result_list
+                          ?.slice(1)
+                          .filter((result) => result.correct).length
+                      }
+                      개 성공
+                    </code>
+                  )}
                 </>
               )}
             </ScrollBox>
@@ -213,7 +233,7 @@ function ProblemDetail(props: GetProblemResponse) {
       <FlexBox flexDirection="row" justifyContent={"space-between"}>
         {isLogin ? (
           <>
-            <Button onClick={() => setIsOpen(true)}>
+            <Button onClick={() => setOpenModal({ open: true, content: 0 })}>
               다른 유저의 코드 보기
             </Button>
             <div>
@@ -235,8 +255,7 @@ function ProblemDetail(props: GetProblemResponse) {
               </Button>
               <Button
                 onClick={() => {
-                  const code = editorRef.current?.getValue();
-                  gradeProblem(id, code, language);
+                  setOpenModal({ open: true, content: 1 });
                 }}
               >
                 제출 및 채점
@@ -259,7 +278,7 @@ export async function getServerSideProps(ctx: NextPageContext) {
   if (problemId) {
     try {
       const problemDetail = await getProblemDetail(problemId as string);
-      if (problemDetail.data.success)
+      if (problemDetail.data?.success)
         return {
           props: problemDetail.data,
         };
@@ -310,7 +329,7 @@ const STable = styled.table`
 const Header = styled(FlexBox)`
   background-color: ${({ theme }) => theme.colors.gray100};
   padding: 0 60px;
-  ${({ theme }) => theme.text.header}
+
   & h1 {
     font-size: ${({ theme }) => theme.fontSizes[3]};
   }
