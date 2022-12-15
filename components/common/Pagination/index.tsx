@@ -2,14 +2,14 @@ import React, { MouseEventHandler, useMemo } from "react";
 import styled from "styled-components";
 
 interface Props {
-  current_pages?: number;
-  total_pages?: number;
+  current_pages: number;
+  total_pages: number;
   onChange: Function;
 }
 
 const LIMIT = 5;
 
-function Pagination({ current_pages = 5, total_pages = 10, onChange }: Props) {
+function Pagination({ current_pages, total_pages, onChange }: Props) {
   const paginationIndex = useMemo(
     () => Math.floor((current_pages - 1) / 5),
     [current_pages]
@@ -37,6 +37,8 @@ function Pagination({ current_pages = 5, total_pages = 10, onChange }: Props) {
     onChange(selectedPageNumber);
   };
 
+  if (total_pages === 0) return null;
+
   return (
     <Wrapper aria-label="pagination navigation" onClick={handleClickPageBtn}>
       {hasPrev && (
@@ -48,7 +50,6 @@ function Pagination({ current_pages = 5, total_pages = 10, onChange }: Props) {
       )}
       <PageNumbers>
         {pageNumbers.map((number) => {
-          console.log("CURRENT", current_pages);
           const isCurrentPage = number === current_pages;
           return (
             <div
@@ -109,6 +110,8 @@ const PaginationNavButton = styled.div`
 
 const Wrapper = styled.nav`
   display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 15px;
-  margin: 2rem;
+  margin: 2rem auto;
 `;

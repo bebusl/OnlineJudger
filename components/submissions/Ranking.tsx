@@ -1,17 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { getSubmissionsByQuery } from "../../api/submissionsAPI";
-import useInfiniteScroll from "../../hooks/useIntersectionObserver";
+import Pagination from "../common/Pagination";
 import Table from "../common/Table/Table";
 import { Submission } from "../../api/scheme/submissions";
 
 function Ranking({ problemId }: { problemId?: number }) {
   const [body, setBody] = useState<Submission[]>([]);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState({ current_pages: 0, total_pages: 0 });
   const pageLimit = useRef<number>(1);
-  const onIntersectionCallback = () => {
-    if (page < pageLimit.current - 1) setPage((prev) => prev + 1);
-  };
-  const { targetRef } = useInfiniteScroll({ onIntersectionCallback });
 
   const header = useMemo(
     () => [
@@ -26,43 +22,59 @@ function Ranking({ problemId }: { problemId?: number }) {
     []
   );
 
-  useEffect(() => {
-    (async () => {
-      const result = await getSubmissionsByQuery({
-        problem_id: problemId,
-        is_ranking: true,
-        page: page,
-      });
-      if (result.data?.success) {
-        pageLimit.current = result.data.page.total_pages;
-        let submissions = result.data?.submissions || [];
-        submissions.map((submission) => {
-          return Object.assign(submission, {
-            problem_id: (
-              <a
-                href={`/solution/${submission.id}`}
-                rel="noreferrer"
-                target="_blank"
-              >
-                <p>{submission.problem_id}</p>
-              </a>
-            ),
-          });
+  const fetchSubmissions = async (page: number = 1) => {
+    const result = await getSubmissionsByQuery({
+      problem_id: problemId,
+      is_ranking: true,
+      page,
+    });
+    if (result.data?.success) {
+      pageLimit.current = result.data.page.total_pages;
+      let submissions = result.data?.submissions || [];
+      submissions.map((submission) => {
+        return Object.assign(submission, {
+          problem_id: (
+            <a
+              href={`/solution/${submission.id}`}
+              rel="noreferrer"
+              target="_blank"
+            >
+              <p>{submission.problem_id}</p>
+            </a>
+          ),
         });
-        setBody((prev) => [...prev, ...submissions]);
-      }
-    })();
-  }, [page]);
+      });
+      setBody(submissions);
+      setPage({
+        current_pages: result.data.page.current_pages,
+        total_pages: result.data.page.total_pages,
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchSubmissions();
+  }, []);
 
   return (
     <>
       {!!body.length ? (
-        <Table header={header} body={body} />
+        <>
+          <Table header={header} body={body} />
+          <Pagination
+            {...page}
+            onChange={(value: number) => {
+              fetchSubmissions(value);
+              setPage((prev) => ({
+                current_pages: value,
+                total_pages: prev.total_pages,
+              }));
+            }}
+          />
+        </>
       ) : (
-        <div>제출된 풀이법이 없습니다.</div>
+        <div>제출된 풀이가 없습니다.</div>
       )}
-
-      <div style={{ height: "1px" }} ref={targetRef} />
     </>
   );
 }

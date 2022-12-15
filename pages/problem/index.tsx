@@ -9,12 +9,13 @@ import Pagination from "../../components/common/Pagination";
 import Table from "../../components/common/Table/Table";
 import SearchFilter from "../../components/search/SearchFilter";
 import ProblemCard from "../../components/unit/problem/problemCard/ProblemCard";
+import { useRouter } from "next/router";
 
 const header = [{ field: "card", header: "문제" }];
 
 export default function ProblemList({ problems, page }: GetProblemsResponse) {
   const [body, setBody] = useState<{ card: JSX.Element }[]>([]);
-
+  const router = useRouter();
   useEffect(() => {
     const body = problems.map((problem, idx) => ({
       card: <ProblemCard key={idx} {...problem} />,
@@ -34,13 +35,18 @@ export default function ProblemList({ problems, page }: GetProblemsResponse) {
         <>
           <Table header={header} body={body} />
           <Pagination
-            route="problem"
-            current_pages={page?.current_pages}
-            total_pages={page?.total_pages}
+            current_pages={page.current_pages}
+            total_pages={page.total_pages}
+            onChange={(page: number) =>
+              router.push({
+                pathname: router.pathname,
+                query: { ...router.query, page },
+              })
+            }
           />
         </>
       ) : (
-        <p>등록된 문제가 없습니다.</p>
+        <p>조건에 맞는 문제가 없습니다. 필터를 수정해주세요</p>
       )}
     </FlexBox>
   );
@@ -49,7 +55,6 @@ export default function ProblemList({ problems, page }: GetProblemsResponse) {
 export async function getServerSideProps(ctx: NextPageContext) {
   try {
     const result = await getProblems(ctx.query);
-
     if (result.data.success) {
       const { page, problems } = result.data;
       return {
