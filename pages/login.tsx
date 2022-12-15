@@ -41,6 +41,7 @@ const LoginForm = () => {
         <Input
           {...register("email", { pattern: regexPatterns.email })}
           placeholder="이메일"
+          errorMessage="이메일 형태로 입력해주세요"
         />
         <Input
           type="password"
