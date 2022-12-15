@@ -1,4 +1,4 @@
-import React, { FormEventHandler, useEffect, useState } from "react";
+import React, { FormEventHandler, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 
@@ -14,18 +14,23 @@ import Subscription from "../components/common/Typhography/Description";
 import GoogleOAuthButton from "../components/common/Buttons/OAuthButton/GoogleOAuthButton";
 import KakaoOAuthButton from "../components/common/Buttons/OAuthButton/KakaoOAuthButton";
 
-const RegisterForm = ({ linkKey }: { linkKey: string | undefined }) => {
+const RegisterForm = ({
+  linkKey,
+}: {
+  linkKey: string | string[] | undefined;
+}) => {
   const dispatch = useAppDispatch();
-  const { isValidInputs, getAllValues, register } = useForm();
+  const { getAllValues, register, isValidInputs } = useForm();
   const [errMsg, setErrMsg] = useState("");
 
   const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
-    const { checkPassword, ...rest } = getAllValues();
-    dispatch(signUpRequest({ ...rest, link_key: linkKey || "" }))
-      .unwrap()
-      .then((data) => console.log("DATA", data))
-      .catch((e) => setErrMsg(e));
+    if (!Array.isArray(linkKey)) {
+      const { checkPassword, ...rest } = getAllValues();
+      dispatch(signUpRequest({ ...rest, link_key: linkKey || "" }))
+        .unwrap()
+        .catch((e) => setErrMsg(e));
+    }
   };
 
   return (
@@ -34,10 +39,11 @@ const RegisterForm = ({ linkKey }: { linkKey: string | undefined }) => {
         <Input
           {...register("email", { pattern: regexPatterns.email })}
           placeholder={"이메일"}
+          description="이메일 형태로 입력해주세요"
         />
       )}
       <Input
-        {...register("name", { minLength: 5 })}
+        {...register("name", { minLength: 3 })}
         placeholder="닉네임"
         description="3글자 이상"
       />
@@ -55,6 +61,7 @@ const RegisterForm = ({ linkKey }: { linkKey: string | undefined }) => {
           },
         })}
         placeholder="비밀번호 확인"
+        errorMessage="비밀번호가 일치하지 않습니다"
       />
       <Subscription>{errMsg}</Subscription>
       <Button disabled={!isValidInputs()} onClick={handleSubmit} width="100%">
@@ -66,17 +73,7 @@ const RegisterForm = ({ linkKey }: { linkKey: string | undefined }) => {
 
 function Register() {
   const router = useRouter();
-  const [oAuthAccount, setOAuthAccount] = useState({
-    provider: "",
-    linkKey: "",
-  });
-
-  useEffect(() => {
-    const { provider, linkKey } = router.query;
-    if (typeof provider === "string" && typeof linkKey === "string") {
-      setOAuthAccount({ provider, linkKey });
-    }
-  }, []);
+  const { provider, linkKey } = router.query;
 
   return (
     <AuthTemplate
@@ -85,15 +82,15 @@ function Register() {
     >
       <div style={{ width: "60%" }}>
         <FlexBox justifyContent="space-around">
-          {oAuthAccount.provider ? (
+          {provider && typeof provider === "string" ? (
             <>
               <Image
-                src={`/images/logo/${oAuthAccount.provider.toLowerCase()}-logo.png`}
-                alt={`login with ${oAuthAccount.provider.toLowerCase()}`}
+                src={`/images/logo/${provider.toLowerCase()}-logo.png`}
+                alt={`login with ${provider.toLowerCase()}`}
                 height="40px"
                 width="40px"
               />
-              <p>{oAuthAccount.provider}와(과) 연동되는 계정입니다.</p>
+              <p>{provider}와(과) 연동되는 계정입니다.</p>
               <Seperator>and</Seperator>
             </>
           ) : (
@@ -104,7 +101,7 @@ function Register() {
             </>
           )}
         </FlexBox>
-        <RegisterForm linkKey={oAuthAccount.linkKey} />
+        <RegisterForm linkKey={linkKey} />
       </div>
     </AuthTemplate>
   );
