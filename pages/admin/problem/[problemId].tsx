@@ -2,7 +2,7 @@ import React, { MouseEventHandler, useState } from "react";
 import type { NextPageContext } from "next";
 
 import { getProblemDetail, modifyProblem } from "../../../api/problemsAPI";
-import { GetAllProblemResponse } from "../../../api/scheme/problem";
+import { GetProblemsResponse } from "../../../api/scheme/problem";
 
 import useNotification from "../../../hooks/useNotification";
 
@@ -11,7 +11,7 @@ import { Button } from "../../../components/common";
 
 interface Props {
   id: string;
-  data: GetAllProblemResponse;
+  data: GetProblemsResponse;
 }
 
 function ProblemDetail({ id, data }: Props) {

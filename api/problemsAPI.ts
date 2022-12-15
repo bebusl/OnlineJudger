@@ -1,77 +1,60 @@
-import request from "./request";
-import { makeAuthHeader } from "../utils/authUtils";
+import { common, secure } from "./fetchClient";
+import { getAuthToken } from "../utils/authUtils";
 import {
   AddProblemResponse,
-  GetProblemRequest,
-  GetAllProblemResponse,
+  GetProblemsRequest,
+  GetProblemsResponse,
   GetProblemResponse,
 } from "./scheme/problem";
 import axios from "axios";
 import { APIResponse } from "./scheme/common";
 
-const { get, post, deleteRequest, putRequest } = request("/problems");
-
 export const deleteProblem = (id: number) =>
-  deleteRequest<APIResponse>(`/${id}`);
+  secure.delete<APIResponse>(`/problems/${id}`);
 
 export const deleteMultiProblems = (ids: Set<number>) => {
   const problemWillDelete = Array.from(ids);
   const requests = problemWillDelete.map((problemId) =>
-    deleteRequest<APIResponse>(`/${problemId}`)
+    secure.delete<APIResponse>(`/problems/${problemId}`)
   );
   return axios.all(requests);
 };
 
 export const getProblemDetail = (id: string) =>
-  get<GetProblemResponse>(`/${id}`);
+  common.get<GetProblemResponse>(`/problems/${id}`);
 
 export const getProblems = ({
   page = 1,
   title,
   languages = [],
   tags,
-}: GetProblemRequest) => {
-  const defaultQuery = "?page=" + page;
-  const titleQuery = title ? `&title=${title}` : "";
-  let languagesQuery = "";
-  let tagsQuery = "";
-
-  if (Array.isArray(languages)) {
-    const key = "&languages=";
-    languages.forEach((language) => (languagesQuery += key + language));
-  }
-  if (languages) languagesQuery = "&languages=" + languages;
-  if (Array.isArray(tags)) {
-    const key = "&tags=";
-    tags.forEach((tag) => (tagsQuery += key + tag));
-  }
-  if (tags) tagsQuery = "&tags=" + languages;
-
-  return get<GetAllProblemResponse>(defaultQuery + titleQuery + languagesQuery);
+  levels,
+}: Partial<GetProblemsRequest>) => {
+  return common.get<GetProblemsResponse>("/problems", {
+    params: {
+      page,
+      title,
+      languages,
+      tags,
+      levels,
+    },
+  });
 };
 
+/**TEST. 잘 되나 */
 export const registerProblem = (data: FormData) =>
-  post<AddProblemResponse>({
-    url: "",
-    data: data,
-    config: {
-      headers: {
-        accept: "*/*",
-        "Content-Type": "multipart/form-data",
-        ...makeAuthHeader(),
-      },
+  secure.post<AddProblemResponse>("/problems", data, {
+    headers: {
+      accept: "*/*",
+      "Content-Type": "multipart/form-data",
     },
   });
 
+/**TEST. 잘 되나 */
 export const modifyProblem = (id: string, data: FormData) =>
-  putRequest<APIResponse>({
-    url: `/${id}`,
-    data,
-    config: {
-      headers: {
-        accept: "*/*",
-        "Content-Type": "multipart/form-data",
-        ...makeAuthHeader(),
-      },
+  secure.put<APIResponse>(`/problems/${id}`, data, {
+    headers: {
+      accept: "*/*",
+      "Content-Type": "multipart/form-data",
     },
   });

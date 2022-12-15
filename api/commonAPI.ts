@@ -1,5 +1,3 @@
-import request from "./request";
+import { common } from "./fetchClient";
 
-const { get } = request("/common");
-
-export const checkHealth = async () => await get("/health");
+export const checkHealth = async () => await common.get("/common/health");

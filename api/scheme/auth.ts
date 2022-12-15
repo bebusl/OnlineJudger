@@ -1,5 +1,5 @@
 import { APIResponse } from "./common";
-import { ROLEADMIN, ROLEUSER } from "../../constants/role";
+import { ROLEADMIN, ROLEUSER } from "../../utils/constants/role";
 
 export interface User {
   name: string;
@@ -31,9 +31,9 @@ export interface OAuthResponse {
 }
 
 export type SignInRequest = {
-  email: string;
-  password: string;
-  link_key: string;
+  email?: string;
+  password?: string;
+  link_key?: string;
 };
 
 export interface SignInResponse extends APIResponse {
@@ -42,7 +42,7 @@ export interface SignInResponse extends APIResponse {
 }
 
 export interface RefreshTokenResponse extends APIResponse {
-  aceees_token: string;
+  access_token: string;
 }
 
 export interface CurrentUserResponse extends APIResponse {

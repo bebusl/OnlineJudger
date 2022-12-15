@@ -1,29 +1,30 @@
 import { useRouter } from "next/router";
 import React, { ChangeEventHandler, FormEventHandler, useRef } from "react";
 import styled from "styled-components";
-import { C, CPP, JAVA, PYTHON2, PYTHON3 } from "../../constants/language";
-import { TAGS } from "../../constants/tag";
+import { C, CPP, JAVA, PYTHON2, PYTHON3 } from "../../utils/constants/language";
+import { tagMapper, TAGS } from "../../utils/constants/tag";
 import { toggleSetItem } from "../../utils/setTypeUtils";
 import { FlexBox } from "../common";
 import SearchBar from "../common/SearchBar";
 import Selector from "../common/Selector";
 
+function generateQuerySet(queries: string | string[] | undefined): Set<string> {
+  let newQuerySet = new Set<string>();
+  if (queries) {
+    newQuerySet = Array.isArray(queries)
+      ? new Set(queries)
+      : new Set([queries]);
+  }
+  return newQuerySet;
+}
+
 function SearchFilter() {
   const router = useRouter();
 
-  function makeQuerySet(queries: string | string[] | undefined): Set<string> {
-    let newQuerySet = new Set<string>();
-    if (queries) {
-      newQuerySet = Array.isArray(queries)
-        ? new Set(queries)
-        : new Set([queries]);
-    }
-    return newQuerySet;
-  }
-
-  const { languages, tags } = router.query;
-  const languagesQuery = makeQuerySet(languages);
-  const tagsQuery = makeQuerySet(tags);
+  const { languages, tags, levels } = router.query;
+  const languagesQuery = generateQuerySet(languages);
+  const tagsQuery = generateQuerySet(tags);
+  const lvQuery = generateQuerySet(levels);
 
   const handleTitleSubmit: FormEventHandler = (e) => {
     e.preventDefault();
@@ -52,10 +53,23 @@ function SearchFilter() {
 
   const handleTagChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     const value = e.target.value;
+    console.log(value);
     const newTagsQuery = toggleSetItem<string>(tagsQuery, value);
     router.push({
       pathname: router.pathname,
-      query: { ...router.query, tags: Array.from(newTagsQuery) },
+      query: {
+        ...router.query,
+        tags: Array.from(newTagsQuery),
+      },
+    });
+  };
+
+  const handleLevelChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const value = e.target.value;
+    const newLvQuery = toggleSetItem<string>(lvQuery, value);
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, levels: Array.from(newLvQuery) },
     });
   };
 
@@ -89,12 +103,22 @@ function SearchFilter() {
           groupName="채점가능언어"
         />
         <Selector
-          options={TAGS.map((tag) => ({
+          options={TAGS.map((tag, idx) => ({
             text: tag,
-            checked: tagsQuery.has(tag),
+            checked: tagsQuery.has(Number(idx + 1).toString()),
+            defaultValue: idx + 1,
           }))}
           onChange={handleTagChange}
           groupName="태그"
+        />
+        <Selector
+          options={[1, 2, 3, 4, 5].map((lv) => ({
+            text: lv,
+            checked: lvQuery.has(lv.toString()),
+            defaultValue: lv.toString(),
+          }))}
+          onChange={handleLevelChange}
+          groupName="레벨"
         />
       </FlexBox>
       <div style={{ minWidth: "2rem" }}>
@@ -119,7 +143,7 @@ function SearchFilter() {
         ))}
         {Array.from(tagsQuery).map((t) => (
           <Tag key={t}>
-            {t}
+            {tagMapper[t]}
             <button
               onClick={() => {
                 tagsQuery.delete(t);
@@ -136,7 +160,26 @@ function SearchFilter() {
             </button>
           </Tag>
         ))}
-        {!!(tagsQuery.size || languagesQuery.size) && (
+        {Array.from(lvQuery).map((lv) => (
+          <Tag key={"lv." + lv}>
+            Lv.{lv}{" "}
+            <button
+              onClick={() => {
+                lvQuery.delete(lv);
+                router.push({
+                  pathname: router.pathname,
+                  query: {
+                    ...router.query,
+                    levels: Array.from(lvQuery),
+                  },
+                });
+              }}
+            >
+              x
+            </button>
+          </Tag>
+        ))}
+        {!!(tagsQuery.size || languagesQuery.size || lvQuery.size) && (
           <Tag
             as="button"
             onClick={() => {

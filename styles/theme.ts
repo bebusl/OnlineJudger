@@ -10,7 +10,7 @@ const colors = {
   white: "#ffffff",
   lightGray: "f6f6f6",
   gray50: "#fbfbfb",
-  gray100: "#edeef2",
+  gray100: "#f1f4f7",
   gray150: "#d5dbe1",
   gray200: "#c7c8d2",
   gray250: "#cfd6dc",
@@ -58,7 +58,7 @@ const theme: DefaultTheme = {
     widescreen: `@media screen and (min-width: ${breakpoints[4]})`,
   },
   shadows: {
-    light: "15px 15px 35px rgba(0, 127, 255, 0.5)",
+    light: `5px 5px 10px ${colors.gray100}`,
     dark: `7px 7px 15px ${colors.primary}`,
   },
   fontSizes: [
@@ -82,31 +82,31 @@ const theme: DefaultTheme = {
     header: {
       fontFamily: fonts.heading,
       lineHeight: "1.25",
-      fontSize: [4, 4, 5, 6],
+      fontSize: 4,
       marginBottom: 3,
     },
     subheader: {
       fontFamily: fonts.heading,
       lineHeight: "1.25",
-      fontSize: [3, 3, 4, 4],
+      fontSize: 3,
       marginBottom: 3,
     },
     h2: {
       fontFamily: fonts.heading,
       lineHeight: "1.25",
-      fontSize: [2, 3, 4, 5],
+      fontSize: 3,
       marginBottom: 3,
     },
     h3: {
       fontFamily: fonts.heading,
       lineHeight: "1.25",
-      fontSize: [2, 2, 3, 3],
+      fontSize: 2,
       marginBottom: 3,
     },
     h4: {
       fontFamily: fonts.heading,
       lineHeight: "1.25",
-      fontSize: [1],
+      fontSize: 1,
       marginBottom: 3,
     },
     label: {

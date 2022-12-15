@@ -3,7 +3,7 @@ import { Button, Input } from "../../components/common";
 import useForm from "../../hooks/useForm";
 import { resetPassword } from "../../api/authAPI";
 import { useRouter } from "next/router";
-import Subscription from "../../components/common/Typhography/Subscription";
+import Subscription from "../../components/common/Typhography/Description";
 import useNotification from "../../hooks/useNotification";
 
 function PasswordReset() {

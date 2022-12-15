@@ -1,6 +1,7 @@
 import React, { MouseEventHandler } from "react";
 import Button from "../Buttons/BasicButton/Button";
 import MediumCard from "../Card/MediumCard";
+import FlexBox from "../FlexBox";
 import Modal from "../Modal";
 
 function ConfirmDialogue({
@@ -13,10 +14,23 @@ function ConfirmDialogue({
   onConfirm: Function;
 }) {
   return (
-    <Modal onClose={() => console.log("CLOSE")}>
+    <Modal onClose={onClose}>
       <MediumCard $variant="normal">
-        <p>{message}</p>
-        <Button onClick={onClose as MouseEventHandler}>취소</Button>
+        <FlexBox
+          style={{
+            height: "130px",
+            verticalAlign: "middle",
+          }}
+        >
+          {message}
+        </FlexBox>
+        <Button
+          onClick={onClose as MouseEventHandler}
+          style={{ marginRight: "1rem" }}
+          $variant="outline"
+        >
+          취소
+        </Button>
         <Button
           onClick={(e) => {
             e.preventDefault();

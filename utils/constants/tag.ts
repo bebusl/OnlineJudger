@@ -35,4 +35,12 @@ export const TAGS = [
   "LCS",
 ];
 
+export const tagMapper = TAGS.reduce<Record<number, string>>(
+  (accum, cur, idx) => {
+    accum[idx + 1] = cur;
+    return accum;
+  },
+  {}
+);
+
 export type TagsType = typeof TAGS;
