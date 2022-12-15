@@ -2,7 +2,6 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { deleteMultiProblems, getProblems } from "../../api/problemsAPI";
 import { GetProblemResponse } from "../../api/scheme/problem";
-import { PagingResponse } from "../../api/scheme/page";
 import useNotification from "../../hooks/useNotification";
 
 import Pagination from "../../components/common/Pagination";
@@ -25,18 +24,12 @@ interface ProblemTableInfo
 
 function ManageProblem() {
   const [problems, setProblems] = useState<ProblemTableInfo[]>([]);
-  const [pageInfo, setPageInfo] = useState<PagingResponse>({
-    current_pages: 0,
-    total_elements: 0,
-    total_pages: 0,
-    is_first: false,
-    is_last: false,
-  });
+  const [page, setPage] = useState({ current_pages: 0, total_pages: 0 });
   const addNotification = useNotification();
 
-  const fetchProblem = async () => {
+  const fetchProblem = async (value: number = 1) => {
     try {
-      const res = await getProblems({ page: pageInfo.current_pages });
+      const res = await getProblems({ page: value });
       const { page, problems } = res.data;
 
       const newValue = problems.map((problem) => ({
@@ -47,12 +40,12 @@ function ManageProblem() {
         languages: problem.languages.join(" "),
       }));
       setProblems(newValue);
-      setPageInfo(page);
+      setPage(page);
     } catch (e) {}
   };
 
   useEffect(() => {
-    fetchProblem();
+    fetchProblem(1);
   }, []);
 
   const handleCheckedDataBtnClick = async (value) => {
@@ -78,7 +71,16 @@ function ManageProblem() {
           checkedDataBtnText="삭제"
         />
       </div>
-      <Pagination route="/admin" {...pageInfo} />
+      <Pagination
+        {...page}
+        onChange={(value: number) => {
+          fetchProblem(value);
+          setPage((prev) => ({
+            current_pages: value,
+            total_pages: prev.total_pages,
+          }));
+        }}
+      />
     </section>
   );
 }
