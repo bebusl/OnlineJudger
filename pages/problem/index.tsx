@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import type { NextPageContext } from "next";
 
 import { getProblems } from "../../api/problemsAPI";
-import { GetAllProblemResponse } from "../../api/scheme/problem";
+import { GetProblemsResponse } from "../../api/scheme/problem";
 
 import { FlexBox } from "../../components/common";
 import Pagination from "../../components/common/Pagination";
@@ -12,7 +12,7 @@ import ProblemCard from "../../components/unit/problem/problemCard/ProblemCard";
 
 const header = [{ field: "card", header: "문제" }];
 
-export default function ProblemList({ problems, page }: GetAllProblemResponse) {
+export default function ProblemList({ problems, page }: GetProblemsResponse) {
   const [body, setBody] = useState<{ card: JSX.Element }[]>([]);
 
   useEffect(() => {
@@ -47,16 +47,8 @@ export default function ProblemList({ problems, page }: GetAllProblemResponse) {
 }
 
 export async function getServerSideProps(ctx: NextPageContext) {
-  const { page, title, languages, tags, levels } = ctx.query;
-
   try {
-    const result = await getProblems({
-      page,
-      title,
-      languages,
-      tags,
-      levels,
-    });
+    const result = await getProblems(ctx.query);
 
     if (result.data.success) {
       const { page, problems } = result.data;
@@ -67,7 +59,7 @@ export async function getServerSideProps(ctx: NextPageContext) {
         },
       };
     }
-  } catch (e) {
+  } catch (error) {
     return {
       props: {
         problems: [],

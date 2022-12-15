@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
 import type { NextPageContext } from "next";
-import { LINK_KEY } from "../../../constants/url";
+import { LINK_KEY } from "../../../utils/constants/url";
 
 import { loginRequest } from "../../../store/slice/authSlice";
 
 import { useRouter } from "next/router";
 import { useAppDispatch } from "../../../hooks/useStore";
-import useNotification from "../../../hooks/useNotification";
 
 function Oauth2Redirect({
   isNew,
@@ -21,7 +20,6 @@ function Oauth2Redirect({
 }) {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const addNotification = useNotification();
 
   useEffect(() => {
     if (isNew) {
