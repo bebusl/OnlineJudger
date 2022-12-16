@@ -3,7 +3,7 @@ import React from "react";
 import { Button } from "../../components/common";
 import Input, { LabeledInput } from "../../components/common/Input";
 import WithSideBar from "../../components/templates/WithSideBar";
-import { GOOGLE_AUTH_LINK_URL } from "../../constants/url";
+import { GOOGLE_AUTH_LINK_URL } from "../../utils/constants/url";
 import useForm from "../../hooks/useForm";
 import { useAppSelector } from "../../hooks/useStore";
 
@@ -29,27 +29,13 @@ function UserProfile() {
             Remove
           </Button> */}
         </form>
-        <LabeledInput
-          text="EMAIL"
-          name="email"
-          forwardref={emailRef}
-          defaultValue={email}
-        />
-        <LabeledInput
-          text="NAME"
-          name="name"
-          forwardref={nameRef}
-          defaultValue={name}
-        />
+        <LabeledInput text="EMAIL" name="email" forwardref={emailRef} defaultValue={email} />
+        <LabeledInput text="NAME" name="name" forwardref={nameRef} defaultValue={name} />
 
         <h3>연동된 소셜 계정</h3>
 
         {links?.length > 0 ? (
-          <Input
-            type="email"
-            name="linkedEmail"
-            defaultValue={links[0]?.email}
-          />
+          <Input type="email" name="linkedEmail" defaultValue={links[0]?.email} />
         ) : (
           <>
             <p>연동된 소셜 계정이 없습니다</p>
