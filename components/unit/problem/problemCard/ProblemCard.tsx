@@ -6,7 +6,7 @@ import { ProblemDetail } from "../../../../api/scheme/problem";
 import styled from "styled-components";
 import { Button, FlexBox } from "../../../common";
 import { LogoIconMapper } from "../../../LanguageAsset";
-import { LvTagMapper } from "../../../common/Tag";
+//import { LvTagMapper } from "../../../common/Tag";
 import { useRouter } from "next/router";
 
 const ProblemCard = (props: ProblemDetail) => {
@@ -19,7 +19,7 @@ const ProblemCard = (props: ProblemDetail) => {
     >
       <div>
         <b>{props.title}</b>
-        {LvTagMapper[props.level]}
+        {/* {LvTagMapper[props.level]} */}
       </div>
       <FlexBox flexDirection="row" justifyContent="start">
         {props.languages?.map((language) => LogoIconMapper[language])}

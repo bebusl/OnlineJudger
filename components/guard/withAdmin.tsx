@@ -3,11 +3,9 @@ import { useRouter } from "next/router";
 import { useAppSelector } from "../../hooks/useStore";
 import useNotification from "../../hooks/useNotification";
 
-import { ROLEADMIN } from "../../constants/role";
+import { ROLEADMIN } from "../../utils/constants/role";
 
-const withAdmin = (
-  WrappedComponent: React.ComponentType<Record<string, unknown>>
-) => {
+const withAdmin = (WrappedComponent: React.ComponentType<Record<string, unknown>>) => {
   function AuthenticatedComponent(props: Record<string, unknown>) {
     const router = useRouter();
     const addNotification = useNotification();
