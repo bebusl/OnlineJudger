@@ -7,15 +7,15 @@ import { AddProblemRequest } from "../../api/scheme/problem";
 
 import { toggleSetItem } from "../../utils/setTypeUtils";
 
-import { LANGUAGES } from "../../constants/language";
-import { TAGS } from "../../constants/tag";
+import { LANGUAGES } from "../../utils/constants/language";
+import { TAGS } from "../../utils/constants/tag";
 
 import { Button, FlexBox, Seperator } from "../../components/common";
 import { LabeledTextArea } from "../../components/common/TextArea";
 import { LabeledInput } from "../../components/common/Input";
 import Selector from "../common/Selector";
 import DropZone from "../common/DropZone";
-import Subscription from "../common/Typhography/Subscription";
+import Description from "../common/Typhography/Description";
 
 interface FormProps extends Partial<AddProblemRequest> {
   readOnly: boolean;
@@ -23,9 +23,7 @@ interface FormProps extends Partial<AddProblemRequest> {
   submitButtonText?: string;
 }
 
-const defaultExampleValue = [
-  { input: "입력값을 작성해주세요", output: "출력값을 작성해주세요" },
-];
+const defaultExampleValue = [{ input: "입력값을 작성해주세요", output: "출력값을 작성해주세요" }];
 
 function ProblemForm({
   title,
@@ -40,20 +38,12 @@ function ProblemForm({
 }: FormProps) {
   const router = useRouter();
 
-  const [examples, setExamples] =
-    useState<{ input: string; output: string }[]>(test_case_examples);
+  const [examples, setExamples] = useState<{ input: string; output: string }[]>(test_case_examples);
   const [selectedTags, setSelectedTag] = useState(new Set());
   const [selectedLanguages, setSelectedLanguages] = useState(new Set());
   const [testcaseFile, setTestcaseFile] = useState<File | null>(null);
   const { getRef, getAllValues, isValid, handleBlur, isValidInputs } = useForm({
-    types: [
-      "title",
-      "time_limit",
-      "memory_limit",
-      "desc",
-      "input_desc",
-      "output_desc",
-    ],
+    types: ["title", "time_limit", "memory_limit", "desc", "input_desc", "output_desc"],
   });
 
   const tagOptions = TAGS.map((tag) => ({
@@ -233,10 +223,9 @@ function ProblemForm({
       {!readOnly && (
         <>
           <h4>테스트케이스 파일 업로드</h4>
-          <Subscription>
-            [title].in, [title].out 쌍으로 이루어진 zip파일만 정상적으로 등록
-            가능합니다.
-          </Subscription>
+          <Description>
+            [title].in, [title].out 쌍으로 이루어진 zip파일만 정상적으로 등록 가능합니다.
+          </Description>
           <Seperator />
           <DropZone
             file={testcaseFile}
