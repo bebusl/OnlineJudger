@@ -1,12 +1,6 @@
-import React, {
-  Children,
-  forwardRef,
-  InputHTMLAttributes,
-  Ref,
-  useEffect,
-} from "react";
+import React, { Children, forwardRef, InputHTMLAttributes, Ref, useEffect } from "react";
 import styled from "styled-components";
-import Subscription from "./Typhography/Subscription";
+import Description from "./Typhography/Description";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   type?: string;
@@ -26,18 +20,13 @@ interface FormGroupProps extends InputProps {
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  (
-    { type = "text", errorMessage = "wrong Input", isValid = true, ...rest },
-    ref
-  ) => {
+  ({ type = "text", errorMessage = "wrong Input", isValid = true, ...rest }, ref) => {
     return (
       <InputWrapper>
         <input ref={ref} type={type} {...rest} />
-        <Subscription
-          style={{ visibility: isValid ? "hidden" : "visible", color: "red" }}
-        >
+        <Description style={{ visibility: isValid ? "hidden" : "visible", color: "red" }}>
           {errorMessage}
-        </Subscription>
+        </Description>
       </InputWrapper>
     );
   }
