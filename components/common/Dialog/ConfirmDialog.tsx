@@ -1,4 +1,4 @@
-import React, { MouseEventHandler } from "react";
+import React, { MouseEventHandler, ReactNode } from "react";
 import Button from "../Buttons/BasicButton/Button";
 import FlexBox from "../FlexBox";
 import Modal from "../Modal";
@@ -15,7 +15,11 @@ function ConfirmDialog({
   return (
     <Modal onClose={onClose}>
       <FlexBox style={{ minWidth: "300px", minHeight: "150px" }}>
-        <FlexBox style={{ flex: 2 }}>{message}</FlexBox>
+        <FlexBox
+          style={{ flex: 2, whiteSpace: "pre-line", textAlign: "center" }}
+        >
+          {message}
+        </FlexBox>
         <div style={{ flex: 1 }}>
           <Button
             onClick={onClose as MouseEventHandler}
