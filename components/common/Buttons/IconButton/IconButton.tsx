@@ -40,7 +40,7 @@ export const IconButton = ({
       <h4 style={{ textAlign: "left", margin: 0, color: "#000" }}>{text}</h4>
       <p
         style={{
-          fontSize: "0.5rem",
+          fontSize: "0.7rem",
           textAlign: "left",
           color: "#6e6e6e",
           margin: 0,
