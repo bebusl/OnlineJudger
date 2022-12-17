@@ -1,15 +1,16 @@
-import React, { Children, forwardRef, InputHTMLAttributes, Ref, useEffect } from "react";
+import React, { forwardRef, InputHTMLAttributes, Ref } from "react";
 import styled from "styled-components";
 import Description from "./Typhography/Description";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   type?: string;
+  description?: string;
   errorMessage?: string;
   isValid?: boolean;
 }
 
 interface LabelInputProps extends InputProps {
-  forwardref: Ref<HTMLInputElement>;
+  forwardedRef: Ref<HTMLInputElement>;
   text: string;
   name: string;
 }
@@ -20,10 +21,14 @@ interface FormGroupProps extends InputProps {
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ type = "text", errorMessage = "wrong Input", isValid = true, ...rest }, ref) => {
+  (
+    { type = "text", description, errorMessage = "잘못된 입력값입니다", isValid = true, ...rest },
+    ref
+  ) => {
     return (
       <InputWrapper>
         <input ref={ref} type={type} {...rest} />
+        {description && <Description>{description}</Description>}
         <Description style={{ visibility: isValid ? "hidden" : "visible", color: "red" }}>
           {errorMessage}
         </Description>
@@ -45,25 +50,25 @@ export const FormGroup = ({ children, ...props }: FormGroupProps) => {
   );
 };
 
-export const LabeledInput = ({ forwardref, ...props }: LabelInputProps) => {
+export const LabeledInput = React.memo(({ forwardedRef, ...props }: LabelInputProps) => {
   return (
     <FormGroup text={props.text}>
-      <Input {...props} ref={forwardref} />
+      <Input {...props} ref={forwardedRef} />
     </FormGroup>
   );
-};
+});
 
 export const InputWrapper = styled.div`
   & > input {
     background-color: ${({ theme }) => theme.colors.gray50};
     padding: 10px;
     width: 100%;
-    border: 1px solid ${({ theme }) => theme.colors.gray100};
+    border: 1px solid ${({ theme }) => theme.colors.gray150};
     border-radius: 5px;
   }
 
   & + p {
-    color: ${({ theme }) => theme.colors.warning};
+    color: ${({ theme }) => theme.colors.error};
     font-size: 0.8rem;
   }
 `;
@@ -73,7 +78,7 @@ const FormGroupWrapper = styled.div`
   flex-grow: 1;
   & > label {
     font-weight: bold;
-    font-size: ${({ theme }) => theme.fontSizes[3]};
+    font-size: ${({ theme }) => theme.fontSizes[2]};
   }
 `;
 

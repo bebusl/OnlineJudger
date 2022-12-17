@@ -4,7 +4,7 @@ import Button from "./Buttons/BasicButton/Button";
 import Popover from "./Popover";
 
 interface selectorProps {
-  options: { text: string; checked: boolean }[];
+  options: { text: string; checked: boolean; defaultValue?: string }[];
   onChange: ChangeEventHandler;
   groupName: string;
 }
@@ -45,14 +45,14 @@ function Selector({
         <Popover top={expandPosition.top} left={expandPosition.left}>
           <form tabIndex={-1} style={{ width: expandPosition.width }}>
             {options.map((option) => {
-              const { text, checked } = option;
+              const { text, checked, defaultValue } = option;
               return (
                 <CheckLabel key={text}>
                   <input
                     type={"checkbox"}
                     name={text}
                     id={text}
-                    defaultValue={text}
+                    defaultValue={defaultValue || text}
                     checked={checked}
                     onChange={onChange}
                   />

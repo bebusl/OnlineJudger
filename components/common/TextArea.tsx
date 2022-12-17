@@ -13,7 +13,7 @@ interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 }
 
 interface LabeledTextAreaProps extends TextAreaProps {
-  forwardRef?: Ref<HTMLTextAreaElement>;
+  forwardedRef?: Ref<HTMLTextAreaElement>;
   name: string;
   text: string;
 }
@@ -39,13 +39,13 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
 );
 
 export const LabeledTextArea = ({
-  forwardRef,
+  forwardedRef,
   text,
   ...props
 }: LabeledTextAreaProps) => {
   return (
     <FormGroup text={text}>
-      <TextArea {...props} ref={forwardRef} />
+      <TextArea {...props} ref={forwardedRef} />
     </FormGroup>
   );
 };
@@ -58,7 +58,7 @@ const TextareaBox = styled.textarea`
   background-color: ${({ theme }) => theme.colors.gray50};
   padding: 10px;
   width: 100%;
-  border: 1px solid ${({ theme }) => theme.colors.gray100};
+  border: 1px solid ${({ theme }) => theme.colors.gray150};
   border-radius: 5px;
   height: 200px;
   resize: none;
