@@ -1,5 +1,5 @@
 import { LANGUAGES_TYPE } from "../utils/constants/language";
-import { secure } from "./fetchClient";
+import { secureFetch } from "./fetchClient";
 import { APIResponse } from "./scheme/common";
 import type {
   GetSubmissionRequest,
@@ -15,7 +15,7 @@ export const gradeProblem = (
   code: string,
   language: LANGUAGES_TYPE
 ) =>
-  secure.post<APIResponse>("/submissions", {
+  secureFetch.post<APIResponse>("/submissions", {
     problem_id: problemId,
     language,
     code,
@@ -27,7 +27,7 @@ export const runProblem = (
   code: string,
   language: LANGUAGES_TYPE
 ) =>
-  secure.post<APIResponse>("/submissions", {
+  secureFetch.post<APIResponse>("/submissions", {
     problem_id: problemId,
     language,
     code,
@@ -73,11 +73,11 @@ export const getSubmissionsByQuery = ({
   //   submitIdQuery +
   //   languageQuery +
   //   rankingQuery;
-  return secure.get<GetSubmissionResponse>("/submissions", { params });
+  return secureFetch.get<GetSubmissionResponse>("/submissions", { params });
 };
 
 export const likeSubmission = ({ submission_id }: LikeSubmissionRequest) => {
-  return secure.post<LikeSubmissionResponse>(
+  return secureFetch.post<LikeSubmissionResponse>(
     `/submissions/like/${submission_id}`
   );
 };
@@ -85,7 +85,7 @@ export const likeSubmission = ({ submission_id }: LikeSubmissionRequest) => {
 export const deleteLikeSubmission = ({
   submission_id,
 }: DeleteLikeSubmissionRequest) => {
-  return secure.delete<DeleteLikeSubmissionResponse>(
+  return secureFetch.delete<DeleteLikeSubmissionResponse>(
     `/submissions/like/${submission_id}`
   );
 };
