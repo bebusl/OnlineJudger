@@ -12,7 +12,7 @@ function RankingModal({
 }) {
   return (
     <Modal onClose={onClose} title="풀이">
-      <ScrollBox>
+      <ScrollBox height="30vh">
         <Ranking problemId={problemId} />
       </ScrollBox>
     </Modal>

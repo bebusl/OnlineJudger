@@ -1,14 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Container, Logo } from "./Header.style";
+
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 import { logoff } from "../../store/slice/authSlice";
-import Popover from "../common/Popover";
-import { FlexBox } from "../common";
+
 import Image from "next/image";
+import { Container, Logo } from "./Header.style";
+import { FlexBox } from "../common";
+import Popover from "../common/Popover";
 
 function Header() {
-  const { isLogin, avatar, name } = useAppSelector((state) => state.auth);
+  const { isLogin, avatar, name, email } = useAppSelector(
+    (state) => state.auth
+  );
   const dispatch = useAppDispatch();
   const [isMount, setIsMount] = useState(false);
   const [openUserPopover, setOpenUserPopover] = useState(false);
@@ -49,6 +53,7 @@ function Header() {
                 });
               }}
               id="popoverbox"
+              style={{ cursor: "pointer" }}
             >
               {name}님
             </div>
@@ -59,19 +64,25 @@ function Header() {
                   style={{ width: "200px", height: "200px" }}
                   onMouseLeave={() => setOpenUserPopover(false)}
                 >
-                  <div ref={popoverRef}>
-                    <Image width="50px" height="50px" src={avatar} alt="user profile image" />
-                    <p>@test1234</p>
+                  <div ref={popoverRef} style={{ textAlign: "center" }}>
+                    <Image
+                      width="50px"
+                      height="50px"
+                      src={avatar}
+                      alt="user profile image"
+                    />
+                    <p>{email}</p>
                   </div>
                   <Link href="/user">마이 페이지</Link>
                   <Link href="/user/problem">푼 문제</Link>
-                  <button
+                  <a
                     onClick={() => {
                       dispatch(logoff());
                     }}
+                    style={{ cursor: "pointer" }}
                   >
                     로그아웃
-                  </button>
+                  </a>
                 </FlexBox>
               </Popover>
             )}
