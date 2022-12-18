@@ -38,8 +38,4 @@ const Ol = styled.ol`
       margin: 1rem;
     }
   }
-
-  & a {
-    /* ${({ theme }) => theme.text.subheader} */
-  }
 `;

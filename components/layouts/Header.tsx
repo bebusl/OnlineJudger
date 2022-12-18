@@ -17,7 +17,7 @@ function Header() {
   const countRef = useRef<number>(0);
   useEffect(() => {
     setIsMount(true);
-    const handleResizeEvent = (e) => {
+    const handleResizeEvent = (e: UIEvent) => {
       countRef.current = countRef.current + 1;
       const popoverBoxElement = document.getElementById("popoverbox");
       const rect = popoverBoxElement?.getBoundingClientRect();
@@ -60,12 +60,7 @@ function Header() {
                   onMouseLeave={() => setOpenUserPopover(false)}
                 >
                   <div ref={popoverRef}>
-                    <Image
-                      width="50px"
-                      height="50px"
-                      src={avatar}
-                      alt="user profile image"
-                    />
+                    <Image width="50px" height="50px" src={avatar} alt="user profile image" />
                     <p>@test1234</p>
                   </div>
                   <Link href="/user">마이 페이지</Link>
