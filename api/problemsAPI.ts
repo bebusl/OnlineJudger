@@ -1,5 +1,4 @@
-import { common, secure } from "./fetchClient";
-import { getAuthToken } from "../utils/authUtils";
+import { commonFetch, secureFetch } from "./fetchClient";
 import {
   AddProblemResponse,
   GetProblemsRequest,
@@ -10,18 +9,18 @@ import axios from "axios";
 import { APIResponse } from "./scheme/common";
 
 export const deleteProblem = (id: number) =>
-  secure.delete<APIResponse>(`/problems/${id}`);
+  secureFetch.delete<APIResponse>(`/problems/${id}`);
 
 export const deleteMultiProblems = (ids: Set<number>) => {
   const problemWillDelete = Array.from(ids);
   const requests = problemWillDelete.map((problemId) =>
-    secure.delete<APIResponse>(`/problems/${problemId}`)
+    secureFetch.delete<APIResponse>(`/problems/${problemId}`)
   );
   return axios.all(requests);
 };
 
 export const getProblemDetail = (id: string) =>
-  common.get<GetProblemResponse>(`/problems/${id}`);
+  commonFetch.get<GetProblemResponse>(`/problems/${id}`);
 
 export const getProblems = ({
   page = 1,
@@ -30,7 +29,7 @@ export const getProblems = ({
   tags,
   levels,
 }: Partial<GetProblemsRequest>) => {
-  return common.get<GetProblemsResponse>("/problems", {
+  return commonFetch.get<GetProblemsResponse>("/problems", {
     params: {
       page,
       title,
@@ -43,7 +42,7 @@ export const getProblems = ({
 
 /**TEST. 잘 되나 */
 export const registerProblem = (data: FormData) =>
-  secure.post<AddProblemResponse>("/problems", data, {
+  secureFetch.post<AddProblemResponse>("/problems", data, {
     headers: {
       accept: "*/*",
       "Content-Type": "multipart/form-data",
@@ -52,7 +51,7 @@ export const registerProblem = (data: FormData) =>
 
 /**TEST. 잘 되나 */
 export const modifyProblem = (id: string, data: FormData) =>
-  secure.put<APIResponse>(`/problems/${id}`, data, {
+  secureFetch.put<APIResponse>(`/problems/${id}`, data, {
     headers: {
       accept: "*/*",
       "Content-Type": "multipart/form-data",

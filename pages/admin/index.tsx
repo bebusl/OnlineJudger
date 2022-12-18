@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { deleteMultiProblems, getProblems } from "../../api/problemsAPI";
 import { GetProblemResponse } from "../../api/scheme/problem";
 import useNotification from "../../hooks/useNotification";
@@ -7,6 +7,7 @@ import useNotification from "../../hooks/useNotification";
 import Pagination from "../../components/common/Pagination";
 import { Button } from "../../components/common";
 import CheckableTable from "../../components/common/Table/CheckableTable";
+import ConfirmDialog from "../../components/common/Dialog/ConfirmDialog";
 
 const header = [
   { field: "id", header: "ID" },
@@ -25,6 +26,13 @@ interface ProblemTableInfo
 function ManageProblem() {
   const [problems, setProblems] = useState<ProblemTableInfo[]>([]);
   const [page, setPage] = useState({ current_pages: 0, total_pages: 0 });
+  const [openModal, setOpenModal] = useState<{
+    open: boolean;
+    selectedProblems: Set<number> | null;
+  }>({
+    open: false,
+    selectedProblems: null,
+  });
   const addNotification = useNotification();
 
   const fetchProblem = async (value: number = 1) => {
@@ -41,14 +49,16 @@ function ManageProblem() {
       }));
       setProblems(newValue);
       setPage(page);
-    } catch (e) {}
+    } catch (e) {
+      setProblems([]);
+    }
   };
 
   useEffect(() => {
     fetchProblem(1);
   }, []);
 
-  const handleCheckedDataBtnClick = async (value) => {
+  const handleCheckedDataBtnClick = async (value: Set<number>) => {
     const responses = await deleteMultiProblems(value);
     const isErrorOccured = responses.some((response) => response.error);
     if (isErrorOccured)
@@ -59,6 +69,16 @@ function ManageProblem() {
 
   return (
     <section style={{ width: "100%" }}>
+      {openModal.open && (
+        <ConfirmDialog
+          message="선택한 문제를 삭제하시겠습니까?"
+          onClose={() => setOpenModal({ open: false, selectedProblems: null })}
+          onConfirm={() => {
+            handleCheckedDataBtnClick(openModal.selectedProblems);
+            setOpenModal({ open: false, selectedProblems: null });
+          }}
+        />
+      )}
       <h1>문제 관리 페이지</h1>
       <Link href="admin/add-problem" passHref>
         <Button as="a">과목 추가하기</Button>
@@ -67,7 +87,9 @@ function ManageProblem() {
         <CheckableTable
           header={header}
           body={problems}
-          handleCheckedDataBtnClick={handleCheckedDataBtnClick}
+          handleCheckedDataBtnClick={(value) =>
+            setOpenModal({ open: true, selectedProblems: value })
+          }
           checkedDataBtnText="삭제"
         />
       </div>

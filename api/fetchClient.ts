@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
+import Cookies from "js-cookie";
 import { API_BASE_URL } from "../utils/constants/url";
 import { getAuthToken } from "../utils/authUtils";
 import refreshAPI from "./refreshAPI";
@@ -11,30 +12,30 @@ function AxiosFactory<T = any>(config: AxiosRequestConfig<T> = {}) {
 
   return axiosInstance;
 }
-export const common = AxiosFactory();
 
-export const secure = AxiosFactory({
+export const commonFetch = AxiosFactory();
+
+export const secureFetch = AxiosFactory({
   withCredentials: true,
 });
-secure.interceptors.request.use((config) => {
+secureFetch.interceptors.request.use((config) => {
   const authToken = getAuthToken();
-  if (authToken)
-    config.headers = { ...config.headers, Authorization: authToken };
+  if (authToken) config.headers = { ...config.headers, Authorization: authToken };
   return config;
 });
-secure.interceptors.response.use(
+secureFetch.interceptors.response.use(
   (response) => response,
   async (error) => {
     const {
       config,
       response: { data, status },
     } = error;
-    if (status === 401 || data?.err_msg.includes("userPrincipal")) {
+    if (status === 401) {
       const response = await refreshAPI();
       if (response) {
         config.headers = {
           ...config.headers,
-          Authorization: getAuthToken(),
+          Authorization: Cookies.get("Authorization"),
         };
         return axios(config);
       }

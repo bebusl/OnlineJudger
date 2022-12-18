@@ -1,9 +1,14 @@
 import React from "react";
-import Image from "next/image";
 import { IconButton } from "../IconButton/IconButton";
 
+interface OAuthLinkButtonProps {
+  url: string;
+  type: "kakao" | "github" | "google";
+  subText?: string;
+}
+
 const OAuthLinkButton = React.memo(
-  ({ url, type }: { url: string; type: "kakao" | "github" | "google" }) => {
+  ({ url, type, subText = "로 시작하기" }: OAuthLinkButtonProps) => {
     OAuthLinkButton.displayName = `OAuthLinkButton`;
     return (
       <a
@@ -15,8 +20,8 @@ const OAuthLinkButton = React.memo(
         <IconButton
           iconSrc={`/images/logo/${type}-logo.png`}
           text={type.toUpperCase()}
-          subText="로 시작하기"
-        ></IconButton>
+          subText={subText}
+        />
       </a>
     );
   }
