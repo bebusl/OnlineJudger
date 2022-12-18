@@ -16,7 +16,7 @@ import Table from "../../components/common/Table/Table";
 import { gradeProblem, runProblem } from "../../api/submissionsAPI";
 import ScrollBox from "../../components/common/ScrollBox";
 import BreadCrumbs from "../../components/layouts/BreadCrumbs";
-import ConfirmDialogue from "../../components/common/Dialogue/ConfirmDialogue";
+import ConfirmDialog from "../../components/common/Dialog/ConfirmDialog";
 
 const RankingModal = dynamic(
   import("../../components/submissions/RankingModal"),
@@ -66,7 +66,7 @@ function ProblemDetail({
         />
       )}
       {openModal.open && openModal.content === 1 && (
-        <ConfirmDialogue
+        <ConfirmDialog
           onConfirm={() => {
             submitCode();
             router.push("/user/problem");

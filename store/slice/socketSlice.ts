@@ -17,12 +17,16 @@ export const socketSlice = createSlice({
     recieveRunMessage: (state, action) => {
       state.runResult = action.payload;
     },
+    resetRunMessage: (state) => {
+      state.runResult = {};
+    },
     recieveJudgeMessage: (state, action) => {
       state.judgeResult.push(action.payload);
     },
   },
 });
 
-export const { recieveJudgeMessage, recieveRunMessage } = socketSlice.actions;
+export const { recieveJudgeMessage, recieveRunMessage, resetRunMessage } =
+  socketSlice.actions;
 
 export default socketSlice.reducer;
