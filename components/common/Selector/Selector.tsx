@@ -1,7 +1,7 @@
 import React, { ChangeEventHandler, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import Button from "./Buttons/BasicButton/Button";
-import Popover from "./Popover";
+import Button from "../Buttons/BasicButton/Button";
+import Popover from "../Popover";
 
 interface selectorProps {
   options: { text: string; checked: boolean; defaultValue?: string }[];
@@ -14,16 +14,13 @@ function Selector({
   groupName = "채점 가능 언어",
 }: selectorProps) {
   const [expand, setExpand] = useState(false);
-
-  const [expandPosition, setExpandPosition] = useState({
-    top: 0,
-    left: 0,
-    width: 0,
-  });
-
+  /**TODO : 버튼/expander 외부 클릭 시 expand false로 바꾸기
+   *      * expander 펼쳐지면 focus그쪽으로 옮기기 -> 아 이건 기본으로 된다 취소취소..
+   *
+   */
   return (
-    <div>
-      <Expander
+    <Expand>
+      {/* <Expander
         $variant="outline"
         onClick={(e) => {
           e.preventDefault();
@@ -40,8 +37,37 @@ function Selector({
         }}
       >
         {groupName}
-      </Expander>
+      </Expander> */}
+      <Button
+        $variant="outline"
+        onClick={(e) => {
+          e.preventDefault();
+          setExpand((prev) => !prev);
+        }}
+      >
+        {groupName}
+      </Button>
       {expand && (
+        <Options>
+          {options.map((option) => {
+            const { text, checked, defaultValue } = option;
+            return (
+              <CheckLabel key={text}>
+                <input
+                  type={"checkbox"}
+                  name={text}
+                  id={text}
+                  defaultValue={defaultValue || text}
+                  checked={checked}
+                  onChange={onChange}
+                />
+                <label htmlFor={text}>{text}</label>
+              </CheckLabel>
+            );
+          })}
+        </Options>
+      )}
+      {/* {expand && (
         <Popover top={expandPosition.top} left={expandPosition.left}>
           <form tabIndex={-1} style={{ width: expandPosition.width }}>
             {options.map((option) => {
@@ -62,15 +88,15 @@ function Selector({
             })}
           </form>
         </Popover>
-      )}
-    </div>
+      )} */}
+    </Expand>
   );
 }
 
 export default Selector;
 
-const Expander = styled(Button)`
-  &:after {
+const Expand = styled.div`
+  & > button:after {
     content: "";
     margin-top: 0.3em;
     vertical-align: middle;
@@ -89,4 +115,13 @@ const CheckLabel = styled.div`
   label {
     width: fit-content;
   }
+`;
+
+const Options = styled.div`
+  position: absolute;
+  background-color: white;
+  min-width: 150px;
+  z-index: 500;
+  border: 1px solid ${({ theme }) => theme.colors.gray150};
+  box-shadow: ${({ theme }) => theme.shadows.light};
 `;
