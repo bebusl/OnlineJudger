@@ -4,7 +4,7 @@ import Button from "../Buttons/BasicButton/Button";
 import Popover from "../Popover";
 
 interface selectorProps {
-  options: { text: string; checked: boolean; defaultValue?: string }[];
+  options: { text: string; checked: boolean; defaultValue?: string | number }[];
   onChange: ChangeEventHandler;
   groupName: string;
 }
@@ -14,30 +14,21 @@ function Selector({
   groupName = "채점 가능 언어",
 }: selectorProps) {
   const [expand, setExpand] = useState(false);
-  /**TODO : 버튼/expander 외부 클릭 시 expand false로 바꾸기
-   *      * expander 펼쳐지면 focus그쪽으로 옮기기 -> 아 이건 기본으로 된다 취소취소..
-   *
-   */
-  return (
-    <Expand>
-      {/* <Expander
-        $variant="outline"
-        onClick={(e) => {
-          e.preventDefault();
-          setExpand((prev) => !prev);
+  const boxRef = useRef<HTMLDivElement>(null);
 
-          const target = e.target as HTMLButtonElement;
-          const rect = target.getBoundingClientRect();
-          if (rect)
-            setExpandPosition({
-              top: rect.top + rect.height + window.scrollY,
-              left: rect.left,
-              width: rect.width > 320 ? rect.width : 320,
-            });
-        }}
-      >
-        {groupName}
-      </Expander> */}
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (boxRef.current && !boxRef.current.contains(e.target)) {
+        setExpand(false);
+      }
+    }
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+  return (
+    <Expand ref={boxRef}>
       <Button
         $variant="outline"
         onClick={(e) => {
@@ -67,28 +58,6 @@ function Selector({
           })}
         </Options>
       )}
-      {/* {expand && (
-        <Popover top={expandPosition.top} left={expandPosition.left}>
-          <form tabIndex={-1} style={{ width: expandPosition.width }}>
-            {options.map((option) => {
-              const { text, checked, defaultValue } = option;
-              return (
-                <CheckLabel key={text}>
-                  <input
-                    type={"checkbox"}
-                    name={text}
-                    id={text}
-                    defaultValue={defaultValue || text}
-                    checked={checked}
-                    onChange={onChange}
-                  />
-                  <label htmlFor={text}>{text}</label>
-                </CheckLabel>
-              );
-            })}
-          </form>
-        </Popover>
-      )} */}
     </Expand>
   );
 }
