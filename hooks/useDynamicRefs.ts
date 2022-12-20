@@ -11,11 +11,16 @@ function getRef<T>(key: string): React.RefObject<T> {
   return map.get(key) as React.RefObject<T>;
 }
 
+function deleteRef<T>(key: string): void {
+  map.delete(key);
+}
+
 function useDynamicRefs<T>(): [
   (key: string) => React.RefObject<T>,
+  (key: string) => void,
   (key: string) => void
 ] {
-  return [getRef<T>, setRef<T>];
+  return [getRef<T>, setRef<T>, deleteRef<T>];
 }
 
 export default useDynamicRefs;
