@@ -2,6 +2,7 @@ import React, { FormEventHandler, useState, useRef } from "react";
 
 import { useRouter } from "next/router";
 import useForm from "../../../../hooks/useFormRefactor";
+import useOptionsReducer from "./optionsReducer";
 
 import { AddProblemRequest } from "../../../../api/scheme/problem";
 
@@ -15,8 +16,6 @@ import Selector from "../../../common/Selector/Selector";
 import DropZone from "../../../common/DropZone";
 import Description from "../../../common/Typhography/Description";
 import ConfirmDialog from "../../../common/Dialog/ConfirmDialog";
-import styled from "styled-components";
-import useOptionsReducer from "./optionsReducer";
 
 interface FormProps extends Partial<AddProblemRequest> {
   readOnly: boolean;
@@ -59,6 +58,7 @@ function ProblemForm({
     register: exampleRegister,
     getAllValues: getAllExamples,
     isValidInputs: isValidExamples,
+    unregister,
   } = useForm();
   const [openModal, setOpenModal] = useState(false);
 
@@ -83,20 +83,41 @@ function ProblemForm({
 
   const generateSubmitFormData = () => {
     const refValues = getAllValues();
-    const exampleValues = getAllExamples();
-    const allValues = Object.assign(refValues, formattedOptions);
-    console.log("EXAMPLES", exampleValues, allValues);
+    const exampleValues = getAllExamples() as Record<string, string>;
+    const formattedExamples: { input: string; output: string }[] = [];
+    exampleIds.forEach((id) => {
+      const input = exampleValues[`input-${id}`];
+      const output = exampleValues[`output-${id}`];
+      formattedExamples.push({ input, output });
+    });
+
+    let allValues = {
+      ...refValues,
+      ...formattedOptions,
+      test_case_examples: formattedExamples,
+    };
+
     const submitFormData = new FormData();
     submitFormData.append("req", JSON.stringify(allValues));
     if (testcaseFile) submitFormData.append("file", testcaseFile);
     return submitFormData;
   };
 
+  const removeExample = (id: number, idx: number) => {
+    unregister(`input-${id}`);
+    unregister(`output-${id}`);
+
+    setExampleIds((prev) => {
+      const copy = [...prev];
+      copy.splice(idx, 1);
+      return copy;
+    });
+  };
+
   const handleGeSubmit: FormEventHandler = (e) => {
     e.preventDefault();
     const submitData = generateSubmitFormData();
-    console.log("제출 데이터", submitData);
-    // handleSubmit(submitData);
+    handleSubmit(submitData);
   };
 
   /*forwardRef 한단계 더 거쳐야 하는 애들은 여기서 register */
@@ -195,7 +216,7 @@ function ProblemForm({
             const { ref: outputRef, ...outputOptions } =
               exampleRegister<HTMLTextAreaElement>(`output-${id}`);
             return (
-              <Test key={id} flexDirection="row" alignItems="flex-end">
+              <FlexBox key={id} flexDirection="row" alignItems="start">
                 <LabeledTextArea
                   text={`입력 설명 ${idx + 1}`}
                   forwardedRef={inputRef}
@@ -208,8 +229,13 @@ function ProblemForm({
                   defaultValue={test_case_examples[idx]?.output}
                   {...outputOptions}
                 />
-                <button>Delete</button>
-              </Test>
+                <button
+                  style={{ border: 0, boxShadow: "" }}
+                  onClick={() => removeExample(id, idx)}
+                >
+                  x
+                </button>
+              </FlexBox>
             );
           })}
           {!readOnly && exampleIds.length < 3 && (
@@ -260,12 +286,3 @@ function ProblemForm({
 }
 
 export default ProblemForm;
-
-const Test = styled(FlexBox)`
-  &::before {
-    content: "x";
-    position: absolute;
-    top: -50px;
-    left: 0;
-  }
-`;
