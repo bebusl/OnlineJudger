@@ -6,7 +6,7 @@ import { GetProblemsResponse } from "../../../api/scheme/problem";
 
 import useNotification from "../../../hooks/useNotification";
 
-import ProblemForm from "../../../components/templates/ProblemForm";
+import ProblemForm from "../../../components/unit/problem/problemForm/ProblemForm";
 import { Button } from "../../../components/common";
 
 interface Props {
