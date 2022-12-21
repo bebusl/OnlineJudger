@@ -28,6 +28,16 @@ export interface Submission {
   updated_at: string;
   code: string;
   code_length: number;
+  like: number;
+  liked: boolean;
+  comments: Comment[];
+}
+
+export interface Comment {
+  submission_id: string;
+  content: string;
+  user_id: string;
+  created_at: Date;
 }
 
 export interface SubmitProblemRequest {
@@ -39,7 +49,7 @@ export interface SubmitProblemRequest {
 
 export interface GetSubmissionRequest {
   page?: number;
-  id?: number;
+  id?: string;
   problem_id?: number;
   language?: LANGUAGES_TYPE;
   user_id?: string;
@@ -62,3 +72,12 @@ export interface DeleteLikeSubmissionRequest {
 }
 
 export interface DeleteLikeSubmissionResponse extends APIResponse {}
+
+export interface GetLikedSubmissionListRequest {
+  page: number;
+}
+
+export interface GetLikedSubmissionListResponse extends APIResponse {
+  page: PagingResponse;
+  likes: { submission_id: string; submission: Submission };
+}

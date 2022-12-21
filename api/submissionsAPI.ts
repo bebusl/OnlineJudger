@@ -8,6 +8,8 @@ import type {
   LikeSubmissionResponse,
   DeleteLikeSubmissionRequest,
   DeleteLikeSubmissionResponse,
+  GetLikedSubmissionListRequest,
+  GetLikedSubmissionListResponse,
 } from "./scheme/submissions";
 
 export const gradeProblem = (
@@ -34,16 +36,6 @@ export const runProblem = (
     judge: false,
   });
 
-// export const getAllSubmissions = (page: number, language?: string) => {
-//   const params = { page, language };
-//   const pageQuery = "page=" + page;
-//   const languageQuery = language ? "&language=" + language : "";
-//   const query = "?" + pageQuery + languageQuery;
-//   return secure.get(query);
-// };
-//모든 제출 기록 가져오기(scoreboard), scoreboard는 모든 페이지 정보 다 들고와서 해야할 것 같음..!
-//맨 첫번째 걸 먼저 들고옴. 1페이지 응답 => total_page저장되어 있음. => Promise.all안에 2페이지부터 total_page까지 결과를 다 가져옴 => data합쳐서 return
-
 export const getSubmissionsByQuery = ({
   user_id,
   problem_id,
@@ -60,19 +52,6 @@ export const getSubmissionsByQuery = ({
     language,
     is_ranking,
   };
-  // const pageQuery = "?page=" + page;
-  // const submitIdQuery = id ? "&submission_id=" + id : "";
-  // const userIdQuery = user_id ? "&user_id=" + user_id : "";
-  // const problemIdQuery = problem_id ? "&problem_id=" + problem_id : "";
-  // const languageQuery = language ? "&language=" + language : "";
-  // const rankingQuery = is_ranking ? "&is_ranking=true" : "&is_ranking=false";
-  // const query =
-  //   pageQuery +
-  //   userIdQuery +
-  //   problemIdQuery +
-  //   submitIdQuery +
-  //   languageQuery +
-  //   rankingQuery;
   return secureFetch.get<GetSubmissionResponse>("/submissions", { params });
 };
 
@@ -88,4 +67,12 @@ export const deleteLikeSubmission = ({
   return secureFetch.delete<DeleteLikeSubmissionResponse>(
     `/submissions/like/${submission_id}`
   );
+};
+
+export const getLikedSubmissionList = ({
+  page,
+}: GetLikedSubmissionListRequest) => {
+  return secureFetch.get<GetLikedSubmissionListResponse>(`/submissions/like`, {
+    params: { page },
+  });
 };
