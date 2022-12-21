@@ -10,6 +10,14 @@ import type {
   DeleteLikeSubmissionResponse,
   GetLikedSubmissionListRequest,
   GetLikedSubmissionListResponse,
+  WriteCommentRequest,
+  WriteCommentResponse,
+  EditCommentRequest,
+  EditCommentResponse,
+  RemoveCommentRequest,
+  RemoveCommentResponse,
+  GetMyCommentsRequest,
+  GetMyCommentsResponse,
 } from "./scheme/submissions";
 
 export const gradeProblem = (
@@ -73,6 +81,26 @@ export const getLikedSubmissionList = ({
   page,
 }: GetLikedSubmissionListRequest) => {
   return secureFetch.get<GetLikedSubmissionListResponse>(`/submissions/like`, {
+    params: { page },
+  });
+};
+
+export const writeComment = (body: WriteCommentRequest) => {
+  return secureFetch.post<WriteCommentResponse>("/submissions/comments", body);
+};
+
+export const editComment = (body: EditCommentRequest) => {
+  return secureFetch.put<EditCommentResponse>("/submissions/comments", body);
+};
+
+export const removeComment = ({ comment_id }: RemoveCommentRequest) => {
+  return secureFetch.delete<RemoveCommentResponse>(
+    `/submissions/comments/${comment_id}`
+  );
+};
+
+export const getMyComments = ({ page }: GetMyCommentsRequest) => {
+  return secureFetch.get<GetMyCommentsResponse>("/submissions/comments", {
     params: { page },
   });
 };
