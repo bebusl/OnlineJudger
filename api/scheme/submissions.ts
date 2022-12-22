@@ -37,7 +37,7 @@ export interface Comment {
   submission_id: string;
   content: string;
   user_id: string;
-  created_at: Date;
+  created_at: string;
 }
 
 export interface SubmitProblemRequest {
@@ -84,7 +84,7 @@ export interface GetLikedSubmissionListResponse extends APIResponse {
 
 export interface WriteCommentRequest {
   submission_id: string;
-  comment: string;
+  content: string;
 }
 
 export interface WriteCommentResponse extends APIResponse {}
