@@ -3,7 +3,7 @@ import Button from "../Buttons/BasicButton/Button";
 import Table, { TableProps } from "./Table";
 
 interface CheckableTableProps extends TableProps {
-  handleCheckedDataBtnClick: (value: unknown) => void;
+  handleCheckedDataBtnClick: (value: Set<number>) => void;
   checkedDataBtnText: string;
 }
 
@@ -74,9 +74,10 @@ export default function CheckableTable({
       <Table body={checkableBody} header={checkableHeader} {...rest} />
       <Button
         onClick={() => {
-          handleCheckedDataBtnClick(checkedValue);
+          handleCheckedDataBtnClick(checkedValue); // 여기서 모달 띄우고,, onConfirm에 checkedValue받아와야하는뎅,,ㅎㅎ;
           setCheckedValue(new Set());
         }}
+        disabled={!checkedValue.size}
       >
         선택한 {checkedValue.size}개를 {checkedDataBtnText}
       </Button>

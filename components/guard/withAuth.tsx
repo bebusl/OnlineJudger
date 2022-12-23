@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 import { useAppSelector } from "../../hooks/useStore";
 import useNotification from "../../hooks/useNotification";
 
-import Cookies from "js-cookie";
 import refreshAccessToken from "../../api/refreshAPI";
+import { getAuthToken } from "../../utils/authUtils";
 
 const withAuth = (
   WrappedComponent: React.ComponentType<Record<string, unknown>>
@@ -12,34 +12,23 @@ const withAuth = (
   function AuthenticatedComponent(props: Record<string, unknown>) {
     const router = useRouter();
     const addNotification = useNotification();
-    const { isLogin } = useAppSelector((state) => state.auth);
-    const [mounted, setMounted] = useState(false);
-    const accessToken = Cookies.get("Authorization");
+    const { isAuthenticating, isLogin } = useAppSelector((state) => state.auth);
+    const accessToken = getAuthToken();
 
     useEffect(() => {
-      setMounted(true);
-    }, []);
-
-    if (mounted) {
-      if (!accessToken) {
-        (async () => {
-          const successRefresh = await refreshAccessToken();
-          if (!successRefresh) {
-            //리프레시마저도 실패!
-            addNotification(
-              "인증이 만료되었습니다. 로그인이 필요합니다.",
-              "error"
-            );
-            router.replace("/login");
-          }
-        })();
+      if (!isAuthenticating && !isLogin && !accessToken) {
+        addNotification("로그인이 필요한 서비스입니다", "error");
+        router.replace("/login");
       }
+    }, [isLogin, isAuthenticating, accessToken]);
 
-      return <WrappedComponent {...props} />;
+    if (isAuthenticating) {
+      return <div>인증중</div>;
     }
-    return null;
+
+    return <WrappedComponent {...props} />;
   }
-  AuthenticatedComponent.displayName = "authenticated-component";
+  AuthenticatedComponent.displayName = "authenticated-";
   return AuthenticatedComponent;
 };
 

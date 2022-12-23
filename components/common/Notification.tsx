@@ -68,5 +68,5 @@ const NotiContainer = styled.aside`
   margin: auto;
   position: fixed;
   top: 0;
-  left: 0;
+  left: calc(50% - 125px);
 `;

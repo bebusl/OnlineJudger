@@ -6,7 +6,7 @@ import { tagMapper, TAGS } from "../../utils/constants/tag";
 import { toggleSetItem } from "../../utils/setTypeUtils";
 import { FlexBox } from "../common";
 import SearchBar from "../common/SearchBar";
-import Selector from "../common/Selector";
+import Selector from "../common/Selector/Selector";
 
 function generateQuerySet(queries: string | string[] | undefined): Set<string> {
   let newQuerySet = new Set<string>();

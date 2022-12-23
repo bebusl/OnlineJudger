@@ -2,19 +2,22 @@ import { Stomp, Client } from "@stomp/stompjs";
 import { Middleware } from "redux";
 import SockJS from "sockjs-client";
 import { WEB_SOCKET_URL } from "../../utils/constants/url";
-import { generateAuthHeader } from "../../utils/authUtils";
+import { getAuthToken } from "../../utils/authUtils";
 import { recieveJudgeMessage, recieveRunMessage } from "../slice/socketSlice";
 
 const socketManager: Middleware<{}> = (store) => {
   let socketClient: Client | null = null;
   return (next) => {
     return (action) => {
-      if (action.type === "auth/login/fulfilled" || action.type === "auth/getMe/fulfilled") {
-        const authHeader = generateAuthHeader();
-        if (authHeader) {
+      if (
+        action.type === "auth/login/fulfilled" ||
+        action.type === "auth/getMe/fulfilled"
+      ) {
+        const authToken = getAuthToken();
+        if (authToken) {
           socketClient = generateSocketClient();
           if (socketClient) {
-            socketClient.connectHeaders = authHeader;
+            socketClient.connectHeaders = { Authorization: authToken };
             socketClient.onConnect = () => {
               if (socketClient?.connected) {
                 socketClient.subscribe("/user/queue/notification", (msg) => {

@@ -1,10 +1,7 @@
 import Head from "next/head";
 import React, { useState } from "react";
 import styled from "styled-components";
-import {
-  sortObjectListAscByField,
-  sortObjectListDescByField,
-} from "../../../utils/sortUtils";
+import { sortObjectListAscByField, sortObjectListDescByField } from "../../../utils/sortUtils";
 
 export interface TableProps {
   header: {
@@ -66,6 +63,7 @@ export default function Table({ header, body, rowHeight }: TableProps) {
 
 const TableStyle = styled.table<{ $rowHeight?: string }>`
   width: 100%;
+  max-width: 900px;
   table-layout: auto;
   border-spacing: 0;
   tbody {
@@ -77,7 +75,7 @@ const TableStyle = styled.table<{ $rowHeight?: string }>`
     padding: 0 20px;
   }
   td {
-    height: ${({ $rowHeight }) => $rowHeight || "150px"};
+    height: ${({ $rowHeight }) => $rowHeight || "3rem"};
     white-space: pre;
   }
 

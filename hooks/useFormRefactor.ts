@@ -17,6 +17,7 @@ interface RegisterOptions {
   pattern: RegExp;
   onChange: Function;
   onBlur: Function;
+  value: unknown;
 }
 
 interface RegisterReturnType<T> {
@@ -28,7 +29,7 @@ interface RegisterReturnType<T> {
 }
 
 const useForm = (mode: "onChange" | "onBlur" = "onChange") => {
-  const [getRef, setRef] = useDynamicRefs<any>();
+  const [getRef, setRef, deleteRef] = useDynamicRefs<any>();
 
   const [isDirtyField, setDirtyField] = useState<Record<string, boolean>>({});
   const [isValid, setIsValid] = useState<Record<string, boolean>>({});
@@ -42,18 +43,15 @@ const useForm = (mode: "onChange" | "onBlur" = "onChange") => {
     const getCurrentValue = () => ref.current?.value;
 
     if (!Object.keys(isValid).includes(name)) {
-      //setIsValid(Object.assign(isValid, { [name]: true }));
-      //setIsValid((prev) => ({ ...prev, [name]: true }));
-      //isValid 를 펼쳐줄때도 꼭
       setIsValid((prev) => Object.assign(prev, { [name]: true }));
-    }
-    if (!Object.keys(isDirtyField).includes(name))
       setDirtyField((prev) => Object.assign(prev, { [name]: false }));
+    }
 
     const validator = () => {
       const currentValue = getCurrentValue();
-      let isValid = true;
+      if (!currentValue.length) return true; //빈칸일때는 밸리데이터 적용X
 
+      let isValid = true;
       if (options) {
         const { required, maxLength, minLength, max, min, validate, pattern } =
           options;
@@ -67,12 +65,11 @@ const useForm = (mode: "onChange" | "onBlur" = "onChange") => {
           isValid = isValid && currentValue >= min;
         if (validate) isValid = isValid && validate(currentValue);
         if (pattern) isValid = isValid && pattern.test(currentValue);
-        if (!currentValue.length) isValid = true; //빈칸일때는 밸리데이터 적용X
       }
       return isValid;
     };
 
-    const onChange = () => {
+    const handleChange = () => {
       const currentValue = getCurrentValue();
       if (mode === "onChange") {
         const updatedIsValid = validator();
@@ -83,20 +80,23 @@ const useForm = (mode: "onChange" | "onBlur" = "onChange") => {
       const updatedIsDirtied = "" !== currentValue;
       if (updatedIsDirtied !== isDirtyField[name])
         setDirtyField({ ...isDirtyField, [name]: updatedIsDirtied });
+
+      if (options?.onChange) options.onChange();
     };
 
-    const onBlur = () => {
+    const handleBlur = () => {
       if (mode === "onBlur") {
         const updatedIsValid = validator();
         if (updatedIsValid !== isValid[name]) {
           setIsValid({ ...isValid, [name]: updatedIsValid });
         }
       }
+      if (options?.onBlur) options.onBlur();
     };
 
     return {
-      onChange,
-      onBlur,
+      onChange: handleChange,
+      onBlur: handleBlur,
       ref,
       name,
       isValid: isValid[name],
@@ -104,10 +104,10 @@ const useForm = (mode: "onChange" | "onBlur" = "onChange") => {
   };
 
   const isValidInputs = () => {
-    const allDirty = Object.values(isDirtyField).every((field) => field);
+    const allDirtied = Object.values(isDirtyField).every((field) => field);
     const allValid = Object.values(isValid).every((field) => field);
-    console.log(isDirtyField);
-    return allDirty && allValid;
+
+    return allDirtied && allValid;
   };
 
   const getAllRefs = () => {
@@ -128,11 +128,25 @@ const useForm = (mode: "onChange" | "onBlur" = "onChange") => {
     return allValues;
   };
 
+  const unregister = (key: string) => {
+    const ref = getRef(key);
+    const removeStateUpdater = (prev: Record<string, boolean>) => {
+      const { [key]: dummy, ...rest } = prev;
+      return Object.assign({}, rest);
+    };
+    if (ref) {
+      deleteRef(key);
+      setIsValid(removeStateUpdater);
+      setDirtyField(removeStateUpdater);
+    }
+  };
+
   const formState = { isValid, isDirtyField };
 
   return {
     getAllValues,
     register,
+    unregister,
     formState,
     isValidInputs,
   };

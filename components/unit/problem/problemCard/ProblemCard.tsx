@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import Link from "next/link";
 
 import { ProblemDetail } from "../../../../api/scheme/problem";
@@ -22,14 +22,11 @@ const ProblemCard = (props: ProblemDetail) => {
         {/* {LvTagMapper[props.level]} */}
       </div>
       <FlexBox flexDirection="row" justifyContent="start">
-        {props.languages?.map((language) => LogoIconMapper[language])}
+        {props.languages?.map((language) => (
+          <Fragment key={`${language}logo`}>{LogoIconMapper[language]}</Fragment>
+        ))}
       </FlexBox>
-      <FlexBox
-        flexDirection="row"
-        style={{ fontSize: "12px" }}
-        justifyContent="start"
-        alignItems="center"
-      >
+      <FlexBox flexDirection="row" justifyContent="start" alignItems="center" gap="5px">
         {props.tags?.map((tag) => (
           <p key={props.title + tag.id} style={{ fontSize: "12px" }}>
             #{tag.name}
@@ -53,7 +50,7 @@ const ProblemCard = (props: ProblemDetail) => {
 
 export default ProblemCard;
 
-const CardGrid = styled.div`
+const CardGrid = styled.article`
   display: grid;
   height: 150px;
   padding: 30px 40px;
