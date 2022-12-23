@@ -8,29 +8,32 @@ import {
   getSubmissionsByQuery,
   likeSubmission,
 } from "../../api/submissionsAPI";
+import { Submission } from "../../api/scheme/submissions";
 
 import { Button, FlexBox } from "../../components/common";
 import { StatusTagMapper } from "../../components/common/Tag";
-import { LogoIconMapper } from "../../components/LanguageAsset";
 import SubmissionView from "../../components/templates/SubmissionView";
-import { Submission } from "../../api/scheme/submissions";
+import { LogoIconMapper } from "../../components/LanguageAsset";
+import CommentBox from "../../components/unit/comment/CommentBox";
 
 function UserSubmissions() {
   const router = useRouter();
+  const { submitId } = router.query;
   const [isLoading, setIsLoading] = useState(true);
   const [info, setInfo] = useState<Submission>({});
   const [liked, setLiked] = useState(false);
 
+  const fetchData = async () => {
+    const res = await getSubmissionsByQuery({ id: submitId });
+    if (res.data.success) {
+      setInfo(res.data.submissions[0]);
+      setLiked(res.data.submissions[0].liked);
+    }
+    setIsLoading(false);
+  };
+
   useEffect(() => {
-    const { submitId } = router.query;
-    (async () => {
-      const res = await getSubmissionsByQuery({ id: submitId });
-      if (res.data.success) {
-        setInfo(res.data.submissions[0]);
-        setLiked(res.data.submissions[0].liked);
-      }
-      setIsLoading(false);
-    })();
+    fetchData();
   }, []);
 
   if (isLoading) return <div>로딩 중</div>;
@@ -111,12 +114,11 @@ function UserSubmissions() {
           code={info.code}
           submitInfo={[
             Object.assign(info, {
-              created_at: new Date(
-                info?.created_at?.split(".")[0]
-              ).toLocaleString(),
+              created_at: new Date(info.created_at).toLocaleString(),
             }),
           ]}
         />
+        <CommentBox comments={info.comments} fetchData={fetchData} />
       </section>
     </>
   );

@@ -37,7 +37,7 @@ export interface Comment {
   submission_id: string;
   content: string;
   user_id: string;
-  created_at: Date;
+  created_at: string;
 }
 
 export interface SubmitProblemRequest {
@@ -80,4 +80,33 @@ export interface GetLikedSubmissionListRequest {
 export interface GetLikedSubmissionListResponse extends APIResponse {
   page: PagingResponse;
   likes: { submission_id: string; submission: Submission };
+}
+
+export interface WriteCommentRequest {
+  submission_id: string;
+  content: string;
+}
+
+export interface WriteCommentResponse extends APIResponse {}
+
+export interface EditCommentRequest {
+  comment_id: string;
+  content: string;
+}
+
+export interface EditCommentResponse extends APIResponse {}
+
+export interface RemoveCommentRequest {
+  comment_id: string;
+}
+
+export interface RemoveCommentResponse extends APIResponse {}
+
+export interface GetMyCommentsRequest {
+  page: number;
+}
+
+export interface GetMyCommentsResponse extends APIResponse {
+  page: PagingResponse;
+  comments: Comment[];
 }
