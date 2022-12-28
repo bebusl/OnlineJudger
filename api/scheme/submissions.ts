@@ -38,6 +38,7 @@ export interface Comment {
   content: string;
   user_id: string;
   created_at: string;
+  comment_id: string;
 }
 
 export interface SubmitProblemRequest {
