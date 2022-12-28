@@ -10,7 +10,7 @@ const refreshAccessToken = async () => {
   );
   if (response?.status === 200 && response.data?.success) {
     setAuthorizationCookie(response.data.access_token);
-    return true;
+    return response.data.access_token;
   }
   store.dispatch(logoff());
   return false;
