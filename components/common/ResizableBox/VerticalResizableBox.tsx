@@ -64,7 +64,9 @@ const Container = styled(FlexBox)`
   justify-content: stretch;
 `;
 
-const View = styled.section``;
+const View = styled.section`
+  height: 50%;
+`;
 
 const Controller = styled.div`
   background: url("/images/grip/img-grippie-horizon.png") no-repeat;
