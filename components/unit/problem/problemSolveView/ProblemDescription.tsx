@@ -1,13 +1,11 @@
 import React, { useContext } from "react";
 import { ProblemDetail } from "../../../../api/scheme/problem";
-import { ProblemContext } from "../../../../pages/problem/[problemId]";
 
 import ScrollBox from "../../../common/ScrollBox";
 import Table from "../../../common/Table/Table";
 import { LogoIconMapper } from "../../../LanguageAsset";
 
-function ProblemDescription() {
-  const problem = useContext(ProblemContext) as ProblemDetail;
+function ProblemDescription({ problem }: { problem: ProblemDetail }) {
   const header = [
     { field: "timeLimit", header: "시간제한" },
     { field: "memoryLimit", header: "메모리제한" },

@@ -80,7 +80,7 @@ export interface GetLikedSubmissionListRequest {
 
 export interface GetLikedSubmissionListResponse extends APIResponse {
   page: PagingResponse;
-  likes: { submission_id: string; submission: Submission };
+  likes: { submission_id: string; submission: Submission }[];
 }
 
 export interface WriteCommentRequest {
