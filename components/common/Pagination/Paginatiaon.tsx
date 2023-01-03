@@ -33,7 +33,7 @@ function Pagination({ current_pages, total_pages, onChange }: Props) {
   const handleClickPageBtn: MouseEventHandler<HTMLDivElement> = (e) => {
     const target = e.target as HTMLAnchorElement;
     const selectedPageNumber = target.dataset.page;
-    onChange(selectedPageNumber);
+    if (selectedPageNumber) onChange(selectedPageNumber);
   };
 
   if (total_pages === 0) return null;
