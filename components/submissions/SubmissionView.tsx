@@ -1,4 +1,5 @@
 import React from "react";
+import { dateFormatter } from "../../utils/dateUtils";
 import Table from "../common/Table/Table";
 
 interface SubmissionViewProps {
@@ -7,6 +8,10 @@ interface SubmissionViewProps {
 }
 
 function SubmissionView({ submitInfo, code }: SubmissionViewProps) {
+  const tableBody = submitInfo.map((submit) =>
+    Object.assign(submit, { created_at: dateFormatter(submit.created_at) })
+  );
+
   return (
     <>
       <Table
@@ -17,7 +22,7 @@ function SubmissionView({ submitInfo, code }: SubmissionViewProps) {
           { field: "code_length", header: "코드길이" },
           { field: "created_at", header: "제출시간" },
         ]}
-        body={submitInfo}
+        body={tableBody}
       />
       <div style={{ border: "1px solid #ededed", padding: "1rem" }}>
         <code style={{ fontSize: "0.7rem" }}>
