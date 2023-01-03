@@ -13,6 +13,7 @@ function LinkS({ href, text }: { href: string; text: string }) {
 const Anchor = styled.a`
   font-size: ${({ theme }) => theme.fontSizes[0]};
   margin-top: 1rem;
+  text-decoration: underline;
 `;
 
 export default LinkS;
