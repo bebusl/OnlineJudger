@@ -1,10 +1,13 @@
 import React, { ChangeEventHandler, useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import * as S from "./Selector.style";
 import Button from "../Buttons/BasicButton/Button";
-import Popover from "../Popover";
 
 interface selectorProps {
-  options: { text: string; checked: boolean; defaultValue?: string | number }[];
+  options: {
+    text: string | number;
+    checked: boolean;
+    defaultValue?: string | number;
+  }[];
   onChange: ChangeEventHandler;
   groupName: string;
 }
@@ -17,18 +20,18 @@ function Selector({
   const boxRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    function handleClickOutside(e) {
-      if (boxRef.current && !boxRef.current.contains(e.target)) {
+    function handleClickOutside({ target }: MouseEvent) {
+      if (boxRef.current && !boxRef.current.contains(target as Node))
         setExpand(false);
-      }
     }
     document.addEventListener("click", handleClickOutside);
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, []);
+
   return (
-    <Expand ref={boxRef}>
+    <S.Expand ref={boxRef}>
       <Button
         $variant="outline"
         onClick={(e) => {
@@ -39,58 +42,28 @@ function Selector({
         {groupName}
       </Button>
       {expand && (
-        <Options>
+        <S.Options>
           {options.map((option) => {
             const { text, checked, defaultValue } = option;
+            const strText = String(text);
             return (
-              <CheckLabel key={text}>
+              <S.CheckLabel key={text}>
                 <input
                   type={"checkbox"}
-                  name={text}
-                  id={text}
+                  name={strText}
+                  id={strText}
                   defaultValue={defaultValue || text}
                   checked={checked}
                   onChange={onChange}
                 />
-                <label htmlFor={text}>{text}</label>
-              </CheckLabel>
+                <label htmlFor={strText}>{text}</label>
+              </S.CheckLabel>
             );
           })}
-        </Options>
+        </S.Options>
       )}
-    </Expand>
+    </S.Expand>
   );
 }
 
 export default Selector;
-
-const Expand = styled.div`
-  & > button:after {
-    content: "";
-    margin-top: 0.3em;
-    vertical-align: middle;
-    border-top: 0.3em solid;
-    border-bottom: 0.3em solid transparent;
-    border-right: 0.3em solid transparent;
-    border-left: 0.3em solid transparent;
-    float: right;
-  }
-  &:focus {
-    background-color: ${({ theme }) => theme.colors.gray150};
-  }
-`;
-
-const CheckLabel = styled.div`
-  label {
-    width: fit-content;
-  }
-`;
-
-const Options = styled.div`
-  position: absolute;
-  background-color: white;
-  min-width: 150px;
-  z-index: 500;
-  border: 1px solid ${({ theme }) => theme.colors.gray150};
-  box-shadow: ${({ theme }) => theme.shadows.light};
-`;
