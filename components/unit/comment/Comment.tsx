@@ -14,7 +14,7 @@ function Comment({
   updateData,
 }: {
   comment: CommentType;
-  updateData: Function;
+  updateData?: Function;
 }) {
   const [editMode, setEditMode] = useState(false);
   const [editValue, setEditValue] = useState("");
@@ -23,7 +23,7 @@ function Comment({
   const handleRemoveBtnClick = async () => {
     try {
       const res = await removeComment({ comment_id: comment.comment_id });
-      if (res.data.success) updateData();
+      if (res.data.success && updateData) updateData();
     } catch (error) {}
   };
 
@@ -33,7 +33,7 @@ function Comment({
         comment_id: comment.comment_id,
         content: editValue,
       });
-      if (res.data.success) updateData();
+      if (res.data.success && updateData) updateData();
     } catch (e) {}
   };
 
