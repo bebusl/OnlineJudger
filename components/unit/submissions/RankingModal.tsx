@@ -1,6 +1,6 @@
 import React from "react";
-import Modal from "../common/Modal";
-import ScrollBox from "../common/ScrollBox";
+import Modal from "../../common/Modal";
+import ScrollBox from "../../common/ScrollBox";
 import Ranking from "./Ranking";
 
 function RankingModal({

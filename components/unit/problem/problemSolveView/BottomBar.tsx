@@ -8,7 +8,7 @@ import { LANGUAGES_TYPE } from "../../../../utils/constants/language";
 
 import { Button, FlexBox } from "../../../common";
 import ConfirmDialog from "../../../common/Dialog/ConfirmDialog";
-import RankingModal from "../../../submissions/RankingModal";
+import RankingModal from "../../submissions/RankingModal";
 import { pendingRunResult } from "../../../../store/slice/socketSlice";
 
 function BottomBar({
