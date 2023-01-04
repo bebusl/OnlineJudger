@@ -1,9 +1,10 @@
 import React from "react";
-import { dateFormatter } from "../../utils/dateUtils";
-import Table from "../common/Table/Table";
+import { Submission } from "../../../api/scheme/submissions";
+import { dateFormatter } from "../../../utils/dateUtils";
+import Table from "../../common/Table/Table";
 
 interface SubmissionViewProps {
-  submitInfo: object[];
+  submitInfo: Submission[];
   code: string;
 }
 
