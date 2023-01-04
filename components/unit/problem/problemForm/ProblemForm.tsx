@@ -1,7 +1,7 @@
 import React, { FormEventHandler, useState, useRef } from "react";
 
 import { useRouter } from "next/router";
-import useForm from "../../../../hooks/useFormRefactor";
+import useForm from "../../../../hooks/useForm";
 import useOptionsReducer from "./optionsReducer";
 
 import { AddProblemRequest } from "../../../../api/scheme/problem";
@@ -13,7 +13,7 @@ import { Button, FlexBox } from "../../../common";
 import { LabeledTextArea } from "../../../common/TextArea";
 import { LabeledInput } from "../../../common/Input";
 import Selector from "../../../common/Selector/Selector";
-import DropZone from "../../../common/DropZone";
+import DropZone from "../../../common/DropZone/DropZone";
 import Description from "../../../common/Typhography/Description";
 import ConfirmDialog from "../../../common/Dialog/ConfirmDialog";
 
@@ -64,10 +64,9 @@ function ProblemForm({
 
   const exampleId = useRef(test_case_examples.length);
 
-  const tagOptions = TAGS.map((tag, idx) => ({
+  const tagOptions = TAGS.map((tag) => ({
     text: tag,
-    defaultValue: idx + 1,
-    checked: options.tags.has(idx + 1),
+    checked: options.tags.has(tag),
   }));
 
   const languageOptions = LANGUAGES.map((language) => ({
@@ -146,7 +145,7 @@ function ProblemForm({
         />
       )}
       <form onSubmit={handleGeSubmit} style={{ minWidth: "900px" }}>
-        <fieldset disabled={readOnly}>
+        <fieldset disabled={readOnly} style={{ border: "none" }}>
           <LabeledInput
             {...titleOptions}
             forwardedRef={titleRef}
