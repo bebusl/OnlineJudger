@@ -79,4 +79,7 @@ const Controller = styled.div`
   :hover {
     background-image: url("/images/grip/img-grippie-horizon-hover.png");
   }
+  ${({ theme }) => theme.mediaQueries.tablet} {
+    display: none;
+  }
 `;

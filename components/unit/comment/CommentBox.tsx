@@ -14,7 +14,7 @@ function CommentBox({
 
   useEffect(() => {
     fetchData();
-  }, [needFetch, fetchData]);
+  }, [needFetch]);
 
   const updateData = () => {
     setFetch((prev) => !prev);

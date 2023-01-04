@@ -1,53 +1,117 @@
-import React, { RefObject, useEffect, useState } from "react";
-import validator from "../utils/validator";
+import React, {
+  ChangeEventHandler,
+  FocusEventHandler,
+  RefObject,
+  useState,
+} from "react";
 import type { regexType } from "../utils/validator";
 import useDynamicRefs from "./useDynamicRefs";
 
-interface Props {
-  types: regexType[];
+interface RegisterOptions {
+  required: boolean;
+  maxLength: number;
+  minLength: number;
+  max: number;
+  min: number;
+  validate: (value: string | number) => boolean;
+  pattern: RegExp;
+  onChange: Function;
+  onBlur: Function;
+  value: unknown;
 }
 
-const useForm = ({ types }: Props) => {
-  const [getRef, setRef] = useDynamicRefs<any>();
-  types.forEach((type) => setRef(type));
+interface RegisterReturnType<T> {
+  onChange: ChangeEventHandler<T>;
+  onBlur: FocusEventHandler<T>;
+  isValid: boolean;
+  name: string;
+  ref: RefObject<T>;
+}
 
-  const initialRecord = (value: boolean) =>
-    types.reduce((accum, current) => {
-      return { ...accum, [current]: value };
-    }, {} as Record<regexType, boolean>);
+const useForm = (mode: "onChange" | "onBlur" = "onChange") => {
+  const [getRef, setRef, deleteRef] = useDynamicRefs<any>();
 
-  const [isDirtyField, setDirtyField] = useState(initialRecord(false));
-  const [isValid, setIsValid] = useState(initialRecord(true));
+  const [isDirtyField, setDirtyField] = useState<Record<string, boolean>>({});
+  const [isValid, setIsValid] = useState<Record<string, boolean>>({});
 
-  const isValidInputs = () => {
-    const allDirty = Object.values(isDirtyField).every((field) => field);
-    const allValid = Object.values(isValid).every((field) => field);
-    return allDirty && allValid;
+  const register = <T = HTMLInputElement>(
+    name: string,
+    options?: Partial<RegisterOptions>
+  ): RegisterReturnType<T> => {
+    setRef(name);
+    const ref = getRef(name);
+    const getCurrentValue = () => ref.current?.value;
+
+    if (!Object.keys(isValid).includes(name)) {
+      setIsValid((prev) => Object.assign(prev, { [name]: true }));
+      setDirtyField((prev) => Object.assign(prev, { [name]: false }));
+    }
+
+    const validator = () => {
+      const currentValue = getCurrentValue();
+      if (!currentValue.length) return true; //빈칸일때는 밸리데이터 적용X
+
+      let isValid = true;
+      if (options) {
+        const { required, maxLength, minLength, max, min, validate, pattern } =
+          options;
+
+        if (required) isValid = isValid && currentValue.length > 0;
+        if (maxLength) isValid = isValid && currentValue.length <= maxLength;
+        if (minLength) isValid = isValid && currentValue.length >= minLength;
+        if (max && typeof currentValue === "number")
+          isValid = isValid && currentValue <= max;
+        if (min && typeof currentValue === "number")
+          isValid = isValid && currentValue >= min;
+        if (validate) isValid = isValid && validate(currentValue);
+        if (pattern) isValid = isValid && pattern.test(currentValue);
+      }
+      return isValid;
+    };
+
+    const handleChange = () => {
+      const currentValue = getCurrentValue();
+      if (mode === "onChange") {
+        const updatedIsValid = validator();
+        if (updatedIsValid !== isValid[name]) {
+          setIsValid({ ...isValid, [name]: updatedIsValid });
+        }
+      }
+      const updatedIsDirtied = "" !== currentValue;
+      if (updatedIsDirtied !== isDirtyField[name])
+        setDirtyField({ ...isDirtyField, [name]: updatedIsDirtied });
+
+      if (options?.onChange) options.onChange(currentValue);
+    };
+
+    const handleBlur = () => {
+      if (mode === "onBlur") {
+        const updatedIsValid = validator();
+        if (updatedIsValid !== isValid[name]) {
+          setIsValid({ ...isValid, [name]: updatedIsValid });
+        }
+      }
+      if (options?.onBlur) options.onBlur();
+    };
+
+    return {
+      onChange: handleChange,
+      onBlur: handleBlur,
+      ref,
+      name,
+      isValid: isValid[name],
+    };
   };
 
-  const handleBlur = (type: regexType, validate?: boolean) => {
-    const currentRef = getRef(type);
-    const isDirtied = "" !== currentRef.current?.value;
-    if (currentRef) {
-      const updatedValidate = validate
-        ? validator(type, currentRef.current?.value as string)
-        : true;
+  const isValidInputs = () => {
+    const allDirtied = Object.values(isDirtyField).every((field) => field);
+    const allValid = Object.values(isValid).every((field) => field);
 
-      if (updatedValidate !== isValid[type]) {
-        setIsValid({ ...isValid, [type]: updatedValidate });
-      }
-      if (isDirtied !== isDirtyField[type]) {
-        setDirtyField({
-          ...isDirtyField,
-          [type]: "" !== currentRef.current?.value,
-        });
-      }
-    }
-    // 이전 스테이트와 다를때만 업데이트되도록 수정
-  }; // 더 좋은 이름이 있을 것 같은딩.
+    return allDirtied && allValid;
+  };
 
   const getAllRefs = () => {
-    const allRefs = types.reduce((accum, current) => {
+    const allRefs = Object.keys(isValid).reduce((accum, current) => {
       const currentRef = getRef(current);
       return { ...accum, [current]: currentRef };
     }, {} as Record<regexType, RefObject<HTMLInputElement | HTMLTextAreaElement>>);
@@ -64,13 +128,27 @@ const useForm = ({ types }: Props) => {
     return allValues;
   };
 
+  const unregister = (key: string) => {
+    const ref = getRef(key);
+    const removeStateUpdater = (prev: Record<string, boolean>) => {
+      const { [key]: dummy, ...rest } = prev;
+      return Object.assign({}, rest);
+    };
+    if (ref) {
+      deleteRef(key);
+      setIsValid(removeStateUpdater);
+      setDirtyField(removeStateUpdater);
+    }
+  };
+
+  const formState = { isValid, isDirtyField };
+
   return {
-    handleBlur,
-    isValidInputs,
-    isValid,
-    getRef,
-    getAllRefs,
     getAllValues,
+    register,
+    unregister,
+    formState,
+    isValidInputs,
   };
 };
 

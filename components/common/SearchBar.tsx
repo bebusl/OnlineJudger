@@ -57,6 +57,6 @@ export const SearchBarWrapper = styled.form`
     line-height: 1.43;
     letter-spacing: 0.1px;
     text-align: left;
-    color: ${({ theme }) => theme.colors.gray300};
+    color: ${({ theme }) => theme.colors.gray600};
   }
 `;

@@ -13,11 +13,13 @@ const AuthTemplate = ({
   children,
 }: Props) => (
   <Container flexDirection="row">
-    <LeftBox alignItems="start" justifyContent="start">
+    <LeftBox>
       <Title>{title}</Title>
       <SubTitle>{subTitle}</SubTitle>
     </LeftBox>
-    <RightBox>{children}</RightBox>
+    <RightBox>
+      <div>{children}</div>
+    </RightBox>
   </Container>
 );
 
@@ -25,37 +27,56 @@ const Container = styled(FlexBox)`
   width: 100%;
   height: 100%;
   border: 1px solid ${({ theme }) => theme.colors.gray150};
-  background-color: ${({ theme }) => theme.colors.lightGray};
+  align-items: stretch;
+  flex-wrap: wrap;
+  & > div {
+    flex-grow: 1;
+  }
 `;
 
-const LeftBox = styled(FlexBox)`
+const LeftBox = styled.div`
   background-color: #7a82d2;
   background-image: linear-gradient(#8c95e5 2px, transparent 1px),
     linear-gradient(to right, #8c95e5 2px, transparent 1px);
   background-size: 50px 50px;
-  width: 50%;
-  height: 100%;
   padding: 80px 0 0 60px;
+  ${({ theme }) => theme.mediaQueries.tablet} {
+    background: none;
+    height: 1rem;
+    padding: 2rem 0;
+  }
 `;
 
 const RightBox = styled(FlexBox)`
-  width: 50%;
-  height: 100%;
+  & > div {
+    width: 60%;
+  }
+  ${({ theme }) => theme.mediaQueries.tablet} {
+    width: 100%;
+    padding: 1rem 0;
+  }
 `;
 
 const Title = styled.h1`
   -webkit-text-stroke: 1px #9747ff;
   font-size: ${({ theme }) => theme.fontSizes[6]};
   margin: 0;
-
   color: ${({ theme }) => theme.colors.white};
+  ${({ theme }) => theme.mediaQueries.tablet} {
+    -webkit-text-stroke: 0;
+    color: ${({ theme }) => theme.colors.gray500};
+    font-size: ${({ theme }) => theme.fontSizes[4]};
+    text-align: center;
+  }
 `;
 
 const SubTitle = styled.p`
   margin: 0;
   font-size: ${({ theme }) => theme.fontSizes[1]};
-
   color: ${({ theme }) => theme.colors.white};
+  ${({ theme }) => theme.mediaQueries.tablet} {
+    display: none;
+  }
 `;
 
 export default AuthTemplate;

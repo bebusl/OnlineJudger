@@ -4,15 +4,19 @@ import styled from "styled-components";
 
 function Footer() {
   return (
-    <footer>
+    <Container>
       <Link href="/admin?page=0" passHref>
         <FooterLink>관리자 페이지</FooterLink>
       </Link>
-    </footer>
+    </Container>
   );
 }
 
 export default Footer;
+
+const Container = styled.footer`
+  text-align: center;
+`;
 
 const FooterLink = styled.a`
   font-size: ${({ theme }) => theme.fontSizes[1]};

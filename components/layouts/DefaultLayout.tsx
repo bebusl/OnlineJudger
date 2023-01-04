@@ -28,6 +28,9 @@ const Body = styled.main`
   flex-direction: column;
   justify-content: start;
   align-items: center;
+  ${({ theme }) => theme.mediaQueries.tablet} {
+    flex-basis: 80vh;
+  }
 `;
 
 export default DefaultLayout;

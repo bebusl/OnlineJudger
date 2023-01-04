@@ -60,10 +60,16 @@ const Container = styled(FlexBox).attrs({ flexDirection: "row" })`
   width: 100vw;
   height: 90vh;
   align-items: stretch;
+  ${({ theme }) => theme.mediaQueries.tablet} {
+    flex-wrap: wrap;
+  }
 `;
 
 const View = styled.section`
   width: calc(50% - 12px);
+  ${({ theme }) => theme.mediaQueries.tablet} {
+    width: 100%;
+  }
 `;
 
 const Controller = styled.div`
@@ -75,5 +81,8 @@ const Controller = styled.div`
   border-right: 1px solid ${({ theme }) => theme.colors.gray150};
   :hover {
     background-image: url("/images/grip/img-grippie-vertical-hover.png");
+  }
+  ${({ theme }) => theme.mediaQueries.tablet} {
+    display: none;
   }
 `;
