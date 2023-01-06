@@ -1,22 +1,25 @@
 import React from "react";
-import { Button, Input } from "../../components/common";
-import useForm from "../../hooks/useForm";
-import { resetPassword } from "../../api/authAPI";
 import { useRouter } from "next/router";
-import Subscription from "../../components/common/Typhography/Description";
+import useForm from "../../hooks/useForm";
 import useNotification from "../../hooks/useNotification";
 
+import { resetPassword } from "../../api/authAPI";
+
+import { Button, Input } from "../../components/common";
+import Description from "../../components/common/Typhography/Description";
+import { regexPatterns } from "../../utils/validator";
+
 function PasswordReset() {
-  const { getRef, getAllValues } = useForm({
-    types: ["password", "passwordDoubleCheck"],
-  });
+  const { register, getAllValues } = useForm();
   const router = useRouter();
   const addNotification = useNotification();
+
   const checkPasswordValidation = () => {
     const { password, passwordDoubleCheck } = getAllValues();
     if (password === passwordDoubleCheck) return true;
     return false;
   };
+
   return (
     <form
       onSubmit={async (e) => {
@@ -37,12 +40,17 @@ function PasswordReset() {
         }
       }}
     >
-      <Subscription>새로운 비밀번호를 입력해주세요</Subscription>
-      <Input ref={getRef("password")} type="password" placeholder="비밀번호" />
+      <Description>새로운 비밀번호를 입력해주세요</Description>
       <Input
-        ref={getRef("passwordDoubleCheck")}
         type="password"
-        isValid={checkPasswordValidation()}
+        placeholder="비밀번호"
+        {...register("password", { pattern: regexPatterns.password })}
+      />
+      <Input
+        {...register("passwordDoubleCheck", {
+          validate: checkPasswordValidation,
+        })}
+        type="password"
         placeholder="비밀번호 체크"
       />
       <Button type="submit">변경</Button>
