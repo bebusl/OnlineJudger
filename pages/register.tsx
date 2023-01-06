@@ -5,14 +5,14 @@ import Image from "next/image";
 import { signUpRequest } from "../store/slice/authSlice";
 
 import { useAppDispatch } from "../hooks/useStore";
-import useForm from "../hooks/useFormRefactor";
+import useForm from "../hooks/useForm";
 
-import AuthTemplate from "../components/templates/AuthTemplate";
+import AuthTemplate from "../components/layouts/AuthTemplate";
 import { Button, FlexBox, Input, Seperator } from "../components/common";
 import { regexPatterns } from "../utils/validator";
 import Subscription from "../components/common/Typhography/Description";
-import GoogleOAuthButton from "../components/common/Buttons/OAuthButton/GoogleOAuthButton";
-import KakaoOAuthButton from "../components/common/Buttons/OAuthButton/KakaoOAuthButton";
+import GoogleOAuthButton from "../components/common/Buttons/OAuthButton/GoogleRegisterButton";
+import KakaoOAuthButton from "../components/common/Buttons/OAuthButton/KakaoRegisterButton";
 
 const RegisterForm = ({
   linkKey,
@@ -20,6 +20,7 @@ const RegisterForm = ({
   linkKey: string | string[] | undefined;
 }) => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const { getAllValues, register, isValidInputs } = useForm();
   const [errMsg, setErrMsg] = useState("");
 
@@ -29,6 +30,11 @@ const RegisterForm = ({
       const { checkPassword, ...rest } = getAllValues();
       dispatch(signUpRequest({ ...rest, link_key: linkKey || "" }))
         .unwrap()
+        .then(() => {
+          linkKey
+            ? router.replace("/login")
+            : router.replace("/user/verify-email");
+        })
         .catch((e) => setErrMsg(e));
     }
   };
@@ -39,19 +45,13 @@ const RegisterForm = ({
         <Input
           {...register("email", { pattern: regexPatterns.email })}
           placeholder={"이메일"}
-          description="이메일 형태로 입력해주세요"
         />
       )}
-      <Input
-        {...register("name", { minLength: 3 })}
-        placeholder="닉네임"
-        description="3글자 이상"
-      />
+      <Input {...register("name", { minLength: 3 })} placeholder="닉네임" />
       <Input
         type="password"
         {...register("password", { pattern: regexPatterns.password })}
         placeholder="비밀번호"
-        description="6~12글자 사이 영어 숫자 혼합"
       />
       <Input
         type="password"
@@ -80,29 +80,27 @@ function Register() {
       title="REGISTER"
       subTitle="서비스를 이용하기 위해서는 회원가입이 필요합니다"
     >
-      <div style={{ width: "60%" }}>
-        <FlexBox justifyContent="space-around">
-          {provider && typeof provider === "string" ? (
-            <>
-              <Image
-                src={`/images/logo/${provider.toLowerCase()}-logo.png`}
-                alt={`login with ${provider.toLowerCase()}`}
-                height="40px"
-                width="40px"
-              />
-              <p>{provider}와(과) 연동되는 계정입니다.</p>
-              <Seperator>and</Seperator>
-            </>
-          ) : (
-            <>
-              <GoogleOAuthButton />
-              <KakaoOAuthButton />
-              <Seperator>or</Seperator>
-            </>
-          )}
-        </FlexBox>
-        <RegisterForm linkKey={linkKey} />
-      </div>
+      <FlexBox justifyContent="space-around">
+        {provider && typeof provider === "string" ? (
+          <>
+            <Image
+              src={`/images/logo/${provider.toLowerCase()}-logo.png`}
+              alt={`login with ${provider.toLowerCase()}`}
+              height="40px"
+              width="40px"
+            />
+            <p>{provider}와(과) 연동되는 계정입니다.</p>
+            <Seperator>and</Seperator>
+          </>
+        ) : (
+          <>
+            <GoogleOAuthButton />
+            <KakaoOAuthButton />
+            <Seperator>or</Seperator>
+          </>
+        )}
+      </FlexBox>
+      <RegisterForm linkKey={linkKey} />
     </AuthTemplate>
   );
 }
