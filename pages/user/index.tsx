@@ -1,62 +1,94 @@
+import React, { useState } from "react";
 import Image from "next/image";
-import React from "react";
-import { Button } from "../../components/common";
+
+import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
+import { logoff } from "../../store/slice/authSlice";
+import { deleteAccount } from "../../api/authAPI";
+
+import WithSideBar from "../../components/layouts/WithSideBar";
+import { Button, FlexBox } from "../../components/common";
 import Input, { LabeledInput } from "../../components/common/Input";
-import WithSideBar from "../../components/templates/WithSideBar";
-import { GOOGLE_AUTH_LINK_URL } from "../../utils/constants/url";
-import useForm from "../../hooks/useForm";
-import { useAppSelector } from "../../hooks/useStore";
+import ConfirmDialog from "../../components/common/Dialog/ConfirmDialog";
+import Description from "../../components/common/Typhography/Description";
+import GoogleLinkButton from "../../components/common/Buttons/OAuthButton/GoogleLinkButton";
+import KakaoLinkButton from "../../components/common/Buttons/OAuthButton/KakaoLinkButton";
+import useNotification from "../../hooks/useNotification";
 
 function UserProfile() {
-  const { getRef } = useForm({
-    types: ["name", "email", "link"],
-  });
-  const nameRef = getRef("name");
-  const emailRef = getRef("email");
-
   const { avatar, name, email, links } = useAppSelector((state) => state.auth);
-
+  const [openModal, setOpenModal] = useState(false);
+  const dispatch = useAppDispatch();
+  const addNotification = useNotification();
   return (
     <WithSideBar>
+      {openModal && (
+        <ConfirmDialog
+          message={`정말 탈퇴하시겠습니까?\n탈퇴한 계정으로 다시 가입할 수 없습니다`}
+          onClose={() => setOpenModal(false)}
+          onConfirm={async () => {
+            const response = await deleteAccount();
+            if (response.data.success) {
+              dispatch(logoff());
+              addNotification("정상적으로 탈퇴되었습니다", "success");
+            }
+            addNotification("에러가 발생했습니다", "error");
+          }}
+        />
+      )}
       <section>
         <h2>내 계정</h2>
         <form>
           <Image alt="person" src={avatar} width="100px" height="100px" />
-          {/* <Button $variant="outline" width="fit-content">
-            Change
-          </Button>
-          <Button $variant="outline" width="fit-content">
-            Remove
-          </Button> */}
         </form>
-        <LabeledInput text="EMAIL" name="email" forwardref={emailRef} defaultValue={email} />
-        <LabeledInput text="NAME" name="name" forwardref={nameRef} defaultValue={name} />
+        <LabeledInput
+          forwardedRef={null}
+          text="이메일"
+          name="email"
+          defaultValue={email}
+          readOnly
+        />
+        <LabeledInput
+          forwardedRef={null}
+          text="닉네임"
+          name="name"
+          defaultValue={name}
+          readOnly
+        />
 
         <h3>연동된 소셜 계정</h3>
-
         {links?.length > 0 ? (
-          <Input type="email" name="linkedEmail" defaultValue={links[0]?.email} />
+          <Input
+            type="email"
+            name="linkedEmail"
+            defaultValue={links[0]?.email}
+            readOnly
+          />
         ) : (
           <>
-            <p>연동된 소셜 계정이 없습니다</p>
-            <Button $variant="outline">
-              <a href={GOOGLE_AUTH_LINK_URL}>구글 연동하기</a>
-            </Button>
+            <Description>연동된 소셜 계정이 없습니다</Description>
+            <FlexBox flexDirection="row" gap="1rem">
+              <GoogleLinkButton />
+              <KakaoLinkButton />
+            </FlexBox>
           </>
         )}
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <div>
-            <Button $variant="outline" width="fit-content">
+          <span>
+            <Button
+              $variant="outline"
+              width="fit-content"
+              style={{ marginRight: "1rem" }}
+              onClick={(e) => {
+                e.preventDefault();
+                dispatch(logoff());
+              }}
+            >
               로그아웃
             </Button>
-            <Button $variant="outline">탈퇴</Button>
-          </div>
-          <div>
-            {/* <Button $variant="outline" width="fit-content">
-              초기화
-            </Button> */}
-            <Button width="fit-content">저장</Button>
-          </div>
+            <Button $variant="outline" onClick={() => setOpenModal(true)}>
+              탈퇴
+            </Button>
+          </span>
         </div>
       </section>
     </WithSideBar>

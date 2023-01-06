@@ -80,7 +80,7 @@ function ProblemDetail(props: GetProblemResponse) {
           ))}
         </select>
       </View.Header>
-      <main>
+      <section>
         <HorizontalResizableBox
           leftChild={<View.ProblemDescription problem={props} />}
           rightChild={ProblemSolveSection}
@@ -91,7 +91,7 @@ function ProblemDetail(props: GetProblemResponse) {
           language={selectedLanguage}
           problemId={id}
         />
-      </main>
+      </section>
     </>
   );
 }

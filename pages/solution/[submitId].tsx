@@ -12,7 +12,7 @@ import { Submission } from "../../api/scheme/submissions";
 
 import { Button, FlexBox } from "../../components/common";
 import { StatusTagMapper } from "../../components/common/Tag";
-import SubmissionView from "../../components/templates/SubmissionView";
+import SubmissionView from "../../components/unit/submissions/SubmissionView";
 import { LogoIconMapper } from "../../components/LanguageAsset";
 import CommentBox from "../../components/unit/comment/CommentBox";
 import { dateFormatter } from "../../utils/dateUtils";

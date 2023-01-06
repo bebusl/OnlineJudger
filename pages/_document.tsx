@@ -1,3 +1,4 @@
+import React from "react";
 import Document, {
   DocumentContext,
   DocumentInitialProps,
@@ -43,9 +44,9 @@ export default class CustomDocument extends Document {
       <Html>
         <Head />
         <body>
+          <Main />
           <div id="portal" />
           <div id="notification-portal" />
-          <Main />
           <NextScript />
         </body>
       </Html>

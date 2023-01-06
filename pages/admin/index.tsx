@@ -9,6 +9,12 @@ import { Button } from "../../components/common";
 import CheckableTable from "../../components/common/Table/CheckableTable";
 import ConfirmDialog from "../../components/common/Dialog/ConfirmDialog";
 
+interface ProblemTableInfo
+  extends Omit<GetProblemResponse, "title" | "languages"> {
+  title: string | JSX.Element;
+  languages: string;
+}
+
 const header = [
   { field: "id", header: "ID" },
   { field: "title", header: "제목" },
@@ -16,12 +22,6 @@ const header = [
   { field: "time_limit", header: "제한시간" },
   { field: "languages", header: "언어" },
 ];
-
-interface ProblemTableInfo
-  extends Omit<GetProblemResponse, "title" | "languages"> {
-  title: string | JSX.Element;
-  languages: string;
-}
 
 function ManageProblem() {
   const [problems, setProblems] = useState<ProblemTableInfo[]>([]);
@@ -68,13 +68,14 @@ function ManageProblem() {
   };
 
   return (
-    <section style={{ width: "100%" }}>
+    <>
       {openModal.open && (
         <ConfirmDialog
           message="선택한 문제를 삭제하시겠습니까?"
           onClose={() => setOpenModal({ open: false, selectedProblems: null })}
           onConfirm={() => {
-            handleCheckedDataBtnClick(openModal.selectedProblems);
+            if (openModal.selectedProblems)
+              handleCheckedDataBtnClick(openModal.selectedProblems);
             setOpenModal({ open: false, selectedProblems: null });
           }}
         />
@@ -103,7 +104,7 @@ function ManageProblem() {
           }));
         }}
       />
-    </section>
+    </>
   );
 }
 

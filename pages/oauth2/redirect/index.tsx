@@ -28,8 +28,6 @@ function Oauth2Redirect() {
         .then(() => {
           router.replace("/");
         });
-    } else {
-      router.replace({ pathname: "/login", query: { error } });
     }
   }, []);
 

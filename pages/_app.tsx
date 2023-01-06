@@ -1,5 +1,5 @@
 import "../styles/globals.css";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import store from "../store/store";
 import { Provider } from "react-redux";
 import { getUserData } from "../store/slice/authSlice";
@@ -7,7 +7,7 @@ import { getUserData } from "../store/slice/authSlice";
 import { ThemeProvider } from "styled-components";
 import theme from "../styles/theme";
 import DefaultLayout from "../components/layouts/DefaultLayout";
-import Notification from "../components/common/Notification";
+import Notification from "../components/common/Notification/Notification";
 
 import withAuth from "../components/guard/withAuth";
 import withAdmin from "../components/guard/withAdmin";
@@ -15,7 +15,6 @@ import withAdmin from "../components/guard/withAdmin";
 import type { ReactElement, ReactNode } from "react";
 import type { NextPage } from "next";
 import type { AppProps } from "next/app";
-import Cookies from "js-cookie";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -30,8 +29,7 @@ function MyApp({
   pageProps,
 }: AppPropsWithLayout<{ authRequired: boolean; adminOnly: boolean }>) {
   useEffect(() => {
-    const token = Cookies.get("Authorization");
-    if (token) store.dispatch(getUserData());
+    store.dispatch(getUserData());
   }, []);
 
   const getLayout =

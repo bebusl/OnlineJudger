@@ -20,12 +20,17 @@ function ProblemDetail({ id, data }: Props) {
   const addNotification = useNotification();
 
   const handleSubmit = (data: FormData) => {
-    modifyProblem(id, data).then((data) => {
-      if (data.data.success) {
-        addNotification("문제수정을 성공했습니다.", "success");
-        setReadOnly(true);
-      }
-    });
+    modifyProblem(id, data)
+      .then((data) => {
+        if (data.data.success) {
+          addNotification("문제수정을 성공했습니다.", "success");
+          setReadOnly(true);
+        }
+      })
+      .catch((e) => {
+        console.log("에러가 발생했습니다.");
+        addNotification("문제수정을 실패했습니다.", "error");
+      });
   };
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
