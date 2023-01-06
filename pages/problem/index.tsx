@@ -7,7 +7,7 @@ import { GetProblemsResponse } from "../../api/scheme/problem";
 import { FlexBox } from "../../components/common";
 import Pagination from "../../components/common/Pagination";
 import Table from "../../components/common/Table/Table";
-import SearchFilter from "../../components/search/SearchFilter";
+import SearchFilter from "../../components/unit/search/SearchFilter";
 import ProblemCard from "../../components/unit/problem/problemCard/ProblemCard";
 import { useRouter } from "next/router";
 
