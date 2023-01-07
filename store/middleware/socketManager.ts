@@ -1,12 +1,18 @@
 import { Stomp, Client } from "@stomp/stompjs";
-import { Middleware } from "redux";
 import SockJS from "sockjs-client";
 import { WEB_SOCKET_URL } from "../../utils/constants/url";
-import { getAuthToken } from "../../utils/authUtils";
-import { recieveJudgeMessage, recieveRunMessage } from "../slice/socketSlice";
 
-const socketManager: Middleware<{}> = (store) => {
+import type { Middleware } from "redux";
+import type { StoreDispatch } from "../store";
+
+import { getAuthToken } from "../../utils/authUtils";
+
+import { receiveJudgeMessage, receiveRunMessage } from "../slice/socketSlice";
+import { addNoti } from "../slice/notiSlice";
+
+const socketManager: Middleware = (store) => {
   let socketClient: Client | null = null;
+  const dispatch: StoreDispatch = store.dispatch;
   return (next) => {
     return (action) => {
       if (
@@ -22,11 +28,18 @@ const socketManager: Middleware<{}> = (store) => {
               if (socketClient?.connected) {
                 socketClient.subscribe("/user/queue/notification", (msg) => {
                   const body = JSON.parse(msg.body);
-                  store.dispatch(recieveJudgeMessage(body));
+                  dispatch(receiveJudgeMessage(body));
+                  dispatch(
+                    addNoti({
+                      id: Date.now(),
+                      message: "채점이 완료되었습니다",
+                      variant: "success",
+                    })
+                  );
                 });
                 socketClient.subscribe("/user/queue/problem/run", (msg) => {
                   const body = JSON.parse(msg.body);
-                  store.dispatch(recieveRunMessage(body));
+                  store.dispatch(receiveRunMessage(body));
                 });
               }
             };
@@ -38,9 +51,7 @@ const socketManager: Middleware<{}> = (store) => {
         }
       }
       if (action.type === "auth/logoff/fulfilled") {
-        if (socketClient) {
-          socketClient.deactivate();
-        }
+        socketClient?.deactivate();
       }
       next(action);
     };

@@ -119,7 +119,7 @@ export const authSlice = createSlice({
       state.id = action.payload.id;
       state.roles = action.payload.roles;
       state.name = action.payload.name;
-      state.avatar = action.payload.links.avatar_url || misteryManSrc;
+      state.avatar = action.payload.links[0]?.avatar_url || misteryManSrc;
       state.links = action.payload.links;
       state.email = action.payload.email;
     },
@@ -138,11 +138,11 @@ export const authSlice = createSlice({
     builder.addCase(getUserData.pending, (state) => {
       state.isAuthenticating = true;
     });
+    builder.addCase(getUserData.fulfilled, (state) => {
+      state.isAuthenticating = false;
+    });
     builder.addCase(getUserData.rejected, (state) => {
       authSlice.caseReducers.removeToken(state);
-    });
-    builder.addCase(getUserData.fulfilled, (state) => {
-      state.isAuthentication = false;
     });
     builder.addCase(logoff.fulfilled, (state) => {
       authSlice.caseReducers.removeToken(state);
