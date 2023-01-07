@@ -9,7 +9,7 @@ export const getAuthToken = () => {
 export const setAuthorizationCookie = (accessToken: string) => {
   Cookies.set("Authorization", `Bearer ${accessToken}`, {
     secure: true,
-    sameSite: "Strict",
+    sameSite: "None",
     expires: addHours(1),
   });
 };
