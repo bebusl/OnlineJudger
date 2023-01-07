@@ -26,3 +26,14 @@ export function relativeTimeFormatter(time: Date): string {
     return formatter.format(Math.ceil(timeDifference / A_MINUTE), "minute");
   return formatter.format(Math.ceil(timeDifference / A_SECOND), "second");
 }
+
+export function dateFormatter(dateString: string) {
+  let date = new Date(dateString);
+  date.setTime(date.getTime() + 9 * A_HOUR);
+  const formattedDate = date
+    .toISOString()
+    .replace("T", " ")
+    .replace(/\..+/, "");
+
+  return formattedDate;
+}
