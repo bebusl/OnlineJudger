@@ -18,12 +18,16 @@ export const addNoti = createAsyncThunk(
 export const notiSlice = createSlice({
   name: "noti",
   initialState: {
-    message: [] as { id: number; message: string; variant: variantType }[],
+    message: [] as {
+      id: number;
+      message: string;
+      variant: variantType;
+    }[],
   },
   reducers: {
     [HYDRATE]: (state, action) => ({
       ...state,
-      ...action.payload.auth,
+      ...action.payload.noti,
     }),
     add: (state, action) => {
       state.message.push(action.payload);
