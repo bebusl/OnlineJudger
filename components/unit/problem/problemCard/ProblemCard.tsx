@@ -11,7 +11,6 @@ import { useRouter } from "next/router";
 
 const ProblemCard = (props: ProblemDetail) => {
   const router = useRouter();
-  console.log(props.tags);
   return (
     <CardGrid
       onClick={() => {
