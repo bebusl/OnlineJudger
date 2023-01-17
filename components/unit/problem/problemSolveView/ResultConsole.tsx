@@ -12,7 +12,6 @@ function ResultConsole({ testCases }: ResultConsoleProps) {
     (store) => store.socket
   );
   const isValidResult = isRunning || runResult || isError;
-
   if (isValidResult)
     return (
       <div style={{ padding: "0.5rem" }}>
