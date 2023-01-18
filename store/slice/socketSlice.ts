@@ -68,7 +68,6 @@ export const socketSlice = createSlice({
       state.isError = false;
     },
     receiveJudgeMessage: (state, action) => {
-      console.log("여기까지는 옴");
       state.judgeResult.push(action.payload);
     },
   },
