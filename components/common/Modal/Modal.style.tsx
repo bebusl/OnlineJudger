@@ -23,7 +23,8 @@ export const Background = styled.div`
 export const Paper = styled.article`
   background-color: white;
   z-index: 1000;
-  min-width: 60vw;
+  min-width: 800px;
+
   border-radius: 5px;
   box-shadow: ${({ theme }) => theme.shadows.dark};
   ${FlexBox} {

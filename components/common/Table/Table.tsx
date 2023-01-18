@@ -1,7 +1,9 @@
-import Head from "next/head";
 import React, { useState } from "react";
 import styled from "styled-components";
-import { sortObjectListAscByField, sortObjectListDescByField } from "../../../utils/sortUtils";
+import {
+  sortObjectListAscByField,
+  sortObjectListDescByField,
+} from "../../../utils/sortUtils";
 
 export interface TableProps {
   header: {
@@ -79,7 +81,6 @@ const TableStyle = styled.table<{ $rowHeight?: string }>`
     white-space: pre;
   }
 
-  background-color: ${({ theme }) => theme.colors.lightGray};
   color: ${({ theme }) => theme.colors.gray600};
 `;
 
