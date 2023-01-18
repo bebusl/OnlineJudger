@@ -53,6 +53,10 @@ export default function ProblemList({ problems, page }: GetProblemsResponse) {
 }
 
 export async function getServerSideProps(ctx: NextPageContext) {
+  ctx.res?.setHeader(
+    "Cache-Control",
+    "public, s-maxage=10, stale-while-revalidate=59"
+  );
   try {
     const result = await getProblems(ctx.query);
     if (result.data.success) {
