@@ -53,7 +53,6 @@ function UserSubmissions() {
   if (isLoading) return <div>로딩 중</div>;
 
   if (!info) return <div>잘못된 접근입니다</div>;
-  console.log("왜 안뒘", info.created_at, new Date(info.created_at));
   return (
     <>
       <Script src="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css" />

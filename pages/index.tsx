@@ -1,7 +1,5 @@
 import type { NextPage } from "next";
-import Link from "next/link";
 import styled from "styled-components";
-import { Button } from "../components/common";
 import LottiePlayer from "react-lottie-player";
 import welcomeLottie from "../public/lottie/welcome-lottie.json";
 
