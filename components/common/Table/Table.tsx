@@ -65,7 +65,7 @@ export default function Table({ header, body, rowHeight }: TableProps) {
 
 const TableStyle = styled.table<{ $rowHeight?: string }>`
   width: 100%;
-  max-width: 900px;
+  max-width: 800px;
   table-layout: auto;
   border-spacing: 0;
   tbody {

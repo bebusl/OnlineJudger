@@ -30,6 +30,8 @@ function Ranking({ problemId }: { problemId?: number }) {
       pageLimit.current = result.data.page.total_pages;
       let submissions = result.data?.submissions || [];
       submissions.map((submission) => {
+        console.log(submission.created_at, typeof submission.created_at);
+
         return Object.assign(submission, {
           problem_id: (
             <a
@@ -41,7 +43,9 @@ function Ranking({ problemId }: { problemId?: number }) {
               <p>{submission.problem_id}</p>
             </a>
           ),
-          created_at: relativeTimeFormatter(new Date(submission.created_at)),
+          created_at:
+            relativeTimeFormatter(new Date(submission.created_at)) ||
+            submission.created_at,
         });
       });
 
