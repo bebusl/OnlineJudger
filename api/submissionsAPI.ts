@@ -60,7 +60,9 @@ export const getSubmissionsByQuery = ({
     language,
     is_ranking,
   };
-  return secureFetch.get<GetSubmissionResponse>("/submissions", { params });
+  return secureFetch.get<GetSubmissionResponse>("/submissions", {
+    params,
+  });
 };
 
 export const likeSubmission = ({ submission_id }: LikeSubmissionRequest) => {

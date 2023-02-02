@@ -138,6 +138,7 @@ export async function getStaticProps(
       if (problemDetail.data?.success)
         return {
           props: problemDetail.data,
+          revalidate: 60,
         };
     } catch (e) {
       return {

@@ -243,7 +243,6 @@ function ProblemForm({
                 e.preventDefault();
                 const uniqueId = exampleId.current as number;
                 exampleId.current = uniqueId + 1;
-                console.log(exampleIds);
                 setExampleIds((prev) => [...prev, uniqueId]);
               }}
               $variant={"outline"}
