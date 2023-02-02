@@ -9,6 +9,7 @@ const nextConfig = {
       "lh3.googleusercontent.com",
       "cdn.jsdelivr.net",
       "k.kakaocdn.net",
+      "asset.programmers.co.kr",
     ],
   },
   typescript: {
