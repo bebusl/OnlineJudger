@@ -8,10 +8,15 @@ const nextConfig = {
       "cdn.pixabay.com",
       "lh3.googleusercontent.com",
       "cdn.jsdelivr.net",
+      "k.kakaocdn.net",
+      "asset.programmers.co.kr",
     ],
   },
   typescript: {
     ignoreBuildErrors: true,
+  },
+  compiler: {
+    styledComponents: true,
   },
 };
 

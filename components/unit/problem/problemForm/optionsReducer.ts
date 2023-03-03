@@ -1,17 +1,12 @@
 import { useReducer, ReducerWithoutAction, ChangeEvent } from "react";
 import { LANGUAGES_TYPE } from "../../../../utils/constants/language";
+import { tagMapper, TagsType } from "../../../../utils/constants/tag";
 
 interface State {
   level: number;
-  tags: Set<number>;
+  tags: Set<string>;
   languages: Set<string>;
 }
-
-const initialState = {
-  level: 1,
-  tags: new Set<number>(),
-  languages: new Set<string>(),
-};
 
 export const ACTIONS = {
   UPDATE_LEVEL: "UPDATE_LEVEL",
@@ -26,12 +21,12 @@ export const UPDATE_LEVEL = (level: number) => ({
   payload: level,
 });
 
-export const ADD_TAG = (tag: number) => ({
+export const ADD_TAG = (tag: string) => ({
   type: ACTIONS.ADD_TAG,
   payload: tag,
 });
 
-export const REMOVE_TAG = (tag: number) => ({
+export const REMOVE_TAG = (tag: string) => ({
   type: ACTIONS.REMOVE_TAG,
   payload: tag,
 });
@@ -57,10 +52,10 @@ function reducer(
     case ACTIONS.UPDATE_LEVEL:
       return { ...state, level: action.payload as number };
     case ACTIONS.ADD_TAG:
-      copyOfTags.add(action.payload as number);
+      copyOfTags.add(action.payload as string);
       return { ...state, tags: copyOfTags };
     case ACTIONS.REMOVE_TAG:
-      copyOfTags.delete(action.payload as number);
+      copyOfTags.delete(action.payload as string);
       return { ...state, tags: copyOfTags };
     case ACTIONS.ADD_LANGUAGE:
       copyOfLanguages.add(action.payload as string);
@@ -76,12 +71,12 @@ function reducer(
 const useOptionsReducer = (
   level = 1,
   languages: LANGUAGES_TYPE[] = [],
-  tags: { id: number; name: string }[] = []
+  tags: { id: number; name: TagsType }[] = []
 ) => {
   const [options, dispatch] = useReducer(reducer, {
     level,
     languages: new Set<string>(languages),
-    tags: new Set<number>(tags.map((tag) => tag.id)),
+    tags: new Set<string>(tags.map((tag) => tag.name)),
   });
 
   const updateLevel = (e: ChangeEvent<HTMLInputElement>) => {
@@ -89,7 +84,7 @@ const useOptionsReducer = (
     dispatch(UPDATE_LEVEL(level));
   };
   const updateTags = (e: ChangeEvent<HTMLInputElement>) => {
-    const tag = +e.target.value;
+    const tag = e.target.value;
     if (options.tags.has(tag)) dispatch(REMOVE_TAG(tag));
     else dispatch(ADD_TAG(tag));
   };

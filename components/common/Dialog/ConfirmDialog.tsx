@@ -1,7 +1,7 @@
-import React, { MouseEventHandler, ReactNode } from "react";
+import React, { MouseEventHandler } from "react";
 import Button from "../Buttons/BasicButton/Button";
-import FlexBox from "../FlexBox";
 import Modal from "../Modal";
+import * as S from "./ConfirmDialog.style";
 
 function ConfirmDialog({
   message,
@@ -14,13 +14,9 @@ function ConfirmDialog({
 }) {
   return (
     <Modal onClose={onClose}>
-      <FlexBox style={{ minWidth: "300px", minHeight: "150px" }}>
-        <FlexBox
-          style={{ flex: 2, whiteSpace: "pre-line", textAlign: "center" }}
-        >
-          {message}
-        </FlexBox>
-        <div style={{ flex: 1 }}>
+      <S.Wrapper>
+        <S.MessageBox>{message}</S.MessageBox>
+        <div>
           <Button
             onClick={onClose as MouseEventHandler}
             style={{ marginRight: "1rem" }}
@@ -37,7 +33,7 @@ function ConfirmDialog({
             확인
           </Button>
         </div>
-      </FlexBox>
+      </S.Wrapper>
     </Modal>
   );
 }

@@ -5,21 +5,22 @@ import { useAppSelector } from "../../hooks/useStore";
 import { getSubmissionsByQuery } from "../../api/submissionsAPI";
 import { Submission } from "../../api/scheme/submissions";
 
-import WithSideBar from "../../components/templates/WithSideBar";
+import WithSideBar from "../../components/layouts/WithSideBar";
 import Table from "../../components/common/Table/Table";
 import Pagination from "../../components/common/Pagination";
 import { Button } from "../../components/common";
+import { dateFormatter } from "../../utils/dateUtils";
+
+const header = [
+  { field: "problem_id", header: "ID" },
+  { field: "memory", header: "메모리" },
+  { field: "real_time", header: "실행시간" },
+  { field: "language", header: "제출언어" },
+  { field: "status", header: "상태" },
+  { field: "created_at", header: "제출일시" },
+];
 
 function SolveList() {
-  const header = [
-    { field: "problem_id", header: "ID" },
-    { field: "memory", header: "메모리" },
-    { field: "real_time", header: "실행시간" },
-    { field: "language", header: "제출언어" },
-    { field: "status", header: "상태" },
-    { field: "created_at", header: "제출일시" },
-  ];
-
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [page, setPage] = useState({ current_page: 0, total_pages: 0 });
   const { email } = useAppSelector((store) => store.auth);
@@ -42,14 +43,16 @@ function SolveList() {
     fetchSubmissions(0);
   }, []);
 
-  const body = submissions.map((submission) => {
+  const body = submissions?.map((submission) => {
     return Object.assign(submission, {
       problem_id: (
-        <Link href={`/solution/${submission.id}`}>{submission.problem_id}</Link>
+        <Link href={`/solution/${submission.id}`} passHref>
+          <a style={{ textDecoration: "underline", color: "blue" }}>
+            {submission.problem_id}
+          </a>
+        </Link>
       ),
-      created_at: new Date(
-        submission.created_at.split(".")[0]
-      ).toLocaleString(),
+      created_at: dateFormatter(submission.created_at),
     });
   });
   return (
@@ -61,7 +64,7 @@ function SolveList() {
           style={{ float: "right" }}
           onClick={() => fetchSubmissions(0)}
         >
-          ↺업데이트
+          🔄 업데이트
         </Button>
         {!!submissions?.length ? (
           <Table header={header} body={body} rowHeight={"80px"} />

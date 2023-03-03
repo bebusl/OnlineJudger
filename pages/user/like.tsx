@@ -1,10 +1,13 @@
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
+
 import { Submission } from "../../api/scheme/submissions";
 import { getLikedSubmissionList } from "../../api/submissionsAPI";
-import { Button } from "../../components/common";
-import SubmissionView from "../../components/templates/SubmissionView";
-import WithSideBar from "../../components/templates/WithSideBar";
+
+import { FlexBox } from "../../components/common";
+import LinkS from "../../components/common/Link/LinkS";
+import Pagination from "../../components/common/Pagination";
+import SubmissionView from "../../components/unit/submissions/SubmissionView";
+import WithSideBar from "../../components/layouts/WithSideBar";
 
 function Like() {
   const [likedSubmissons, setLikedSubmissions] = useState<
@@ -12,24 +15,28 @@ function Like() {
       submission_id: string;
       submission: Submission;
     }[]
-  >();
-  const [page, setPage] = useState(1);
+  >([]);
+  const [page, setPage] = useState({ current_pages: 1, total_pages: 0 });
+
+  const fetchData = async () => {
+    try {
+      const res = await getLikedSubmissionList({ page: page.current_pages });
+      setLikedSubmissions(res.data.likes);
+      setPage(res.data.page);
+    } catch (e) {
+      setLikedSubmissions([]);
+      setPage({ current_pages: 0, total_pages: 0 });
+    }
+  };
+
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await getLikedSubmissionList({ page });
-        setLikedSubmissions(res.data.likes);
-        console.log(res.data);
-      } catch (e) {
-        console.error("dl tMLQNK");
-      }
-    })();
+    fetchData();
   }, []);
 
   return (
     <WithSideBar>
       <h4>좋아요 목록</h4>
-      {likedSubmissons &&
+      {!!likedSubmissons?.length ? (
         likedSubmissons.map((liked) => {
           const submission = liked.submission;
           return (
@@ -39,14 +46,29 @@ function Like() {
                 submitInfo={[submission]}
                 code={submission.code}
               />
-              <Link href={`/problem/${submission.problem_id}`} passHref>
-                <Button $variant="outline">문제 보러 가기</Button>
-              </Link>
+              <FlexBox flexDirection="row" justifyContent="end" gap="1rem">
+                <LinkS
+                  href={`/solution/${liked.submission_id}`}
+                  text="좋아요 한 풀이 보러가기→"
+                />
+                <LinkS
+                  href={`/problem/${submission.problem_id}`}
+                  text="문제 보러 가기→"
+                />
+              </FlexBox>
             </article>
           );
-        })}
+        })
+      ) : (
+        <p>좋아요한 목록이 없습니다</p>
+      )}
+      <Pagination {...page} onChange={fetchData} />
     </WithSideBar>
   );
 }
 
 export default Like;
+
+Like.defaultProps = {
+  authRequired: true,
+};

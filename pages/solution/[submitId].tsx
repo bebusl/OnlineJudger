@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Script from "next/script";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEventHandler, useEffect, useState } from "react";
 
 import {
   deleteLikeSubmission,
@@ -12,15 +12,16 @@ import { Submission } from "../../api/scheme/submissions";
 
 import { Button, FlexBox } from "../../components/common";
 import { StatusTagMapper } from "../../components/common/Tag";
-import SubmissionView from "../../components/templates/SubmissionView";
+import SubmissionView from "../../components/unit/submissions/SubmissionView";
 import { LogoIconMapper } from "../../components/LanguageAsset";
 import CommentBox from "../../components/unit/comment/CommentBox";
+import { dateFormatter } from "../../utils/dateUtils";
 
 function UserSubmissions() {
   const router = useRouter();
-  const { submitId } = router.query;
+  const { submitId } = router.query as { submitId: string };
   const [isLoading, setIsLoading] = useState(true);
-  const [info, setInfo] = useState<Submission>({});
+  const [info, setInfo] = useState<Submission | null>(null);
   const [liked, setLiked] = useState(false);
 
   const fetchData = async () => {
@@ -32,12 +33,26 @@ function UserSubmissions() {
     setIsLoading(false);
   };
 
+  const handleChangeLike: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const checked = e.target.checked;
+    if (!info) return;
+    if (checked) {
+      likeSubmission({ submission_id: info.id });
+      setInfo((prev) => (prev ? { ...prev, like: prev.like + 1 } : null));
+    } else {
+      deleteLikeSubmission({ submission_id: info.id });
+      setInfo((prev) => (prev ? { ...prev, like: prev.like - 1 } : null));
+    }
+    setLiked(checked);
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
 
   if (isLoading) return <div>로딩 중</div>;
 
+  if (!info) return <div>잘못된 접근입니다</div>;
   return (
     <>
       <Script src="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css" />
@@ -95,17 +110,7 @@ function UserSubmissions() {
             type="checkbox"
             id="emptyHeart"
             checked={liked}
-            onChange={(e) => {
-              const checked = e.target.checked;
-              if (checked) {
-                likeSubmission({ submission_id: info.id });
-                setInfo((prev) => ({ ...prev, like: prev.like + 1 }));
-              } else {
-                deleteLikeSubmission({ submission_id: info.id });
-                setInfo((prev) => ({ ...prev, like: prev.like - 1 }));
-              }
-              setLiked(checked);
-            }}
+            onChange={handleChangeLike}
             style={{ display: "none" }}
           />
         </FlexBox>
@@ -114,7 +119,7 @@ function UserSubmissions() {
           code={info.code}
           submitInfo={[
             Object.assign(info, {
-              created_at: new Date(info.created_at).toLocaleString(),
+              created_at: dateFormatter(info.created_at),
             }),
           ]}
         />

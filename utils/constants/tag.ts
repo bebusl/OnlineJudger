@@ -33,9 +33,9 @@ export const TAGS = [
   "비트마스킹",
   "LIS",
   "LCS",
-];
+] as const;
 
-export const tagMapper = TAGS.reduce<Record<number, string>>(
+export const tagMapper = TAGS.reduce<Record<string, string>>(
   (accum, cur, idx) => {
     accum[idx + 1] = cur;
     return accum;
@@ -43,4 +43,5 @@ export const tagMapper = TAGS.reduce<Record<number, string>>(
   {}
 );
 
-export type TagsType = typeof TAGS;
+export type TagsType = typeof TAGS[number];
+// https://steveholgado.com/typescript-types-from-arrays/

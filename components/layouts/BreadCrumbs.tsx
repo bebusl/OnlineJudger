@@ -2,19 +2,13 @@ import React from "react";
 import Link from "next/link";
 import styled from "styled-components";
 
-const test = [
-  { text: "HOME", href: "/" },
-  { text: "PROBLEM", href: "/problem" },
-  { text: "1", href: "." },
-];
-
-function BreadCrumbs({ props = test }: { props: { text: string; href: string }[] }) {
+function BreadCrumbs({ paths }: { paths: { text: string; href: string }[] }) {
   return (
     <Nav aria-label="breadcrumb">
       <Ol>
-        {props.map((prop) => (
-          <li key={prop.text}>
-            <Link href={prop.href}>{prop.text}</Link>
+        {paths.map((path) => (
+          <li key={path.text}>
+            <Link href={path.href}>{path.text}</Link>
           </li>
         ))}
       </Ol>

@@ -21,20 +21,20 @@ import { secureFetch, commonFetch } from "./fetchClient";
 
 export const getUser = (Authorization?: string) => {
   if (Authorization)
-    return commonFetch.get<GetUserResponse>("/users", {
+    return secureFetch.get<GetUserResponse>("/users", {
       headers: { Authorization },
     });
-  else return secureFetch.get<GetUserResponse>("/users");
+  return secureFetch.get<GetUserResponse>("/users");
 };
 
 export const validateName = (name: string) =>
-  commonFetch.get<CheckUsedId>(`/users/name/${name}`);
+  secureFetch.get<CheckUsedId>(`/users/name/${name}`);
 
 export const signup = (requestProps: Partial<SignUpRequest>) =>
-  commonFetch.post<SignUpResponse>("/users", requestProps);
+  secureFetch.post<SignUpResponse>("/users", requestProps);
 
 export const login = ({ email, password, link_key }: SignInRequest) =>
-  commonFetch.post<SignInResponse>("/users/login", {
+  secureFetch.post<SignInResponse>("/users/login", {
     email,
     password,
     link_key,

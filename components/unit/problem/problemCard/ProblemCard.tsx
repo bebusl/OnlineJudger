@@ -6,7 +6,7 @@ import { ProblemDetail } from "../../../../api/scheme/problem";
 import styled from "styled-components";
 import { Button, FlexBox } from "../../../common";
 import { LogoIconMapper } from "../../../LanguageAsset";
-//import { LvTagMapper } from "../../../common/Tag";
+import { LvTagMapper } from "../../../common/Tag";
 import { useRouter } from "next/router";
 
 const ProblemCard = (props: ProblemDetail) => {
@@ -19,14 +19,21 @@ const ProblemCard = (props: ProblemDetail) => {
     >
       <div>
         <b>{props.title}</b>
-        {/* {LvTagMapper[props.level]} */}
+        {LvTagMapper[props.level]}
       </div>
       <FlexBox flexDirection="row" justifyContent="start">
         {props.languages?.map((language) => (
-          <Fragment key={`${language}logo`}>{LogoIconMapper[language]}</Fragment>
+          <Fragment key={`${language}logo`}>
+            {LogoIconMapper[language]}
+          </Fragment>
         ))}
       </FlexBox>
-      <FlexBox flexDirection="row" justifyContent="start" alignItems="center" gap="5px">
+      <FlexBox
+        flexDirection="row"
+        justifyContent="start"
+        alignItems="center"
+        gap="5px"
+      >
         {props.tags?.map((tag) => (
           <p key={props.title + tag.id} style={{ fontSize: "12px" }}>
             #{tag.name}
@@ -65,5 +72,10 @@ const CardGrid = styled.article`
   div:nth-child(2) {
     grid-column: 1 / span 2;
     font-size: 18px;
+  }
+
+  ${({ theme }) => theme.mediaQueries.tablet} {
+    width: 100%;
+    padding: 0.5rem;
   }
 `;

@@ -3,18 +3,18 @@ import React, { FormEventHandler, useState } from "react";
 
 import { loginRequest } from "../store/slice/authSlice";
 
-import useForm from "../hooks/useFormRefactor";
+import useForm from "../hooks/useForm";
 import { useAppDispatch } from "../hooks/useStore";
 
 import { regexPatterns } from "../utils/validator";
 
 import Button from "../components/common/Buttons/BasicButton/Button";
 import Input from "../components/common/Input";
-import AuthTemplate from "../components/templates/AuthTemplate";
+import AuthTemplate from "../components/layouts/AuthTemplate";
 import { FlexBox, Seperator } from "../components/common";
 
-import GoogleOAuthButton from "../components/common/Buttons/OAuthButton/GoogleOAuthButton";
-import KakaoOAuthButton from "../components/common/Buttons/OAuthButton/KakaoOAuthButton";
+import GoogleOAuthButton from "../components/common/Buttons/OAuthButton/GoogleRegisterButton";
+import KakaoOAuthButton from "../components/common/Buttons/OAuthButton/KakaoRegisterButton";
 import LinkS from "../components/common/Link/LinkS";
 
 const LoginForm = () => {
@@ -31,7 +31,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div style={{ width: "60%" }}>
+    <>
       <FlexBox justifyContent="space-around">
         <GoogleOAuthButton />
         <KakaoOAuthButton />
@@ -56,7 +56,7 @@ const LoginForm = () => {
         <LinkS href="/register" text="회원가입" />
         <LinkS href="/send-message" text="비밀번호 재설정" />
       </FlexBox>
-    </div>
+    </>
   );
 };
 

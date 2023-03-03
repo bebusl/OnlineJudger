@@ -10,14 +10,12 @@ export function addHours(numOfHours: number): Date {
   return date;
 }
 
-export function relativeTimeFormatter(time: Date): string {
+export function relativeTimeFormatter(time: Date): string | boolean {
   time.setTime(time.getTime() + 9 * A_HOUR);
-  //9시간 더해줌
-
   const timeDifference = time.getTime() - Date.now();
+  if (isNaN(timeDifference)) return false;
   const absOfTimeDifference = Math.abs(timeDifference);
   const formatter = new Intl.RelativeTimeFormat("ko", { numeric: "auto" });
-
   if (absOfTimeDifference > A_DAY)
     return formatter.format(Math.ceil(timeDifference / A_DAY), "day");
   if (absOfTimeDifference > A_HOUR)
@@ -25,4 +23,15 @@ export function relativeTimeFormatter(time: Date): string {
   if (absOfTimeDifference > A_MINUTE)
     return formatter.format(Math.ceil(timeDifference / A_MINUTE), "minute");
   return formatter.format(Math.ceil(timeDifference / A_SECOND), "second");
+}
+
+export function dateFormatter(dateString: string) {
+  let date = new Date(dateString);
+  date.setTime(date.getTime() + 9 * A_HOUR);
+  const formattedDate = date
+    .toISOString()
+    .replace("T", " ")
+    .replace(/\..+/, "");
+
+  return formattedDate;
 }

@@ -15,7 +15,10 @@ export default function CheckableTable({
   ...rest
 }: CheckableTableProps) {
   const [checkedValue, setCheckedValue] = useState<Set<number>>(new Set());
-  const allIds = useMemo(() => body.map((data) => data.id), [body]);
+  const allIds: number[] = useMemo(
+    () => body.map((data) => data.id as number),
+    [body]
+  );
 
   const removeCheckedValue: (id: number) => SetStateAction<Set<number>> =
     (id) => (prev) => {
@@ -56,12 +59,13 @@ export default function CheckableTable({
   ]; //props로 받은 header에 checkbox input을 넣어서 Table 컴포넌트에 넘겨줌
 
   const checkableBody = body.map((data) => {
+    const id = data.id as number;
     return {
       checkbox: (
         <input
           type="checkbox"
-          checked={checkedValue.has(data.id)}
-          onChange={() => handleChangeChecked(data.id)}
+          checked={checkedValue.has(id)}
+          onChange={() => handleChangeChecked(id)}
         />
       ),
       ...data,

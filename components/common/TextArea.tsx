@@ -1,9 +1,4 @@
-import React, {
-  forwardRef,
-  Ref,
-  RefObject,
-  TextareaHTMLAttributes,
-} from "react";
+import React, { forwardRef, Ref, TextareaHTMLAttributes } from "react";
 import styled from "styled-components";
 import { FormGroup } from "./Input";
 
@@ -37,7 +32,6 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     );
   }
 );
-
 export const LabeledTextArea = ({
   forwardedRef,
   text,

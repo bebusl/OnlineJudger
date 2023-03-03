@@ -24,3 +24,8 @@ function useDynamicRefs<T>(): [
 }
 
 export default useDynamicRefs;
+
+/**
+ * 해당 코드의 원본은 https://github.com/fitzmode/use-dynamic-refs 입니다.
+ * 원본 코드에 deleteRef를 추가하였습니다.
+ */

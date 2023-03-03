@@ -1,3 +1,4 @@
+import React from "react";
 import styled from "styled-components";
 
 const Tag = styled.span<{ backgroundColor?: string; whiteText?: boolean }>`
@@ -27,7 +28,7 @@ export const PendingTag = (
 
 export const FailureTag = (
   <Tag backgroundColor="#E06868" whiteText>
-    대기
+    실패
   </Tag>
 );
 
