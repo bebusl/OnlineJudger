@@ -7,12 +7,12 @@ interface BannerProps {
   headline: string;
   desc: string;
   src: string;
-  backgroundColor: string;
+  background: string;
 }
 
-function Banner({ tag, headline, desc, src, backgroundColor }: BannerProps) {
+function Banner({ tag, headline, desc, src, background }: BannerProps) {
   return (
-    <S.Card backgroundColor={backgroundColor}>
+    <S.Card background={background}>
       <S.LeftBox>
         <S.Tag>{tag}</S.Tag>
         <h1>{headline}</h1>
@@ -24,7 +24,7 @@ function Banner({ tag, headline, desc, src, backgroundColor }: BannerProps) {
           height="350px"
           alt="banner image"
           layout="fill"
-          objectFit="cover"
+          objectFit="contain"
         />
       </S.RightBox>
     </S.Card>
