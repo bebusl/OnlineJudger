@@ -82,6 +82,7 @@ export default function CheckableTable({
           setCheckedValue(new Set());
         }}
         disabled={!checkedValue.size}
+        style={{ marginTop: "1rem" }}
       >
         선택한 {checkedValue.size}개를 {checkedDataBtnText}
       </Button>

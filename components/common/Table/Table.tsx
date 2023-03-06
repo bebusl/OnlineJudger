@@ -14,15 +14,21 @@ export interface TableProps {
   }[];
   body: object[];
   rowHeight?: string;
+  maxWidth?: string;
 }
 
-export default function Table({ header, body, rowHeight }: TableProps) {
+export default function Table({
+  header,
+  body,
+  rowHeight,
+  maxWidth,
+}: TableProps) {
   const dataFields: string[] = header.map((content) => content.field);
   const [sort, setSort] = useState({ field: "id", asc: false });
 
   return (
     <>
-      <TableStyle $rowHeight={rowHeight}>
+      <TableStyle $rowHeight={rowHeight} $maxWidth={maxWidth}>
         <THead>
           <tr>
             {header.map((content) =>
@@ -63,9 +69,9 @@ export default function Table({ header, body, rowHeight }: TableProps) {
   );
 }
 
-const TableStyle = styled.table<{ $rowHeight?: string }>`
+const TableStyle = styled.table<{ $rowHeight?: string; $maxWidth?: string }>`
   width: 100%;
-  max-width: 800px;
+  max-width: ${({ $maxWidth }) => $maxWidth || "800px"};
   table-layout: auto;
   border-spacing: 0;
   tbody {
