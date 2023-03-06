@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import type { NextPageContext } from "next";
+import type { GetServerSidePropsContext, NextPageContext } from "next";
 
 import { getProblems } from "../../api/problemsAPI";
 import { GetProblemsResponse } from "../../api/scheme/problem";
@@ -62,8 +62,8 @@ export default function ProblemList({ problems, page }: GetProblemsResponse) {
   );
 }
 
-export async function getServerSideProps(ctx: NextPageContext) {
-  ctx.res?.setHeader(
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+  ctx.res.setHeader(
     "Cache-Control",
     "public, s-maxage=10, stale-while-revalidate=59"
   );

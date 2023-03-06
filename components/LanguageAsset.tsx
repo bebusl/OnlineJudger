@@ -8,9 +8,18 @@ import {
   LANGUAGES_TYPE,
 } from "../utils/constants/language";
 
-export const PythonLogo = (
+export const Python2Logo = (
   <Image
-    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg"
+    src="https://brillbeimages.s3.ap-northeast-2.amazonaws.com/python2-logo.svg"
+    alt="python icon"
+    width="30px"
+    height="30px"
+  />
+);
+
+export const Python3Logo = (
+  <Image
+    src="https://brillbeimages.s3.ap-northeast-2.amazonaws.com/python3-logo.svg"
     alt="python icon"
     width="30px"
     height="30px"
@@ -48,6 +57,6 @@ export const LogoIconMapper: Record<LANGUAGES_TYPE, JSX.Element> = {
   [CPP]: CPPLogo,
   [JAVA]: JavaLogo,
   [C]: CLogo,
-  [PYTHON2]: PythonLogo,
-  [PYTHON3]: PythonLogo,
+  [PYTHON2]: Python2Logo,
+  [PYTHON3]: Python3Logo,
 };

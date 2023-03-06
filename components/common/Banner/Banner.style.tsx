@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
-export const Card = styled.article<{ backgroundColor: string }>`
+export const Card = styled.article<{ background: string }>`
   position: relative;
-  background-color: ${(props) => props.backgroundColor || "white"};
+  background: ${(props) => props.background || "white"};
   height: 350px;
   width: 100%;
   max-width: 1200px;
