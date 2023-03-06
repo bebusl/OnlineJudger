@@ -77,11 +77,11 @@ function BottomBar({
 
         <FlexBox flexDirection="row" justifyContent="space-between">
           <Button onClick={openRankingModal}> 다른 유저의 코드 보기</Button>
-          <div>
+          <FlexBox flexDirection="row" gap="10px">
             <Button onClick={() => resetCode()}>초기화</Button>
             <Button onClick={handleRunBtnClick}>코드실행</Button>
             <Button onClick={handleSubmitBtnClick}>제출 및 채점</Button>
-          </div>
+          </FlexBox>
         </FlexBox>
       </>
     );

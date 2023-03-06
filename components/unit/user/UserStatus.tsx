@@ -19,23 +19,25 @@ function UserStatus() {
 
   useEffect(() => {
     (async () => {
-      const result = await getSubmissionsByQuery({
-        page: 0,
-        user_id: email,
-      });
+      if (email) {
+        const result = await getSubmissionsByQuery({
+          page: 0,
+          user_id: email,
+        });
 
-      if (result.data.success) {
-        const submissions = result.data.submissions;
+        if (result.data.success) {
+          const submissions = result.data.submissions;
 
-        if (submissions?.length) {
-          const successSubmissionsLength = submissions.filter(
-            (submission) => submission.status === "SUCCESS"
-          ).length;
-          setSolvedProblem([successSubmissionsLength, submissions.length]);
-        } else setSolvedProblem([0, 0]);
+          if (submissions?.length) {
+            const successSubmissionsLength = submissions.filter(
+              (submission) => submission.status === "SUCCESS"
+            ).length;
+            setSolvedProblem([successSubmissionsLength, submissions.length]);
+          } else setSolvedProblem([0, 0]);
+        }
       }
     })();
-  }, []);
+  }, [email]);
 
   if (!isLogin)
     return (
