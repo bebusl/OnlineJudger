@@ -10,6 +10,7 @@ const nextConfig = {
       "cdn.jsdelivr.net",
       "k.kakaocdn.net",
       "asset.programmers.co.kr",
+      "brillbeimages.s3.ap-northeast-2.amazonaws.com",
     ],
   },
   typescript: {
