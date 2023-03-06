@@ -8,11 +8,12 @@ import Pagination from "../../components/common/Pagination";
 import { Button } from "../../components/common";
 import CheckableTable from "../../components/common/Table/CheckableTable";
 import ConfirmDialog from "../../components/common/Dialog/ConfirmDialog";
+import { LogoIconMapper } from "../../components/LanguageAsset";
 
 interface ProblemTableInfo
   extends Omit<GetProblemResponse, "title" | "languages"> {
   title: string | JSX.Element;
-  languages: string;
+  languages: string | JSX.Element;
 }
 
 const header = [
@@ -45,7 +46,15 @@ function ManageProblem() {
         title: (
           <Link href={`/admin/problem/${problem.id}`}>{problem.title}</Link>
         ),
-        languages: problem.languages.join(" "),
+        languages: (
+          <>
+            {problem.languages.map((language) => (
+              <React.Fragment key={`${problem.id}${language}`}>
+                {LogoIconMapper[language]}
+              </React.Fragment>
+            ))}
+          </>
+        ),
       }));
       setProblems(newValue);
       setPage(page);
@@ -84,10 +93,12 @@ function ManageProblem() {
       <Link href="admin/add-problem" passHref>
         <Button as="a">과목 추가하기</Button>
       </Link>
+
       <div>
         <CheckableTable
           header={header}
           body={problems}
+          maxWidth={"1200px"}
           handleCheckedDataBtnClick={(value) =>
             setOpenModal({ open: true, selectedProblems: value })
           }

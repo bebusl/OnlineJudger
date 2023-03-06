@@ -89,6 +89,7 @@ function Header() {
           </>
         ) : (
           <>
+            <Link href="/problem?page=1">문제보기</Link>
             <Link href="/login">로그인</Link>
             <Link href="/register">회원가입</Link>
           </>

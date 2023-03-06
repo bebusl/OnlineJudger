@@ -1,6 +1,9 @@
-import { useReducer, ReducerWithoutAction, ChangeEvent } from "react";
-import { LANGUAGES_TYPE } from "../../../../utils/constants/language";
-import { tagMapper, TagsType } from "../../../../utils/constants/tag";
+import { useReducer, ChangeEvent, useMemo } from "react";
+import {
+  LANGUAGES,
+  LANGUAGES_TYPE,
+} from "../../../../utils/constants/language";
+import { TAGS, TagsType } from "../../../../utils/constants/tag";
 
 interface State {
   level: number;
@@ -98,12 +101,43 @@ const useOptionsReducer = (
     tags: Array.from(options.tags),
     languages: Array.from(options.languages),
   };
+
+  const tagOptions = useMemo(
+    () =>
+      TAGS.map((tag) => ({
+        text: tag,
+        checked: options.tags.has(tag),
+      })),
+    [options.tags]
+  );
+
+  const languageOptions = useMemo(
+    () =>
+      LANGUAGES.map((language) => ({
+        text: language,
+        checked: options.languages.has(language),
+      })),
+    [options.languages]
+  );
+
+  const levelOptions = useMemo(
+    () =>
+      [1, 2, 3, 4, 5].map((level) => ({
+        text: "Lv." + level,
+        defaultValue: level,
+        checked: options.level === level,
+      })),
+    [options.level]
+  );
+
   return {
-    options,
     updateLevel,
     updateTags,
     updateLanguages,
     formattedOptions,
+    tagOptions,
+    languageOptions,
+    levelOptions,
   };
 };
 

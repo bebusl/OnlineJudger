@@ -6,9 +6,6 @@ import useOptionsReducer from "./optionsReducer";
 
 import { AddProblemRequest } from "../../../../api/scheme/problem";
 
-import { LANGUAGES } from "../../../../utils/constants/language";
-import { TAGS } from "../../../../utils/constants/tag";
-
 import { Button, FlexBox } from "../../../common";
 import { LabeledTextArea } from "../../../common/TextArea";
 import { LabeledInput } from "../../../common/Input";
@@ -16,6 +13,8 @@ import Selector from "../../../common/Selector/Selector";
 import DropZone from "../../../common/DropZone/DropZone";
 import Description from "../../../common/Typhography/Description";
 import ConfirmDialog from "../../../common/Dialog/ConfirmDialog";
+import { Tag } from "../../search/SearchFilter.style";
+import { LvTagMapper } from "../../../common/Tag";
 
 interface FormProps extends Partial<AddProblemRequest> {
   readOnly: boolean;
@@ -23,9 +22,7 @@ interface FormProps extends Partial<AddProblemRequest> {
   submitButtonText?: string;
 }
 
-const defaultExampleValue = [
-  { input: "입력값을 작성해주세요", output: "출력값을 작성해주세요" },
-];
+const defaultExampleValue = [{ input: "", output: "" }];
 
 function ProblemForm({
   title,
@@ -46,39 +43,24 @@ function ProblemForm({
     Array.from({ length: test_case_examples.length }, (_, idx: number) => idx)
   );
   const {
-    options,
     formattedOptions,
     updateLevel,
     updateLanguages,
     updateTags,
+    tagOptions,
+    languageOptions,
+    levelOptions,
   } = useOptionsReducer(level, languages, tags);
   const [testcaseFile, setTestcaseFile] = useState<File | null>(null);
-  const { register, getAllValues, isValidInputs } = useForm();
+  const { register, getAllValues } = useForm();
   const {
     register: exampleRegister,
     getAllValues: getAllExamples,
-    isValidInputs: isValidExamples,
     unregister,
   } = useForm();
   const [openModal, setOpenModal] = useState(false);
 
   const exampleId = useRef(test_case_examples.length);
-
-  const tagOptions = TAGS.map((tag) => ({
-    text: tag,
-    checked: options.tags.has(tag),
-  }));
-
-  const languageOptions = LANGUAGES.map((language) => ({
-    text: language,
-    checked: options.languages.has(language),
-  }));
-
-  const levelOptions = [1, 2, 3, 4, 5].map((level) => ({
-    text: "Lv." + level,
-    defaultValue: level,
-    checked: options.level === level,
-  }));
 
   const generateSubmitFormData = () => {
     const refValues = getAllValues();
@@ -113,7 +95,7 @@ function ProblemForm({
     });
   };
 
-  const handleGeSubmit: FormEventHandler = (e) => {
+  const handleFormSubmit: FormEventHandler = (e) => {
     e.preventDefault();
     const submitData = generateSubmitFormData();
     handleSubmit(submitData);
@@ -144,7 +126,7 @@ function ProblemForm({
           message="문제를 수정하시겠습니까?"
         />
       )}
-      <form onSubmit={handleGeSubmit} style={{ minWidth: "900px" }}>
+      <form onSubmit={handleFormSubmit} style={{ minWidth: "900px" }}>
         <fieldset disabled={readOnly} style={{ border: "none" }}>
           <LabeledInput
             {...titleOptions}
@@ -168,7 +150,7 @@ function ProblemForm({
             defaultValue={memory_limit}
             {...memoryLimitOptions}
           />
-          <FlexBox flexDirection="row">
+          <FlexBox flexDirection="row" gap={"1em"}>
             <Selector
               groupName="태그"
               options={tagOptions}
@@ -185,6 +167,22 @@ function ProblemForm({
               onChange={updateLanguages}
             />
           </FlexBox>
+          <div style={{ marginTop: "1em" }}>
+            <span>선택 태그,레벨,언어 | </span>
+            {formattedOptions.tags.map((tag) => (
+              <Tag color="tag" key={`selected-${tag}`}>
+                {tag}
+              </Tag>
+            ))}
+            {formattedOptions.level && (
+              <Tag color="lv">Lv.{formattedOptions.level}</Tag>
+            )}
+            {formattedOptions.languages.map((language) => (
+              <Tag color="language" key={`selected-${language}`}>
+                {language}
+              </Tag>
+            ))}
+          </div>
 
           <LabeledTextArea
             text="문제 설명"
@@ -220,20 +218,24 @@ function ProblemForm({
                   text={`입력 설명 ${idx + 1}`}
                   forwardedRef={inputRef}
                   defaultValue={test_case_examples[idx]?.input}
+                  placeholder="입력값을 작성해주세요"
                   {...inputOptions}
                 />
                 <LabeledTextArea
                   text={`출력 설명 ${idx + 1}`}
                   forwardedRef={outputRef}
                   defaultValue={test_case_examples[idx]?.output}
+                  placeholder="출력값을 작성해주세요"
                   {...outputOptions}
                 />
-                <button
-                  style={{ border: 0, boxShadow: "" }}
-                  onClick={() => removeExample(id, idx)}
-                >
-                  x
-                </button>
+                {exampleIds.length > 1 && (
+                  <button
+                    style={{ border: 0, boxShadow: "" }}
+                    onClick={() => removeExample(id, idx)}
+                  >
+                    x
+                  </button>
+                )}
               </FlexBox>
             );
           })}
@@ -256,6 +258,9 @@ function ProblemForm({
               <Description>
                 [title].in, [title].out 쌍으로 이루어진 zip파일만 정상적으로
                 등록 가능합니다.
+              </Description>
+              <Description>
+                드래그앤드롭으로 파일을 등록할 수 있습니다.
               </Description>
               <hr />
               <DropZone
