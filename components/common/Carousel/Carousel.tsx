@@ -3,9 +3,10 @@ import * as S from "./Carousel.style";
 
 interface CarouselProps {
   children: React.ReactElement;
+  auto?: boolean;
 }
 
-function Carousel({ children }: CarouselProps) {
+function Carousel({ children, auto = true }: CarouselProps) {
   const [order, setOrder] = useState(1);
   const [isAnimating, setIsAnimating] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -41,6 +42,16 @@ function Carousel({ children }: CarouselProps) {
 
   const handlePrevButtonClick = goToImage((prev) => prev - 1);
   const handleNextButtonClick = goToImage((prev) => prev + 1);
+
+  useEffect(() => {
+    const autoPlay = () => {
+      if (auto) {
+        goToImage((prev) => prev + 1)();
+      } else clearInterval(intervalId);
+    };
+    const intervalId = setInterval(autoPlay, 10000);
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <S.Container>
