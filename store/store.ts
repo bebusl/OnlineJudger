@@ -11,6 +11,7 @@ const generateStore = () =>
     reducer: reducer,
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({ serializableCheck: false }).concat(socketManager),
+    devTools: process.env.NODE_ENV !== "production",
   });
 
 const store = generateStore();
