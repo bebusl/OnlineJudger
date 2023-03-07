@@ -20,10 +20,10 @@ export const secureFetch = AxiosFactory({
 
 secureFetch.interceptors.request.use((config) => {
   const authToken = getAuthToken();
-  if (authToken)
-    config.headers = { ...config.headers, Authorization: authToken };
+  if (authToken) config.headers.Authorization = authToken;
   return config;
 });
+
 secureFetch.interceptors.response.use(
   (response) => response,
   async (error) => {
