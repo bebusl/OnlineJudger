@@ -29,10 +29,8 @@ function Ranking({ problemId }: { problemId?: number }) {
     if (result.data?.success) {
       pageLimit.current = result.data.page.total_pages;
       let submissions = result.data?.submissions || [];
-      submissions.map((submission) => {
-        console.log(submission.created_at, typeof submission.created_at);
-
-        return Object.assign(submission, {
+      submissions.map((submission) =>
+        Object.assign(submission, {
           problem_id: (
             <a
               href={`/solution/${submission.id}`}
@@ -46,8 +44,8 @@ function Ranking({ problemId }: { problemId?: number }) {
           created_at:
             relativeTimeFormatter(new Date(submission.created_at)) ||
             submission.created_at,
-        });
-      });
+        })
+      );
 
       setBody(submissions);
       setPage({
@@ -65,7 +63,7 @@ function Ranking({ problemId }: { problemId?: number }) {
     <>
       {!!body.length ? (
         <>
-          <Table header={header} body={body} />
+          <Table maxWidth={"1200px"} header={header} body={body} />
           <Pagination
             {...page}
             onChange={(value: number) => {
