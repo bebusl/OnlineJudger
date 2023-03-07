@@ -22,6 +22,9 @@ export const Container = styled.section`
   > button.arrow-right {
     right: 0;
   }
+  ${({ theme }) => theme.mediaQueries.desktop} {
+    display: none;
+  }
 `;
 
 export const Button = styled.button`
