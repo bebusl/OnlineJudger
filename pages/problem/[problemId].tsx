@@ -123,7 +123,7 @@ export async function getStaticPaths() {
 
     return {
       paths,
-      fallback: false,
+      fallback: true,
     };
   }
 }
@@ -138,7 +138,7 @@ export async function getStaticProps(
       if (problemDetail.data?.success)
         return {
           props: problemDetail.data,
-          revalidate: 60,
+          revalidate: 3,
         };
     } catch (e) {
       return {
