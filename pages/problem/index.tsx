@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import type { GetServerSidePropsContext, NextPageContext } from "next";
-
 import { getProblems } from "../../api/problemsAPI";
-import { GetProblemsResponse } from "../../api/scheme/problem";
+import { GetProblemsResponse, ProblemDetail } from "../../api/scheme/problem";
 
 import { FlexBox } from "../../components/common";
 import Pagination from "../../components/common/Pagination";
@@ -15,14 +13,30 @@ import UserStatus from "../../components/unit/user/UserStatus";
 
 const header = [{ field: "card", header: "문제" }];
 
+const mappingCard = (problems: ProblemDetail[]) =>
+  problems.map((problem, idx) => ({
+    card: <ProblemCard key={idx} {...problem} />,
+  }));
+
 export default function ProblemList({ problems, page }: GetProblemsResponse) {
-  const [body, setBody] = useState<{ card: JSX.Element }[]>([]);
+  const [body, setBody] = useState<{ card: JSX.Element }[]>(
+    mappingCard(problems)
+  );
+
   const router = useRouter();
   useEffect(() => {
-    const body = problems.map((problem, idx) => ({
-      card: <ProblemCard key={idx} {...problem} />,
-    }));
-    setBody(body);
+    (async () => {
+      try {
+        const result = await getProblems(router.query);
+        if (result.data.success) {
+          const { problems } = result.data;
+          const rows = mappingCard(problems);
+          setBody(rows);
+        }
+      } catch (e) {
+        setBody([]);
+      }
+    })();
   }, []);
 
   return (
@@ -62,13 +76,9 @@ export default function ProblemList({ problems, page }: GetProblemsResponse) {
   );
 }
 
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-  ctx.res.setHeader(
-    "Cache-Control",
-    "public, s-maxage=10, stale-while-revalidate=59"
-  );
+export async function getStaticProps() {
   try {
-    const result = await getProblems(ctx.query);
+    const result = await getProblems({ page: 0 });
     if (result.data.success) {
       const { page, problems } = result.data;
       return {
