@@ -35,7 +35,7 @@ function VerifyEmail() {
       <Description>이메일 인증을 마치면 문제를 풀어볼 수 있습니다.</Description>
       <FlexBox flexDirection="row" alignItems="start">
         <Input {...register("code")} style={{ width: "30vw" }} />
-        <Button type="submit" disabled={isValidInputs()} onClick={handleClick}>
+        <Button type="submit" disabled={!isValidInputs()} onClick={handleClick}>
           Verify
         </Button>
       </FlexBox>
