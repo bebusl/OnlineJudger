@@ -19,7 +19,8 @@ const socketManager: Middleware = (store) => {
         action.type === "auth/login/fulfilled" ||
         action.type === "auth/getMe/fulfilled"
       ) {
-        const authToken = getAuthToken();
+        const authToken =
+          `Bearer ${action.payload.access_token}` || getAuthToken();
         if (authToken) {
           socketClient = generateSocketClient();
           if (socketClient) {
@@ -49,6 +50,7 @@ const socketManager: Middleware = (store) => {
             socketClient.activate();
           }
         }
+        console.log("OUTOFFSIDE");
       }
       if (action.type === "auth/logoff/fulfilled") {
         socketClient?.deactivate();
