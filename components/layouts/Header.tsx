@@ -39,9 +39,9 @@ function Header() {
       <FlexBox flexDirection="row" gap="1.325rem" style={{ maxWidth: "50%" }}>
         {isMount && isLogin ? (
           <>
-            <Link href="/scoreboard">채점현황</Link>
             <Link href="/problem?page=1">문제보기</Link>
             <Link href="/user/problem">푼 문제</Link>
+            <Link href="/scoreboard">채점현황</Link>
             <div
               onClick={(e) => {
                 const target = e.target as HTMLDivElement;
