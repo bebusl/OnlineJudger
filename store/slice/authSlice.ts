@@ -20,6 +20,7 @@ const initialState = {
   roles: [],
   links: [],
   email: "",
+  accessToken: "",
 };
 
 export const signUpRequest = createAsyncThunk(
@@ -122,6 +123,7 @@ export const authSlice = createSlice({
       state.avatar = action.payload.links[0]?.avatar_url || misteryManSrc;
       state.links = action.payload.links;
       state.email = action.payload.email;
+      state.accessToken = action.payload.access_token;
     },
   },
   extraReducers: (builder) => {
