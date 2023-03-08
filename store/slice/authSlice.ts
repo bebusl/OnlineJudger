@@ -134,6 +134,7 @@ export const authSlice = createSlice({
     });
     builder.addCase(loginRequest.rejected, (state) => {
       authSlice.caseReducers.removeToken(state);
+      state.isAuthenticating = false;
     });
     builder.addCase(getUserData.pending, (state) => {
       state.isAuthenticating = true;
@@ -143,6 +144,7 @@ export const authSlice = createSlice({
     });
     builder.addCase(getUserData.rejected, (state) => {
       authSlice.caseReducers.removeToken(state);
+      state.isAuthenticating = false;
     });
     builder.addCase(logoff.fulfilled, (state) => {
       authSlice.caseReducers.removeToken(state);
