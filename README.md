@@ -37,12 +37,11 @@
 |![회원인증](https://user-images.githubusercontent.com/49019236/223933417-930f309f-e8aa-44c2-ba9b-74c1a43d6ef2.gif)
 |문제 풀이,좋아요&댓글달기|
 | ---|
-|![문제풀이코멘트좋아요](https://user-images.githubusercontent.com/49019236/223933432-37ea5b87-7c39-47d9-8138-68a08467e27b.gif)
+|![문제풀이코멘트좋아요](https://user-images.githubusercontent.com/49019236/224166982-2ba30332-ae61-4456-9b13-d57eaa0e84fd.gif)
 | 문제 필터링 |
-|![문제필털이](https://user-images.githubusercontent.com/49019236/223933476-30a46dc6-480d-4bf5-ab83-3a4ff7ad574e.gif)|
+|![문제필터링](https://user-images.githubusercontent.com/49019236/223933476-30a46dc6-480d-4bf5-ab83-3a4ff7ad574e.gif)|
 | 문제 등록/수정/삭제 |
-|![문제등록수정삭제](https://user-images.githubusercontent.com/49019236/223933501-45394d8a-80be-439f-bf11-526c6d0e79d7.gif)|
-
+|![문제등록수정삭제](https://user-images.githubusercontent.com/49019236/224166959-b35a6394-de20-4509-9b1f-b42950acda02.gif)|
 
 
 
