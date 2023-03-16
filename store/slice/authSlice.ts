@@ -5,6 +5,7 @@ import { addNoti } from "./notiSlice";
 
 import { SignInRequest, SignUpRequest } from "../../api/scheme/auth";
 import {
+  getAuthToken,
   removeAuthorizationCookie,
   setAuthorizationCookie,
 } from "../../utils/authUtils";
@@ -123,7 +124,7 @@ export const authSlice = createSlice({
       state.avatar = action.payload.links[0]?.avatar_url || misteryManSrc;
       state.links = action.payload.links;
       state.email = action.payload.email;
-      state.accessToken = action.payload.access_token;
+      state.accessToken = action.payload.access_token || getAuthToken();
     },
   },
   extraReducers: (builder) => {
