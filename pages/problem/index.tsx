@@ -10,6 +10,7 @@ import ProblemCard from "../../components/unit/problem/problemCard/ProblemCard";
 import { useRouter } from "next/router";
 import BannerCarousel from "../../components/unit/banner/BannerCarousel";
 import UserStatus from "../../components/unit/user/UserStatus";
+import MetaTags from "../../components/common/MetaTags";
 
 const header = [{ field: "card", header: "문제" }];
 
@@ -41,6 +42,11 @@ export default function ProblemList({ problems, page }: GetProblemsResponse) {
 
   return (
     <>
+      <MetaTags
+        title="문제 리스트 | YOONLEEVERSE OJ"
+        description="코딩 테스트 대비. 문제를 풀다 막히면 다른 사람들의 풀이도 참고해보세요!"
+        url="https://uni.yoonleeverse.com/problem?page=1"
+      />
       <BannerCarousel />
       <FlexBox flexDirection="row" alignItems="start" style={{ width: "100%" }}>
         <FlexBox

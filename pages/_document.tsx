@@ -43,11 +43,15 @@ export default class CustomDocument extends Document {
     return (
       <Html>
         <Head>
+          <meta charSet="utf-8" />
+          <meta httpEquiv="x-ua-compatible" content="ie=edge" />
+          <link rel="manifest" href="site.webmanifest" />
           <link
             rel="stylesheet"
             as="style"
             href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.6/dist/web/static/pretendard.css"
           />
+          <meta property="og:site_name" content="온라인 저지" />
         </Head>
         <body>
           <Main />

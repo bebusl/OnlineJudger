@@ -18,6 +18,8 @@ import { useAppDispatch } from "../../hooks/useStore";
 import { resetRunMessage } from "../../store/slice/socketSlice";
 import { useRouter } from "next/router";
 import { FlexBox } from "../../components/common";
+import MetaTags from "../../components/common/MetaTags";
+
 const MonacoEditor = dynamic(import("@monaco-editor/react"), { ssr: false });
 
 const editorLanguageMapper = {
@@ -74,6 +76,11 @@ function ProblemDetail(props: GetProblemResponse) {
 
   return (
     <>
+      <MetaTags
+        title={`${title} | YOONLEEVERSE OJ`}
+        description={`${title} 문제 풀기`}
+        url={`https://uni.yoonleeverse.com/problem/${id}`}
+      />
       <BreadCrumbs
         paths={[
           { text: "HOME", href: "/" },
