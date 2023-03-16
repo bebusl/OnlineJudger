@@ -19,8 +19,11 @@ const socketManager: Middleware = (store) => {
         action.type === "auth/login/fulfilled" ||
         action.type === "auth/getMe/fulfilled"
       ) {
-        const authToken =
-          `Bearer ${action.payload.access_token}` || getAuthToken();
+        const { access_token } = action.payload;
+        const authToken = access_token
+          ? `Bearer ${action.payload.access_token}`
+          : getAuthToken();
+
         if (authToken) {
           socketClient = generateSocketClient();
           if (socketClient) {
