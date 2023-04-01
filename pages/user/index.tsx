@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 import { logoff } from "../../store/slice/authSlice";
 import { deleteAccount } from "../../api/authAPI";
 
+import withAuth from "../../components/guard/withAuth";
 import WithSideBar from "../../components/layouts/WithSideBar";
 import { Button, FlexBox } from "../../components/common";
 import Input, { LabeledInput } from "../../components/common/Input";
@@ -95,8 +96,4 @@ function UserProfile() {
   );
 }
 
-export default UserProfile;
-
-UserProfile.defaultProps = {
-  authRequired: true,
-};
+export default withAuth(UserProfile);

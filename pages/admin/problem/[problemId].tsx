@@ -8,6 +8,7 @@ import useNotification from "../../../hooks/useNotification";
 
 import ProblemForm from "../../../components/unit/problem/problemForm/ProblemForm";
 import { Button } from "../../../components/common";
+import withAdmin from "../../../components/guard/withAdmin";
 
 interface Props {
   id: string;
@@ -82,8 +83,4 @@ export async function getServerSideProps(ctx: NextPageContext) {
   }
 }
 
-export default ProblemDetail;
-
-ProblemDetail.defaultProps = {
-  adminOnly: true,
-};
+export default withAdmin(ProblemDetail);

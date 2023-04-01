@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import withAuth from "../../components/guard/withAuth";
 import { getMyComments } from "../../api/submissionsAPI";
 import { Comment as CommentType } from "../../api/scheme/submissions";
 import Comment from "../../components/unit/comment/Comment";
@@ -44,8 +45,4 @@ function Comments() {
   );
 }
 
-export default Comments;
-
-Comments.defaultProps = {
-  authRequired: true,
-};
+export default withAuth(Comments);

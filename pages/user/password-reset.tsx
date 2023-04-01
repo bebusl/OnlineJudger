@@ -9,6 +9,7 @@ import { regexPatterns } from "../../utils/validator";
 import { Button, Input } from "../../components/common";
 import WithSideBar from "../../components/layouts/WithSideBar";
 import Description from "../../components/common/Typhography/Description";
+import withAuth from "../../components/guard/withAuth";
 
 function PasswordReset() {
   const { register, getAllValues } = useForm();
@@ -76,8 +77,4 @@ function PasswordReset() {
   );
 }
 
-export default PasswordReset;
-
-PasswordReset.defaultProps = {
-  authRequired: true,
-};
+export default withAuth(PasswordReset);

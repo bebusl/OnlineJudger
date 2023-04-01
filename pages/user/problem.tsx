@@ -10,6 +10,7 @@ import Table from "../../components/common/Table/Table";
 import Pagination from "../../components/common/Pagination";
 import { Button } from "../../components/common";
 import { dateFormatter } from "../../utils/dateUtils";
+import withAuth from "../../components/guard/withAuth";
 
 const header = [
   { field: "problem_id", header: "ID" },
@@ -84,8 +85,4 @@ function SolveList() {
   );
 }
 
-export default SolveList;
-
-SolveList.defaultProps = {
-  authRequired: true,
-};
+export default withAuth(SolveList);
