@@ -18,7 +18,6 @@ function Modal({ children, onClose, title = "" }: ModalProps) {
 
   useEffect(() => {
     setIsMounted(true);
-    return () => setIsMounted(false);
   }, []);
 
   const Element = () => (
