@@ -53,7 +53,7 @@ function Carousel({ children, auto = true }: CarouselProps) {
 
   useEffect(() => {
     const autoPlay = () => {
-      if (auto) {
+      if (auto && document.visibilityState === "visible") {
         goToImage((prev) => prev + 1)();
       } else clearInterval(intervalId);
     };
@@ -72,7 +72,7 @@ function Carousel({ children, auto = true }: CarouselProps) {
       <S.Window>
         <S.ItemWrapper
           ref={containerRef}
-          style={{ transform: `translateX(${-1200 * order}px)` }}
+          style={{ transform: `translate3d(${100 * -order}%,0,0)` }}
           onTransitionEnd={handleTransitionEnd}
         >
           {childrenArray[itemsCount - 1]}
