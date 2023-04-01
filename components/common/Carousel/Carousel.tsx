@@ -1,8 +1,14 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  Children,
+} from "react";
 import * as S from "./Carousel.style";
 
 interface CarouselProps {
-  children: React.ReactElement;
+  children: React.ReactElement[];
   auto?: boolean;
 }
 
@@ -10,6 +16,8 @@ function Carousel({ children, auto = true }: CarouselProps) {
   const [order, setOrder] = useState(1);
   const [isAnimating, setIsAnimating] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const childrenArray = Children.toArray(children);
+  const itemsCount = Children.count(children);
 
   const enableTransition = useCallback(() => {
     if (containerRef.current)
@@ -31,12 +39,12 @@ function Carousel({ children, auto = true }: CarouselProps) {
 
   const handleTransitionEnd = () => {
     activateButton();
-    if (order === 4) {
+    if (order >= itemsCount + 1) {
       disableTransition();
       setOrder(1);
-    } else if (order === 0) {
+    } else if (order <= 0) {
       disableTransition();
-      setOrder(3);
+      setOrder(itemsCount);
     }
   };
 
@@ -67,7 +75,9 @@ function Carousel({ children, auto = true }: CarouselProps) {
           style={{ transform: `translateX(${-1200 * order}px)` }}
           onTransitionEnd={handleTransitionEnd}
         >
+          {childrenArray[itemsCount - 1]}
           {children}
+          {childrenArray[0]}
         </S.ItemWrapper>
       </S.Window>
       <S.Button

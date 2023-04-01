@@ -31,13 +31,9 @@ const items = [
 function BannerCarousel() {
   return (
     <Carousel>
-      <>
-        <Banner {...items[items.length - 1]} />
-        {items.map((item) => (
-          <Banner key={item.id} {...item} />
-        ))}
-        <Banner {...items[0]} />
-      </>
+      {items.map((item) => (
+        <Banner key={item.id} {...item} />
+      ))}
     </Carousel>
   );
 }
