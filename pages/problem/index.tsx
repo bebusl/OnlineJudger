@@ -19,12 +19,13 @@ const mappingCard = (problems: ProblemDetail[]) =>
     card: <ProblemCard key={idx} {...problem} />,
   }));
 
-export default function ProblemList({ problems, page }: GetProblemsResponse) {
+function ProblemList({ problems, page }: GetProblemsResponse) {
   const [body, setBody] = useState<{ card: JSX.Element }[]>(
     mappingCard(problems)
   );
 
   const router = useRouter();
+
   useEffect(() => {
     (async () => {
       try {
@@ -38,7 +39,18 @@ export default function ProblemList({ problems, page }: GetProblemsResponse) {
         setBody([]);
       }
     })();
-  }, []);
+  }, [router.query]);
+
+  const handleChangePage = (page: number) => {
+    router.push(
+      {
+        pathname: "",
+        query: { ...router.query, page },
+      },
+      undefined,
+      { shallow: true }
+    );
+  };
 
   return (
     <>
@@ -48,7 +60,11 @@ export default function ProblemList({ problems, page }: GetProblemsResponse) {
         url="https://uni.yoonleeverse.com/problem?page=1"
       />
       <BannerCarousel />
-      <FlexBox flexDirection="row" alignItems="start" style={{ width: "100%" }}>
+      <FlexBox
+        flexDirection="row"
+        alignItems="start"
+        style={{ width: "100%", minHeight: "100vh" }}
+      >
         <FlexBox
           justifyContent="start"
           alignItems="start"
@@ -57,21 +73,18 @@ export default function ProblemList({ problems, page }: GetProblemsResponse) {
           <h1>문제 보기</h1>
           <SearchFilter />
           {body?.length ? (
-            <>
+            <div style={{ minHeight: "50vh" }}>
               <Table header={header} body={body} />
               <Pagination
                 current_pages={page.current_pages}
                 total_pages={page.total_pages}
-                onChange={(page: number) =>
-                  router.push({
-                    pathname: router.pathname,
-                    query: { ...router.query, page },
-                  })
-                }
+                onChange={handleChangePage}
               />
-            </>
+            </div>
           ) : (
-            <p>조건에 맞는 문제가 없습니다. 필터를 수정해주세요</p>
+            <div style={{ minHeight: "50vh" }}>
+              <p>조건에 맞는 문제가 없습니다. 필터를 수정해주세요</p>
+            </div>
           )}
         </FlexBox>
         <div style={{ flexGrow: 1, paddingTop: "150px" }}>
@@ -81,6 +94,8 @@ export default function ProblemList({ problems, page }: GetProblemsResponse) {
     </>
   );
 }
+
+export default ProblemList;
 
 export async function getStaticProps() {
   try {
