@@ -41,3 +41,5 @@ next-env.d.ts
 *.key
 docs/*
 *.env
+
+.history
