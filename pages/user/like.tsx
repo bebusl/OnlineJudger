@@ -8,6 +8,7 @@ import LinkS from "../../components/common/Link/LinkS";
 import Pagination from "../../components/common/Pagination";
 import SubmissionView from "../../components/unit/submissions/SubmissionView";
 import WithSideBar from "../../components/layouts/WithSideBar";
+import withAuth from "../../components/guard/withAuth";
 
 function Like() {
   const [likedSubmissons, setLikedSubmissions] = useState<
@@ -67,8 +68,4 @@ function Like() {
   );
 }
 
-export default Like;
-
-Like.defaultProps = {
-  authRequired: true,
-};
+export default withAuth(Like);

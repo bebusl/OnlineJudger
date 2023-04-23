@@ -1,8 +1,4 @@
-import React, {
-  ChangeEvent,
-  ChangeEventHandler,
-  FormEventHandler,
-} from "react";
+import React, { ChangeEvent, FormEventHandler, useEffect } from "react";
 
 import { useRouter } from "next/router";
 
@@ -14,6 +10,7 @@ import * as S from "./SearchFilter.style";
 import { FlexBox } from "../../common";
 import SearchBar from "../../common/SearchBar";
 import Selector from "../../common/Selector/Selector";
+import { UrlObject } from "url";
 
 function generateQuerySet(queries: string | string[] | undefined): Set<string> {
   let newQuerySet = new Set<string>();
@@ -27,11 +24,14 @@ function generateQuerySet(queries: string | string[] | undefined): Set<string> {
 
 function SearchFilter() {
   const router = useRouter();
-
   const { languages, tags, levels } = router.query;
   const languagesQuery = generateQuerySet(languages);
   const tagsQuery = generateQuerySet(tags);
   const lvQuery = generateQuerySet(levels);
+
+  const shallowRoute = (url: UrlObject | string) => {
+    router.push(url, undefined, { shallow: true });
+  };
 
   const handleTitleSubmit: FormEventHandler = (e) => {
     e.preventDefault();
@@ -39,12 +39,13 @@ function SearchFilter() {
     const titleInputElement = target["title"] as unknown as HTMLInputElement;
     const value = titleInputElement.value;
     const { title, ...restQueries } = router.query;
+
     if (value)
-      router.push({
-        pathname: router.pathname,
+      shallowRoute({
+        pathname: router.pathname + "/",
         query: Object.assign(restQueries, { title: titleInputElement.value }),
       });
-    else router.push({ pathname: router.pathname, query: restQueries });
+    else shallowRoute({ pathname: router.pathname + "/", query: restQueries });
   };
 
   const handleQueryChange =
@@ -52,7 +53,7 @@ function SearchFilter() {
     (e: ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
       const newQuery = toggleSetItem<string>(querySet, value);
-      router.push({
+      shallowRoute({
         pathname: router.pathname,
         query: { ...router.query, page: 1, [queryKey]: Array.from(newQuery) },
       });
@@ -61,8 +62,8 @@ function SearchFilter() {
   const handleTagClick =
     (querySet: Set<string>, deleteElement: string, queryKey: string) => () => {
       querySet.delete(deleteElement);
-      router.push({
-        pathname: router.pathname,
+      shallowRoute({
+        pathname: router.pathname + "/",
         query: {
           ...router.query,
           page: 1,
