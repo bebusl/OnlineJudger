@@ -1,14 +1,7 @@
 import React, { DragEventHandler, useState } from "react";
 import styled from "styled-components";
 import FlexBox from "../FlexBox";
-import { C } from "../../../utils/constants/language";
-
-const nullImg = () => {
-  const img = new Image();
-  img.src =
-    "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-  return img;
-};
+import useNullImg from "./useNullImg";
 
 const CONTROLLER_WIDTH = "24px";
 
@@ -20,13 +13,14 @@ function ResizableBox({
   rightChild: React.ReactNode;
 }) {
   const [controllerClientX, setControllerClientX] = useState(0);
+  const nullImg = useNullImg();
 
   const resizeVertical: DragEventHandler = (e) => {
     if (e.clientX !== 0) setControllerClientX(e.clientX);
   };
 
   const handleDragStart: DragEventHandler = (e) => {
-    e.dataTransfer.setDragImage(nullImg(), 0, 0);
+    if (nullImg) e.dataTransfer.setDragImage(nullImg, 0, 0);
   };
 
   return (
