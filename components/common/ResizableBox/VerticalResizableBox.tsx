@@ -61,7 +61,7 @@ export default VerticalResizableBox;
 
 const Container = styled(FlexBox)`
   width: 100%;
-  height: 90vh;
+  height: 83vh;
   align-items: stretch;
   justify-content: stretch;
 `;
