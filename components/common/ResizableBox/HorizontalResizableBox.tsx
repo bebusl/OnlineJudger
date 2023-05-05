@@ -60,6 +60,7 @@ const Container = styled(FlexBox).attrs({ flexDirection: "row" })`
   align-items: stretch;
   ${({ theme }) => theme.mediaQueries.tablet} {
     flex-wrap: wrap;
+    height: auto;
   }
 `;
 
