@@ -6,7 +6,7 @@ import { logoff } from "../../store/slice/authSlice";
 import { deleteAccount } from "../../api/authAPI";
 
 import withAuth from "../../components/guard/withAuth";
-import WithSideBar from "../../components/layouts/WithSideBar";
+import SidebarLayout from "../../components/layouts/SidebarLayout";
 import { Button, FlexBox } from "../../components/common";
 import Input, { LabeledInput } from "../../components/common/Input";
 import ConfirmDialog from "../../components/common/Dialog/ConfirmDialog";
@@ -21,7 +21,7 @@ function UserProfile() {
   const dispatch = useAppDispatch();
   const addNotification = useNotification();
   return (
-    <WithSideBar>
+    <SidebarLayout>
       {openModal && (
         <ConfirmDialog
           message={`정말 탈퇴하시겠습니까?\n탈퇴한 계정으로 다시 가입할 수 없습니다`}
@@ -92,7 +92,7 @@ function UserProfile() {
           </span>
         </div>
       </section>
-    </WithSideBar>
+    </SidebarLayout>
   );
 }
 

@@ -7,7 +7,7 @@ import { FlexBox } from "../../components/common";
 import LinkS from "../../components/common/Link/LinkS";
 import Pagination from "../../components/common/Pagination";
 import SubmissionView from "../../components/unit/submissions/SubmissionView";
-import WithSideBar from "../../components/layouts/WithSideBar";
+import SidebarLayout from "../../components/layouts/SidebarLayout";
 import withAuth from "../../components/guard/withAuth";
 
 function Like() {
@@ -35,7 +35,7 @@ function Like() {
   }, []);
 
   return (
-    <WithSideBar>
+    <SidebarLayout>
       <h4>좋아요 목록</h4>
       {!!likedSubmissons?.length ? (
         likedSubmissons.map((liked) => {
@@ -64,7 +64,7 @@ function Like() {
         <p>좋아요한 목록이 없습니다</p>
       )}
       <Pagination {...page} onChange={fetchData} />
-    </WithSideBar>
+    </SidebarLayout>
   );
 }
 
