@@ -8,7 +8,7 @@ const ScrollBox = styled.div<{ width?: string; height?: string }>`
   left: 0;
   padding: 1rem;
   height: ${({ height }) => height ?? "100%"};
-  overflow: scroll;
+  overflow: auto;
 `;
 export default ScrollBox;
 
