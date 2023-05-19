@@ -1,9 +1,4 @@
-import React, {
-  FocusEventHandler,
-  HTMLAttributes,
-  useEffect,
-  useState,
-} from "react";
+import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 function Popover({

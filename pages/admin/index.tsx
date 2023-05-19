@@ -9,6 +9,7 @@ import { Button } from "../../components/common";
 import CheckableTable from "../../components/common/Table/CheckableTable";
 import ConfirmDialog from "../../components/common/Dialog/ConfirmDialog";
 import { LogoIconMapper } from "../../components/LanguageAsset";
+import withAdmin from "../../components/guard/withAdmin";
 
 interface ProblemTableInfo
   extends Omit<GetProblemResponse, "title" | "languages"> {
@@ -119,8 +120,8 @@ function ManageProblem() {
   );
 }
 
-export default ManageProblem;
+export default withAdmin(ManageProblem);
 
-ManageProblem.defaultProps = {
-  adminOnly: true,
-};
+// ManageProblem.defaultProps = {
+//   adminOnly: true,
+// };

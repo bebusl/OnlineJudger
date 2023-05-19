@@ -1,13 +1,10 @@
 import React, { DragEventHandler, useRef, useState } from "react";
+import useNullImg from "./useNullImg";
 import styled from "styled-components";
 import FlexBox from "../FlexBox";
 
-const nullImg = () => {
-  const img = new Image();
-  img.src =
-    "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-  return img;
-};
+const HEADER_HEIGHT = 96.78125;
+const CONTROLLER_HEIGHT = 24;
 
 function VerticalResizableBox({
   topChild,
@@ -17,19 +14,24 @@ function VerticalResizableBox({
   bottomChild: React.ReactNode;
 }) {
   const [controllerClientY, setControllerClientY] = useState(0);
+  const nullImg = useNullImg();
 
   const resizeVertical: DragEventHandler = (e) => {
     if (e.clientY !== 0) setControllerClientY(e.clientY);
   };
 
   const handleDragStart: DragEventHandler = (e) => {
-    e.dataTransfer.setDragImage(nullImg(), 0, 0);
+    if (nullImg) e.dataTransfer.setDragImage(nullImg, 0, 0);
   };
 
   return (
     <Container>
       <View
-        style={controllerClientY ? { height: `${controllerClientY}px` } : {}}
+        style={
+          controllerClientY
+            ? { height: `${controllerClientY - HEADER_HEIGHT}px` }
+            : {}
+        }
       >
         {topChild}
       </View>
@@ -44,7 +46,7 @@ function VerticalResizableBox({
             ? {
                 height:
                   controllerClientY &&
-                  `calc(100% - ${controllerClientY}px - 24px)`,
+                  `calc(100% - ${controllerClientY - CONTROLLER_HEIGHT}px)`,
               }
             : {}
         }
@@ -73,7 +75,7 @@ const Controller = styled.div`
   background-size: 2.25rem 0.875rem;
   background-position-y: bottom;
   background-position: center;
-  height: 24px;
+  height: ${CONTROLLER_HEIGHT}px;
   cursor: ns-resize;
   border-top: 1px solid ${({ theme }) => theme.colors.gray150};
   :hover {

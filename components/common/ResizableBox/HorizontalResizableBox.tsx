@@ -1,13 +1,9 @@
-import React, { DragEventHandler, useRef, useState } from "react";
-import styled, { css } from "styled-components";
+import React, { DragEventHandler, useState } from "react";
+import styled from "styled-components";
 import FlexBox from "../FlexBox";
+import useNullImg from "./useNullImg";
 
-const nullImg = () => {
-  const img = new Image();
-  img.src =
-    "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-  return img;
-};
+const CONTROLLER_WIDTH = "24px";
 
 function ResizableBox({
   leftChild,
@@ -17,13 +13,14 @@ function ResizableBox({
   rightChild: React.ReactNode;
 }) {
   const [controllerClientX, setControllerClientX] = useState(0);
+  const nullImg = useNullImg();
 
   const resizeVertical: DragEventHandler = (e) => {
     if (e.clientX !== 0) setControllerClientX(e.clientX);
   };
 
   const handleDragStart: DragEventHandler = (e) => {
-    e.dataTransfer.setDragImage(nullImg(), 0, 0);
+    if (nullImg) e.dataTransfer.setDragImage(nullImg, 0, 0);
   };
 
   return (
@@ -43,7 +40,8 @@ function ResizableBox({
           controllerClientX
             ? {
                 width:
-                  controllerClientX && `calc(100% - ${controllerClientX}px)`,
+                  controllerClientX &&
+                  `calc(100% - ${controllerClientX}px - ${CONTROLLER_WIDTH})`,
               }
             : {}
         }
@@ -76,7 +74,7 @@ const Controller = styled.div`
   background: url("/images/grip/img-grippie-vertical.png") no-repeat;
   background-size: 0.875rem 2.25rem;
   background-position: center;
-  width: 24px;
+  width: ${CONTROLLER_WIDTH};
   cursor: ew-resize;
   border-right: 1px solid ${({ theme }) => theme.colors.gray150};
   :hover {
