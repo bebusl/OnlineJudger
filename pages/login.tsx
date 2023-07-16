@@ -27,7 +27,10 @@ const LoginForm = () => {
     e.preventDefault();
     dispatch(loginRequest(getAllValues()))
       .unwrap()
-      .then(() => router.back());
+      .then(() => {
+        // 로그인 성공 시 뒤로 가기! => 근데 history stack에 따라 문제 발생 가능성 있음.
+        router.back();
+      });
   };
 
   return (
