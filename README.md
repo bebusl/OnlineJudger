@@ -4,8 +4,8 @@
 
 - [배포 링크]([uni.yoonleeverse.com](https://uni.yoonleeverse.com/))
 	- 테스트 계정(관리자 계정)
-		- id: test@test.com
-		- pw : TEST1234
+		- id: admin@admin.com
+		- pw : ADMIN1234
 - 기술스택 : `Next.js` `TypeScript` `Axios` `Redux` `Stompjs` `Styled-Components`
 - 프로젝트 목표
     1. 외부 라이브러리의 사용을 최소화하기
