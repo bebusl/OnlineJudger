@@ -4,7 +4,7 @@ export const Tag = styled.span<{ color: "language" | "tag" | "lv" | "reset" }>`
   display: inline-block;
   width: fit-content;
   padding: 10px;
-  margin: 5px;
+  margin-right: 5px;
   background-color: ${({ color }) => {
     switch (color) {
       case "lv":

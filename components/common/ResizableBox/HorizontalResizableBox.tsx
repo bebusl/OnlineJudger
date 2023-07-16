@@ -56,11 +56,10 @@ export default ResizableBox;
 
 const Container = styled(FlexBox).attrs({ flexDirection: "row" })`
   width: 100vw;
-  height: 83vh;
+  height: 90vh;
   align-items: stretch;
   ${({ theme }) => theme.mediaQueries.tablet} {
     flex-wrap: wrap;
-    height: auto;
   }
 `;
 

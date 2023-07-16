@@ -3,7 +3,7 @@ import withAuth from "../../components/guard/withAuth";
 import { getMyComments } from "../../api/submissionsAPI";
 import { Comment as CommentType } from "../../api/scheme/submissions";
 import Comment from "../../components/unit/comment/Comment";
-import SidebarLayout from "../../components/layouts/SidebarLayout";
+import WithSideBar from "../../components/layouts/WithSideBar";
 
 import LinkS from "../../components/common/Link/LinkS";
 import Pagination from "../../components/common/Pagination";
@@ -28,7 +28,7 @@ function Comments() {
   }, []);
 
   return (
-    <SidebarLayout>
+    <WithSideBar>
       <h4>작성한 댓글</h4>
       {!comments.length && <div>작성한 댓글이 없습니다</div>}
       {comments?.map((comment) => (
@@ -41,7 +41,7 @@ function Comments() {
         </div>
       ))}
       <Pagination {...page} onChange={fetchData} />
-    </SidebarLayout>
+    </WithSideBar>
   );
 }
 

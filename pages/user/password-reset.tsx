@@ -7,7 +7,7 @@ import useNotification from "../../hooks/useNotification";
 import { regexPatterns } from "../../utils/validator";
 
 import { Button, Input } from "../../components/common";
-import SidebarLayout from "../../components/layouts/SidebarLayout";
+import WithSideBar from "../../components/layouts/WithSideBar";
 import Description from "../../components/common/Typhography/Description";
 import withAuth from "../../components/guard/withAuth";
 
@@ -43,7 +43,7 @@ function PasswordReset() {
   };
 
   return (
-    <SidebarLayout>
+    <WithSideBar>
       <form onSubmit={handleSubmit}>
         <Input
           type="password"
@@ -73,7 +73,7 @@ function PasswordReset() {
 
         <Button type="submit">변경</Button>
       </form>
-    </SidebarLayout>
+    </WithSideBar>
   );
 }
 

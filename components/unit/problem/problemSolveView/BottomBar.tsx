@@ -10,7 +10,6 @@ import { Button, FlexBox } from "../../../common";
 import ConfirmDialog from "../../../common/Dialog/ConfirmDialog";
 import RankingModal from "../../submissions/RankingModal";
 import { pendingRunResult } from "../../../../store/slice/socketSlice";
-import styled from "styled-components";
 
 function BottomBar({
   getCode,
@@ -76,27 +75,22 @@ function BottomBar({
           <RankingModal problemId={problemId} onClose={closeRankingModal} />
         )}
 
-        <Container justifyContent="space-between">
+        <FlexBox flexDirection="row" justifyContent="space-between">
           <Button onClick={openRankingModal}> 다른 유저의 코드 보기</Button>
           <FlexBox flexDirection="row" gap="10px">
             <Button onClick={() => resetCode()}>초기화</Button>
             <Button onClick={handleRunBtnClick}>코드실행</Button>
             <Button onClick={handleSubmitBtnClick}>제출 및 채점</Button>
           </FlexBox>
-        </Container>
+        </FlexBox>
       </>
     );
 
   return (
-    <Container justifyContent="end">
+    <FlexBox flexDirection="row" justifyContent="end">
       <Button onClick={() => router.push("/login")}>로그인하기</Button>
-    </Container>
+    </FlexBox>
   );
 }
 
 export default BottomBar;
-
-const Container = styled(FlexBox).attrs({ flexDirection: "row" })`
-  border-top: 1px solid ${({ theme }) => theme.colors.gray150};
-  padding: 5px;
-`;
