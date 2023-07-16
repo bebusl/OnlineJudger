@@ -9,8 +9,8 @@ const app = next({ dev });
 const handle = app.getRequestHandler();
 
 const ports = {
-  http: 3000,
-  https: 3443,
+  http: 4000,
+  https: 3000,
 };
 
 const httpsOptions = {

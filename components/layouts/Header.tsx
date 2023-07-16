@@ -10,82 +10,82 @@ import { FlexBox } from "../common";
 import Popover from "../common/Popover";
 
 function Header() {
+  /** get user data from redux store */
   const { isLogin, avatar, name, email } = useAppSelector(
     (state) => state.auth
   );
   const dispatch = useAppDispatch();
-  const [isMount, setIsMount] = useState(false);
+
   const [openUserPopover, setOpenUserPopover] = useState(false);
-  const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
   const popoverRef = useRef<HTMLDivElement>(null);
-  const countRef = useRef<number>(0);
-  useEffect(() => {
-    setIsMount(true);
-    const handleResizeEvent = (e: UIEvent) => {
-      countRef.current = countRef.current + 1;
-      const popoverBoxElement = document.getElementById("popoverbox");
-      const rect = popoverBoxElement?.getBoundingClientRect();
-      if (rect) setPopoverPosition({ top: rect.top, left: rect.left });
-    };
-    window.addEventListener("resize", handleResizeEvent);
-    return () => window.removeEventListener("resize", handleResizeEvent);
-  }, []);
 
   return (
     <Container>
       <Logo>
         <Link href="/">Online Judge</Link>
       </Logo>
-      <FlexBox flexDirection="row" gap="1.325rem" style={{ maxWidth: "50%" }}>
-        {isMount && isLogin ? (
+      <FlexBox flexDirection="row" gap="0.8rem" role="menubar">
+        {isLogin ? (
           <>
-            <Link href="/problem?page=1">문제보기</Link>
-            <Link href="/user/problem">푼 문제</Link>
-            <Link href="/scoreboard">채점현황</Link>
-            <div
-              onClick={(e) => {
-                const target = e.target as HTMLDivElement;
-                const rect = target.getBoundingClientRect();
-                setOpenUserPopover(true);
-                setPopoverPosition({
-                  top: rect.top + rect.height,
-                  left: rect.left - 50,
-                });
-              }}
-              id="popoverbox"
-              style={{ cursor: "pointer" }}
-            >
-              {name}님
+            <div style={{ flex: "0 0 auto" }}>
+              <Link href="/problem?page=1">문제보기</Link>
             </div>
-            {openUserPopover && (
-              <Popover top={popoverPosition.top} left={popoverPosition.left}>
-                <FlexBox
-                  flexDirection="column"
-                  style={{ width: "200px", height: "200px" }}
-                  onMouseLeave={() => setOpenUserPopover(false)}
-                >
-                  <div ref={popoverRef} style={{ textAlign: "center" }}>
-                    <Image
-                      width="50px"
-                      height="50px"
-                      src={avatar}
-                      alt="user profile image"
-                    />
-                    <p>{email}</p>
-                  </div>
-                  <Link href="/user">마이 페이지</Link>
-                  <Link href="/user/problem">푼 문제</Link>
-                  <a
-                    onClick={() => {
-                      dispatch(logoff());
-                    }}
-                    style={{ cursor: "pointer" }}
+            <div style={{ flex: "0 0 auto" }}>
+              <Link href="/user/problem" style={{ flex: "0 0 auto" }}>
+                푼 문제
+              </Link>
+            </div>
+            <div style={{ flex: "0 0 auto" }}>
+              <Link href="/scoreboard">채점현황</Link>
+            </div>
+            <div style={{ flex: "0 0 auto" }}>
+              <div
+                onClick={(e) => {
+                  setOpenUserPopover((prev) => !prev);
+                }}
+                id="popoverbox"
+                style={{ cursor: "pointer", position: "relative" }}
+              >
+                <p style={{ margin: "0" }}>{name}님</p>
+                {openUserPopover && (
+                  <div
+                    style={{ position: "absolute", zIndex: 3, left: "-100px" }}
                   >
-                    로그아웃
-                  </a>
-                </FlexBox>
-              </Popover>
-            )}
+                    <FlexBox
+                      flexDirection="column"
+                      style={{
+                        width: "200px",
+                        height: "200px",
+                        backgroundColor: "white",
+                        borderRadius: "5px",
+                        border: "1px solid #ededed",
+                      }}
+                      onMouseLeave={() => setOpenUserPopover(false)}
+                    >
+                      <div ref={popoverRef} style={{ textAlign: "center" }}>
+                        <Image
+                          width="50px"
+                          height="50px"
+                          src={avatar}
+                          alt="user profile image"
+                        />
+                        <p>{email}</p>
+                      </div>
+                      <Link href="/user">마이 페이지</Link>
+                      <Link href="/user/problem">푼 문제</Link>
+                      <a
+                        onClick={() => {
+                          dispatch(logoff());
+                        }}
+                        style={{ cursor: "pointer" }}
+                      >
+                        로그아웃
+                      </a>
+                    </FlexBox>
+                  </div>
+                )}
+              </div>
+            </div>
           </>
         ) : (
           <>
@@ -100,3 +100,9 @@ function Header() {
 }
 
 export default React.memo(Header);
+
+const MenuItem = (
+  <div>
+    <Link></Link>
+  </div>
+);

@@ -5,7 +5,7 @@ import { useAppSelector } from "../../hooks/useStore";
 import { getSubmissionsByQuery } from "../../api/submissionsAPI";
 import { Submission } from "../../api/scheme/submissions";
 
-import WithSideBar from "../../components/layouts/WithSideBar";
+import SidebarLayout from "../../components/layouts/SidebarLayout";
 import Table from "../../components/common/Table/Table";
 import Pagination from "../../components/common/Pagination";
 import { Button } from "../../components/common";
@@ -57,7 +57,7 @@ function SolveList() {
     });
   });
   return (
-    <WithSideBar>
+    <SidebarLayout>
       <>
         <h2>해결한 문제들</h2>
         <Button
@@ -81,7 +81,7 @@ function SolveList() {
           }}
         />
       </>
-    </WithSideBar>
+    </SidebarLayout>
   );
 }
 

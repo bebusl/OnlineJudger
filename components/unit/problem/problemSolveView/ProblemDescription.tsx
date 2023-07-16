@@ -1,9 +1,10 @@
-import React, { useContext } from "react";
+import React from "react";
 import { ProblemDetail } from "../../../../api/scheme/problem";
 
 import ScrollBox from "../../../common/ScrollBox";
 import Table from "../../../common/Table/Table";
 import { LogoIconMapper } from "../../../LanguageAsset";
+import styled from "styled-components";
 
 function ProblemDescription({ problem }: { problem: ProblemDetail }) {
   const header = [
@@ -17,7 +18,13 @@ function ProblemDescription({ problem }: { problem: ProblemDetail }) {
       timeLimit: problem.time_limit,
       memoryLimit: problem.memory_limit,
       language: (
-        <>{problem.languages.map((language) => LogoIconMapper[language])}</>
+        <>
+          {problem.languages.map((language) => (
+            <React.Fragment key={`icon-${language}`}>
+              {LogoIconMapper[language]}
+            </React.Fragment>
+          ))}
+        </>
       ),
     },
   ];
@@ -25,11 +32,11 @@ function ProblemDescription({ problem }: { problem: ProblemDetail }) {
   return (
     <ScrollBox as="article">
       <h3>문제설명</h3>
-      <p>{problem.desc}</p>
-      <hr />
+      <p style={{ whiteSpace: "pre-line" }}>{problem.desc}</p>
+      <SpaceHr />
       <h3>제한사항</h3>
       <Table header={header} body={body}></Table>
-      <hr />
+      <SpaceHr />
       <h3>입출력 설명</h3>
       <h4>입력 설명</h4>
       <p>{problem.input_desc}</p>
@@ -47,3 +54,7 @@ function ProblemDescription({ problem }: { problem: ProblemDetail }) {
 }
 
 export default ProblemDescription;
+
+const SpaceHr = styled.hr`
+  margin: 2rem 0;
+`;
