@@ -36,11 +36,6 @@ function Oauth2Redirect() {
           });
         // 인증 절차 실패했을때도 대비해야함..!
       }
-    } else {
-      addNotification(
-        "인증 과정 중에 에러가 발생했습니다. 다시 시도해주세요.",
-        "error"
-      );
     }
   }, [router.query, addNotification, dispatch, router]);
 
