@@ -5,9 +5,7 @@ import useNotification from "../../hooks/useNotification";
 
 import { ROLEADMIN } from "../../utils/constants/role";
 
-const withAdmin = (
-  WrappedComponent: React.ComponentType<Record<string, unknown>>
-) => {
+const withAdmin = (WrappedComponent: React.ComponentType<any>) => {
   function AuthenticatedComponent(props: Record<string, unknown>) {
     const router = useRouter();
     const addNotification = useNotification();
@@ -25,8 +23,7 @@ const withAdmin = (
       if (!isLogin) {
         addNotification("관리자 로그인이 필요합니다", "error");
         router.back();
-      }
-      if (isLogin && !roles?.includes(ROLEADMIN)) {
+      } else if (isLogin && !roles?.includes(ROLEADMIN)) {
         addNotification("관리자 권한이 없습니다", "error");
         router.back();
       }
