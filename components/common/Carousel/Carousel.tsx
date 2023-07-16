@@ -12,9 +12,6 @@ interface CarouselProps {
   auto?: boolean;
 }
 
-/** Carousel 자동 넘기기 시간 */
-const AUTO_PLAY_DURATION = 5000;
-
 function Carousel({ children, auto = true }: CarouselProps) {
   const [order, setOrder] = useState(1);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -58,9 +55,9 @@ function Carousel({ children, auto = true }: CarouselProps) {
     const autoPlay = () => {
       if (auto && document.visibilityState === "visible") {
         goToImage((prev) => prev + 1)();
-      }
+      } else clearInterval(intervalId);
     };
-    const intervalId = setInterval(autoPlay, AUTO_PLAY_DURATION);
+    const intervalId = setInterval(autoPlay, 10000);
     return () => clearInterval(intervalId);
   }, []);
 

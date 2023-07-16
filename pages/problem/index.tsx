@@ -11,7 +11,6 @@ import { useRouter } from "next/router";
 import BannerCarousel from "../../components/unit/banner/BannerCarousel";
 import UserStatus from "../../components/unit/user/UserStatus";
 import MetaTags from "../../components/common/MetaTags";
-import styled from "styled-components";
 
 const header = [{ field: "card", header: "문제" }];
 
@@ -61,13 +60,21 @@ function ProblemList({ problems, page }: GetProblemsResponse) {
         url="https://uni.yoonleeverse.com/problem?page=1"
       />
       <BannerCarousel />
-      <Container>
-        <ProblemListContainer>
+      <FlexBox
+        flexDirection="row"
+        alignItems="start"
+        style={{ width: "100%", minHeight: "100vh" }}
+      >
+        <FlexBox
+          justifyContent="start"
+          alignItems="start"
+          style={{ minHeight: "30vh", flexGrow: 1 }}
+        >
           <h1>문제 보기</h1>
           <SearchFilter />
           {body?.length ? (
-            <div style={{ minHeight: "50vh", width: "100%" }}>
-              <Table header={header} body={body} maxWidth="100%" />
+            <div style={{ minHeight: "50vh" }}>
+              <Table header={header} body={body} />
               <Pagination
                 current_pages={page.current_pages}
                 total_pages={page.total_pages}
@@ -75,15 +82,15 @@ function ProblemList({ problems, page }: GetProblemsResponse) {
               />
             </div>
           ) : (
-            <div style={{ minHeight: "50vh", width: "100%" }}>
+            <div style={{ minHeight: "50vh" }}>
               <p>조건에 맞는 문제가 없습니다. 필터를 수정해주세요</p>
             </div>
           )}
-        </ProblemListContainer>
-        <StatusContainter>
+        </FlexBox>
+        <div style={{ flexGrow: 1, paddingTop: "150px" }}>
           <UserStatus />
-        </StatusContainter>
-      </Container>
+        </div>
+      </FlexBox>
     </>
   );
 }
@@ -111,31 +118,3 @@ export async function getStaticProps() {
     };
   }
 }
-
-const Container = styled(FlexBox).attrs({
-  flexDirection: "row",
-  alignItems: "start",
-})`
-  width: 100%;
-  min-height: 50vh;
-  ${({ theme }) => theme.mediaQueries.tablet} {
-    flex-wrap: wrap-reverse;
-  }
-`;
-
-const ProblemListContainer = styled(FlexBox).attrs({
-  alignItems: "start",
-  flexDirction: "row",
-})`
-  min-height: 30vh;
-  flex: 1 0 75%;
-  padding: 1rem;
-`;
-
-const StatusContainter = styled.div`
-  flex: 1 0 25%;
-  padding-top: 150px;
-  ${({ theme }) => theme.mediaQueries.tablet} {
-    padding-top: 1rem;
-  }
-`;

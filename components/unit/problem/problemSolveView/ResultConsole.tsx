@@ -2,7 +2,6 @@ import React from "react";
 import { useAppSelector } from "../../../../hooks/useStore";
 
 import styled from "styled-components";
-import ScrollBox from "../../../common/ScrollBox";
 
 interface ResultConsoleProps {
   testCases: { input: string; output: string }[];
@@ -15,7 +14,7 @@ function ResultConsole({ testCases }: ResultConsoleProps) {
   const isValidResult = isRunning || runResult || isError;
   if (isValidResult)
     return (
-      <ScrollBox style={{ padding: "0.5rem" }}>
+      <div style={{ padding: "0.5rem" }}>
         <TabHeader>실행 결과</TabHeader>
 
         <ResultConsoleTable>
@@ -66,12 +65,10 @@ function ResultConsole({ testCases }: ResultConsoleProps) {
             개 성공
           </div>
         )}
-      </ScrollBox>
+      </div>
     );
 
-  return (
-    <code style={{ padding: "0.5rem" }}>실행 결과가 여기에 표시됩니다</code>
-  );
+  return <code>실행 결과가 여기에 표시됩니다</code>;
 }
 
 export default ResultConsole;

@@ -15,7 +15,10 @@ export default function CheckableTable({
   ...rest
 }: CheckableTableProps) {
   const [checkedValue, setCheckedValue] = useState<Set<number>>(new Set());
-  const allIds: number[] = useMemo(() => body.map((data) => data.id), [body]);
+  const allIds: number[] = useMemo(
+    () => body.map((data) => data.id as number),
+    [body]
+  );
 
   const removeCheckedValue: (id: number) => SetStateAction<Set<number>> =
     (id) => (prev) => {
